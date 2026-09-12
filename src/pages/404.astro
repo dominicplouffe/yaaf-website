@@ -1,0 +1,31 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { NAV } from "../site.config.mjs";
+---
+<BaseLayout title="Not found" description="That page does not exist.">
+  <div class="shell wrap">
+    <p class="eyebrow">404 · refused</p>
+    <h1>Nothing here.</h1>
+    <p class="lede">Which is at least consistent: in yaaf, a request that doesn't match a rule gets a refusal rather than a polite guess.</p>
+    <nav>
+      <a href="/">Home</a>
+      {NAV.map((i) => <a href={i.href}>{i.label}</a>)}
+    </nav>
+  </div>
+</BaseLayout>
+
+<style>
+  .wrap { padding-block: 120px 80px; max-width: 620px; }
+  h1 { font-size: var(--text-h1); letter-spacing: -0.03em; font-weight: 640; margin: 14px 0 0; }
+  .lede { color: var(--color-ink-2); font-size: 1.0625rem; margin: 14px 0 28px; }
+  nav { display: flex; flex-wrap: wrap; gap: 8px; }
+  nav a {
+    font-size: 13.5px;
+    color: var(--color-ink-2);
+    text-decoration: none;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-control);
+    padding: 7px 13px;
+  }
+  nav a:hover { color: var(--color-ink); border-color: color-mix(in srgb, var(--color-accent) 55%, transparent); }
+</style>

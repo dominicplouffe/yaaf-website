@@ -1,0 +1,49 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  # Never cancel a half-finished s3 sync.
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  id-token: write   # OIDC. There are no long-lived AWS keys in this repo.
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - uses: actions/cache@v4
+        with:
+          path: node_modules/.astro
+          key: astro-${{ runner.os }}-${{ hashFiles('src/assets/**', 'src/content/**') }}
+          restore-keys: astro-${{ runner.os }}-
+
+      - run: npm ci
+      - run: npm run check
+      - run: npm run build
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          role-session-name: yaaf-website-${{ github.run_id }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - run: ./scripts/deploy.sh
+        env:
+          SKIP_BUILD: "1"
+          S3_BUCKET: ${{ vars.S3_BUCKET }}
+          CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
+          SITE_HOST: ${{ vars.SITE_HOST }}

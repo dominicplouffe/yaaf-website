@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      # Astro's image transform cache. Without it every run re-encodes the
+      # five 2880px screenshots from scratch.
+      - uses: actions/cache@v4
+        with:
+          path: node_modules/.astro
+          key: astro-${{ runner.os }}-${{ hashFiles('src/assets/**', 'src/content/**') }}
+          restore-keys: astro-${{ runner.os }}-
+      - run: npm ci
+      - run: npm run check
+      - run: npm run build
+
+      # The contract: a build needs nothing but this repository. No network,
+      # no sibling checkout of yaaf. If the content sync ever drops files,
+      # these counts are what notices.
+      - name: the build is self-contained and complete
+        run: |
+          test -f dist/index.html
+          test -f dist/404.html
+          test -f dist/og.png
+          test -f dist/sitemap-index.xml
+          test "$(find dist/docs   -name index.html | wc -l)" -eq 13   # 12 docs + hub
+          test "$(find dist/examples -name index.html | wc -l)" -eq 13 # 12 examples + hub
+          test "$(ls public/setups/*.json | wc -l)" -eq 12

@@ -1,0 +1,53 @@
+---
+/**
+ * A terminal block.
+ *
+ * Takes `code` as a string rather than a slot: the Astro compiler collapses
+ * the whitespace between elements in a slot, which is fatal inside <pre>.
+ * Markup allowed: <b> prompt, <i> comment, <u> highlight.
+ */
+interface Props { label?: string; note?: string; code: string; class?: string }
+const { label, note, code, class: cls = "" } = Astro.props;
+
+const html = code
+  .trim()
+  .replace(/<b>/g, '<span class="p">')
+  .replace(/<i>/g, '<span class="c">')
+  .replace(/<u>/g, '<span class="ok">')
+  .replace(/<\/[biu]>/g, "</span>");
+---
+<div class:list={["term", cls]}>
+  {label && <div class="bar"><span class="eyebrow">{label}</span></div>}
+  <pre><code set:html={html} /></pre>
+  {note && <p class="note">{note}</p>}
+</div>
+
+<style>
+  .term {
+    background: #0a0a0a;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+  }
+  .bar { padding: 9px 14px; border-bottom: 1px solid var(--color-line); background: var(--color-surface); }
+  pre {
+    margin: 0;
+    padding: 14px 16px;
+    overflow-x: auto;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    line-height: 1.8;
+    color: var(--color-ink-2);
+  }
+  .note {
+    margin: 0;
+    padding: 10px 16px;
+    border-top: 1px solid var(--color-line-2);
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: var(--color-muted);
+  }
+  pre :global(.c) { color: var(--color-muted); }
+  pre :global(.p) { color: var(--color-accent-hi); }
+  pre :global(.ok) { color: var(--color-good); }
+</style>

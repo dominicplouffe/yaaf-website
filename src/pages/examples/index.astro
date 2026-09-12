@@ -1,0 +1,125 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Section from "../../components/Section.astro";
+import Term from "../../components/Term.astro";
+
+const examples = (await getCollection("examples")).sort((a, b) =>
+  a.data.number.localeCompare(b.data.number),
+);
+const fundamentals = examples.filter((e) => Number(e.data.number) <= 2);
+const rest = examples.filter((e) => Number(e.data.number) > 2);
+
+const REHEARSE = `<b>$</b> yaaf rehearse examples/01-your-first-hour.json`;
+
+const MODE: Record<string, string> = {
+  deliver: "Ship one thing, then stop.",
+  operate: "Ship it, then restart on a rhythm — handed the last three cycles verbatim.",
+  explore: "Chase a goal with no fixed end.",
+};
+---
+<BaseLayout
+  title="Examples"
+  description="Twelve importable projects — two you could do in a Claude session, ten that name the specific thing which breaks without the platform. Every one runs as a $0 fire drill first."
+>
+  <Section
+    eyebrow="Examples"
+    title="Twelve projects. Two you could do without yaaf, ten you couldn't."
+    lede="Each is a real spec file in the repository. Import it, or run it as a fire drill first — the whole project on scripted agents, for nothing, before a single dollar moves."
+  >
+    <Term label="Try one before you pay for it" code={REHEARSE} note="Runs your spec as a real project on the real platform — every rule, every refusal — with scripted agents standing in for models." />
+  </Section>
+
+  <Section eyebrow="Part one" title="Fundamentals" lede="Do these first. The point is not the deliverable — it is watching the machinery work once on something you can check in five minutes.">
+    <div class="grid">
+      {fundamentals.map((e) => (
+        <a class="ex" href={`/examples/${e.id}/`}>
+          <p class="num">{e.data.number}</p>
+          <h3>{e.data.title}</h3>
+          <p class="get">{e.data.whatYouGet}</p>
+          <p class="chips">
+            <span class={`mode m-${e.data.mode}`}>{e.data.mode}</span>
+            {e.data.cap && <span>${e.data.cap} cap</span>}
+            {e.data.solo && <span>solo</span>}
+          </p>
+        </a>
+      ))}
+    </div>
+  </Section>
+
+  <Section
+    eyebrow="Part two"
+    title="Why yaaf exists"
+    lede="Each of these names the specific thing that breaks without a platform underneath — a claim nobody can check, a retry that double-posts, a night that burns a budget, a desk that grades its own quarter."
+    grid={true}
+  >
+    <div class="grid">
+      {rest.map((e) => (
+        <a class="ex" href={`/examples/${e.id}/`}>
+          <p class="num">{e.data.number}</p>
+          <h3>{e.data.title}</h3>
+          <p class="get">{e.data.whatYouGet}</p>
+          <p class="chips">
+            <span class={`mode m-${e.data.mode}`}>{e.data.mode}</span>
+            {e.data.cap && <span>${e.data.cap} cap</span>}
+            {e.data.solo && <span>solo</span>}
+            <span>{e.data.teams.length} {e.data.teams.length === 1 ? "team" : "teams"}</span>
+          </p>
+        </a>
+      ))}
+    </div>
+  </Section>
+
+  <Section eyebrow="Three shapes" title="Every project picks one, once.">
+    <div class="modes">
+      {Object.entries(MODE).map(([k, v]) => (
+        <div class="md">
+          <span class={`mode m-${k}`}>{k}</span>
+          <p>{v}</p>
+        </div>
+      ))}
+    </div>
+  </Section>
+</BaseLayout>
+
+<style>
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+  .ex {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    padding: 16px;
+    text-decoration: none;
+    transition: border-color 0.15s, background 0.15s, transform 0.15s;
+  }
+  .ex:hover {
+    border-color: color-mix(in srgb, var(--color-accent) 55%, transparent);
+    background: var(--color-surface-2);
+  }
+  .num { margin: 0; font-family: var(--font-mono); font-size: 11px; color: var(--color-muted); letter-spacing: 1.1px; }
+  .ex h3 { margin: 0; font-size: 16px; font-weight: 640; letter-spacing: -0.015em; color: var(--color-ink); }
+  .get { margin: 0; font-size: 13.5px; line-height: 1.6; color: var(--color-ink-2); }
+  .chips { display: flex; flex-wrap: wrap; gap: 5px; margin: auto 0 0; padding-top: 6px; }
+  .chips span {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.9px;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    padding: 3px 8px;
+  }
+  .mode { color: var(--color-ink-2) !important; }
+  .m-deliver { color: var(--color-accent-hi) !important; border-color: color-mix(in srgb, var(--color-accent) 40%, transparent) !important; }
+  .m-operate { color: var(--color-good) !important; border-color: color-mix(in srgb, var(--color-good) 40%, transparent) !important; }
+  .m-explore { color: var(--color-warning) !important; border-color: color-mix(in srgb, var(--color-warning) 40%, transparent) !important; }
+
+  .modes { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+  .md { background: var(--color-surface); border: 1px solid var(--color-line); border-radius: var(--radius-card); padding: 16px; }
+  .md p { margin: 10px 0 0; font-size: 13.5px; color: var(--color-ink-2); line-height: 1.6; }
+  .md .mode { display: inline-block; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.9px; text-transform: uppercase; border: 1px solid var(--color-line); border-radius: 999px; padding: 3px 9px; }
+</style>

@@ -1,0 +1,41 @@
+---
+import { Image } from "astro:assets";
+interface Props {
+  src: ImageMetadata;
+  alt: string;
+  caption?: string;
+  /** Crop to the top of a tall full-page capture instead of showing all of it. */
+  crop?: number;
+  priority?: boolean;
+}
+const { src, alt, caption, crop, priority = false } = Astro.props;
+---
+<figure class="shot">
+  <div class="frame" style={crop ? `--crop:${crop}px` : undefined}>
+    <Image src={src} alt={alt} widths={[640, 960, 1440]} sizes="(max-width: 900px) 100vw, 900px" loading={priority ? "eager" : "lazy"} />
+  </div>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<style>
+  .shot { margin: 0; }
+  .frame {
+    position: relative;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    background: var(--color-page);
+    box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.8);
+    max-height: var(--crop, none);
+  }
+  .frame::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  }
+  .frame :global(img) { display: block; width: 100%; height: auto; }
+  figcaption { color: var(--color-muted); font-size: 13px; margin-top: 12px; line-height: 1.6; max-width: 62ch; }
+</style>

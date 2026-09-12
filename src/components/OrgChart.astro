@@ -1,0 +1,159 @@
+---
+/**
+ * The thesis, drawn. Chairman on top, CEO under them, desks under the CEO.
+ * CSS connectors rather than SVG so the boxes can hold real, variable-length
+ * role names without anything overflowing.
+ */
+interface Team {
+  name: string;
+  role: string;
+  employees: string[];
+  lead?: string | null;
+  challenge?: boolean;
+}
+interface Props {
+  ceo: string;
+  ceoRole?: string;
+  teams: Team[];
+  chairman?: string | false;
+  compact?: boolean;
+}
+const { ceo, ceoRole, teams, chairman = "You — the chairman", compact = false } = Astro.props;
+---
+<div class:list={["org", { compact }]}>
+  {chairman && (
+    <>
+      <div class="row">
+        <div class="node chair">
+          <span class="eyebrow">Human</span>
+          <strong>{chairman}</strong>
+        </div>
+      </div>
+      <div class="stem" aria-hidden="true"></div>
+    </>
+  )}
+
+  <div class="row">
+    <div class="node ceo">
+      <span class="eyebrow">Executive</span>
+      <strong>{ceo}</strong>
+      {ceoRole && <span class="sub">{ceoRole}</span>}
+    </div>
+  </div>
+
+  {teams.length > 0 && (
+    <>
+      <div class="stem" aria-hidden="true"></div>
+      {/* A rail only makes sense when it forks. One desk gets the stem alone. */}
+      {teams.length > 1 && (
+        <div class="branch" aria-hidden="true" style={`--n:${teams.length}`}>
+          {teams.map(() => <span></span>)}
+        </div>
+      )}
+      <div class="teams" style={`--n:${teams.length}`}>
+        {teams.map((t) => (
+          <div class:list={["node team", { challenge: t.challenge }]}>
+            <span class="eyebrow">{t.name}</span>
+            <strong>{t.role}</strong>
+            {t.employees.length > 0 && (
+              <span class="people">
+                {t.employees.map((e, i) => (
+                  <>
+                    {i > 0 && <span class="sep">·</span>}
+                    <span class:list={{ lead: e === t.lead }}>{e}</span>
+                  </>
+                ))}
+              </span>
+            )}
+          </div>
+        ))}
+      </div>
+    </>
+  )}
+</div>
+
+<style>
+  .org { display: flex; flex-direction: column; align-items: center; width: 100%; }
+  .row { display: flex; justify-content: center; width: 100%; }
+
+  .node {
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    padding: 11px 14px;
+    text-align: center;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .node strong { font-size: 14px; font-weight: 640; letter-spacing: -0.01em; color: var(--color-ink); }
+  .node .sub { font-family: var(--font-mono); font-size: 10.5px; color: var(--color-muted); }
+
+  .chair {
+    border-color: color-mix(in srgb, var(--color-accent-2) 50%, transparent);
+    background: color-mix(in srgb, var(--color-accent-2) 10%, var(--color-surface));
+  }
+  .chair :global(.eyebrow) { color: var(--color-accent-2); }
+
+  .ceo {
+    border-color: color-mix(in srgb, var(--color-accent) 55%, transparent);
+    background: color-mix(in srgb, var(--color-accent) 12%, var(--color-surface));
+  }
+  .ceo :global(.eyebrow) { color: var(--color-accent-hi); }
+
+  .team.challenge { border-color: color-mix(in srgb, var(--color-accent-2) 42%, transparent); }
+  .team.challenge :global(.eyebrow) { color: var(--color-accent-2); }
+
+  .people { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; font-size: 11.5px; color: var(--color-muted); margin-top: 2px; }
+  .people .lead { color: var(--color-ink-2); font-weight: 600; }
+  .people .sep { opacity: 0.5; }
+
+  .stem { width: 1px; height: 20px; background: rgba(255, 255, 255, 0.22); }
+
+  /* One horizontal rail with a drop into each team box. */
+  .branch {
+    display: grid;
+    grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+    width: 100%;
+    height: 20px;
+  }
+  .branch span { position: relative; }
+  .branch span::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 1px;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.22);
+  }
+  .branch span::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.22);
+    left: 50%;
+    right: 0;
+  }
+  .branch span:last-child::after { right: 50%; left: 0; }
+  .branch span:not(:first-child):not(:last-child)::after { left: 0; right: 0; }
+  .branch span:first-child::after { left: 50%; right: 0; }
+
+  .teams {
+    display: grid;
+    grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+    gap: 10px;
+    width: 100%;
+  }
+
+  @media (max-width: 700px) {
+    .branch { display: none; }
+    .teams { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .org > .stem:last-of-type { height: 14px; }
+  }
+  @media (max-width: 420px) {
+    .teams { grid-template-columns: 1fr; }
+  }
+</style>

@@ -1,0 +1,83 @@
+---
+import "@fontsource-variable/instrument-sans";
+import "@fontsource-variable/jetbrains-mono";
+import "../styles/global.css";
+import Nav from "../components/Nav.astro";
+import Foot from "../components/Foot.astro";
+import { SITE, SITE_URL, REPO_URL, LICENSE } from "../site.config.mjs";
+
+interface Props {
+  title: string;
+  description?: string;
+  /** Set on pages that should not carry the site name suffix. */
+  bare?: boolean;
+  ogImage?: string;
+}
+
+const { title, description = SITE.description, bare = false, ogImage = "/og.png" } = Astro.props;
+const fullTitle = bare ? title : `${title} · ${SITE.name}`;
+const canonical = new URL(Astro.url.pathname, SITE_URL).href;
+const og = new URL(ogImage, SITE_URL).href;
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "yaaf",
+  applicationCategory: "DeveloperApplication",
+  operatingSystem: "Linux, macOS",
+  description: SITE.description,
+  url: SITE_URL,
+  codeRepository: REPO_URL,
+  license: "https://www.apache.org/licenses/LICENSE-2.0",
+  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+};
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content={SITE.themeColor} />
+    <meta name="generator" content={Astro.generator} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="yaaf" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={og} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={og} />
+    <meta name="license" content={LICENSE} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <Nav />
+    <main id="main">
+      <slot />
+    </main>
+    <Foot />
+    <style is:global>
+      .skip {
+        position: absolute;
+        left: -9999px;
+        top: 8px;
+        background: var(--color-accent);
+        color: #fff;
+        padding: 8px 14px;
+        border-radius: var(--radius-control);
+        z-index: 100;
+        font-size: 14px;
+      }
+      .skip:focus { left: 12px; }
+    </style>
+  </body>
+</html>

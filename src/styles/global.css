@@ -1,0 +1,224 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+   The palette is the product's palette, lifted from yaaf/web/src/styles.css so
+   the site and the cockpit are visibly one thing. The surfaces are warm-tinted
+   neutrals, not grey — #1a1a1a reads wrong next to a product screenshot.
+   --------------------------------------------------------------------------- */
+@theme {
+  --color-page: #0d0d0d;
+  --color-surface: #1a1a19;
+  --color-surface-2: #222221;
+  --color-grid: #2c2c2a;
+
+  --color-ink: #ffffff;
+  --color-ink-2: #c3c2b7;
+  --color-muted: #898781;
+
+  --color-accent: #3987e5;
+  --color-accent-lo: #2f78d4;
+  --color-accent-hi: #4a93ea;
+  --color-accent-2: #d95926;
+
+  --color-good: #0ca30c;
+  --color-warning: #fab219;
+  --color-serious: #ec835a;
+  --color-critical: #d03b3b;
+
+  --color-line: rgba(255, 255, 255, 0.1);
+  --color-line-2: rgba(255, 255, 255, 0.06);
+
+  --font-sans: "Instrument Sans Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, "SF Mono", Menlo, monospace;
+
+  --radius-card: 8px;
+  --radius-control: 6px;
+
+  --text-hero: clamp(2.35rem, 1.35rem + 3.4vw, 4rem);
+  --text-h1: clamp(2rem, 1.2rem + 3vw, 3.25rem);
+  --text-h2: clamp(1.5rem, 1.1rem + 1.6vw, 2.125rem);
+}
+
+:root {
+  color-scheme: dark;
+  --shell: 1240px;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--color-page);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection { background: color-mix(in srgb, var(--color-accent) 40%, transparent); }
+
+:focus-visible {
+  outline: 2px solid var(--color-accent-hi);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+/* --- the shell ----------------------------------------------------------- */
+@utility shell {
+  width: 100%;
+  max-width: var(--shell);
+  margin-inline: auto;
+  padding-inline: 20px;
+}
+@media (min-width: 768px) {
+  .shell { padding-inline: 32px; }
+}
+
+/* --- the signature: mono uppercase eyebrows ------------------------------ */
+@utility eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+/* --- surfaces ------------------------------------------------------------ */
+@utility card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+}
+
+/* A faint blueprint grid. Used behind a section, never behind body text. */
+@utility blueprint {
+  background-image:
+    linear-gradient(to right, var(--color-grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-grid) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 0%, transparent 75%);
+}
+
+@utility rule {
+  border: 0;
+  border-top: 1px solid var(--color-line);
+}
+
+/* --- type helpers -------------------------------------------------------- */
+@utility balance { text-wrap: balance; }
+@utility pretty { text-wrap: pretty; }
+
+/* --- prose (docs) -------------------------------------------------------- */
+.prose {
+  color: var(--color-ink-2);
+  font-size: 16px;
+  line-height: 1.7;
+  max-width: 72ch;
+}
+.prose > * + * { margin-top: 1.1em; }
+.prose h1, .prose h2, .prose h3, .prose h4 {
+  color: var(--color-ink);
+  font-weight: 650;
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+  text-wrap: balance;
+}
+.prose h1 { font-size: 2rem; margin-top: 0; }
+.prose h2 {
+  font-size: 1.4rem;
+  margin-top: 2.4em;
+  padding-top: 1.1em;
+  border-top: 1px solid var(--color-line);
+}
+.prose h3 { font-size: 1.1rem; margin-top: 1.9em; }
+.prose h4 { font-size: 1rem; margin-top: 1.6em; color: var(--color-ink-2); }
+.prose a {
+  color: var(--color-accent-hi);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  text-decoration-color: color-mix(in srgb, var(--color-accent-hi) 45%, transparent);
+}
+.prose a:hover { text-decoration-color: currentColor; }
+.prose strong { color: var(--color-ink); font-weight: 640; }
+.prose ul, .prose ol { padding-left: 1.3em; }
+.prose li + li { margin-top: 0.4em; }
+.prose ul { list-style: disc; }
+.prose ol { list-style: decimal; }
+.prose li::marker { color: var(--color-muted); }
+.prose blockquote {
+  border-left: 2px solid var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 7%, transparent);
+  padding: 0.9em 1.1em;
+  border-radius: 0 var(--radius-card) var(--radius-card) 0;
+  color: var(--color-ink-2);
+}
+.prose blockquote > * + * { margin-top: 0.7em; }
+.prose code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-line);
+  border-radius: 4px;
+  padding: 0.12em 0.38em;
+}
+.prose pre {
+  background: var(--color-surface) !important;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  padding: 14px 16px;
+  overflow-x: auto;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.prose pre code {
+  background: none;
+  border: 0;
+  padding: 0;
+  font-size: inherit;
+}
+.prose img { border-radius: var(--radius-card); border: 1px solid var(--color-line); }
+.prose hr { border: 0; border-top: 1px solid var(--color-line); margin: 2.2em 0; }
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  display: block;
+  overflow-x: auto;
+}
+.prose thead th {
+  text-align: left;
+  color: var(--color-ink);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+  padding: 10px;
+  border-bottom: 1px solid var(--color-line);
+  white-space: nowrap;
+}
+.prose tbody td {
+  padding: 10px;
+  border-bottom: 1px solid var(--color-line-2);
+  vertical-align: top;
+}
+.prose tbody tr:hover { background: rgba(255, 255, 255, 0.02); }
+
+/* Anchor targets clear the sticky header. */
+.prose :is(h2, h3, h4) { scroll-margin-top: 90px; }

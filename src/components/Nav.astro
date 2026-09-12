@@ -1,0 +1,89 @@
+---
+import { NAV, REPO_URL, SOURCE_IS_PUBLIC } from "../site.config.mjs";
+import Wordmark from "./Wordmark.astro";
+import Mark from "./Mark.astro";
+
+const here = Astro.url.pathname;
+const isOn = (href: string) => here === href || (href !== "/" && here.startsWith(href));
+---
+<header class="hdr">
+  <div class="shell inner">
+    <a href="/" class="brand" aria-label="yaaf home">
+      <Mark size={22} />
+      <Wordmark size="1.05rem" />
+    </a>
+
+    <nav class="links" aria-label="Primary">
+      {NAV.map((item) => (
+        <a href={item.href} class:list={["link", { on: isOn(item.href) }]} aria-current={isOn(item.href) ? "page" : undefined}>
+          {item.label}
+        </a>
+      ))}
+    </nav>
+
+    <a class="gh" href={SOURCE_IS_PUBLIC ? REPO_URL : "#notify"} rel={SOURCE_IS_PUBLIC ? "noopener" : undefined}>
+      {SOURCE_IS_PUBLIC ? "GitHub" : "Get notified"}
+      <span aria-hidden="true">↗</span>
+    </a>
+  </div>
+</header>
+
+<style>
+  .hdr {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: color-mix(in srgb, var(--color-page) 82%, transparent);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--color-line);
+  }
+  .inner {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    height: 58px;
+  }
+  .brand { display: flex; align-items: center; gap: 9px; text-decoration: none; flex: none; }
+  .links {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .links::-webkit-scrollbar { display: none; }
+  .link {
+    color: var(--color-ink-2);
+    text-decoration: none;
+    font-size: 14px;
+    padding: 6px 10px;
+    border-radius: var(--radius-control);
+    white-space: nowrap;
+    transition: color 0.15s, background 0.15s;
+  }
+  .link:hover { color: var(--color-ink); background: rgba(255, 255, 255, 0.04); }
+  .link.on { color: var(--color-ink); background: rgba(255, 255, 255, 0.06); }
+  .gh {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-ink);
+    text-decoration: none;
+    padding: 7px 12px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-control);
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .gh:hover { border-color: color-mix(in srgb, var(--color-accent) 55%, transparent); background: color-mix(in srgb, var(--color-accent) 10%, transparent); }
+  .gh span { color: var(--color-muted); font-size: 11px; }
+
+  @media (max-width: 720px) {
+    .gh { display: none; }
+    .links { margin-left: auto; }
+    .link { padding: 6px 8px; font-size: 13px; }
+  }
+</style>

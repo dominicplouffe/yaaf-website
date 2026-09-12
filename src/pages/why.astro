@@ -1,0 +1,296 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Section from "../components/Section.astro";
+import Term from "../components/Term.astro";
+import { REPO_URL } from "../site.config.mjs";
+
+const KILL = `<i># docs/PLAN.md</i>
+If the org arm does not beat the single-agent arm on the
+pre-registered rubric — blind-judged quality, verified external
+evidence, cost, wall-clock — then yaaf-as-an-org-framework
+is <b>shelved</b>.`;
+
+const ROWS = [
+  ["Shape", "One assistant", "One agent", "A library you wire up", "An org"],
+  ["Optimises for", "Reach", "Continuity", "Composition", "Accountability"],
+  ["Time horizon", "A session", "An ongoing chat", "A run", "Weeks"],
+  ["Who picks the next task", "You", "You", "Your code", "A CEO"],
+  ["“Done” means", "You say so", "You say so", "The graph returned", "The platform verified it"],
+  ["Cost control", "Your own instrumentation", "Your own instrumentation", "Your own instrumentation", "Capped — pauses itself"],
+  ["Disagreement", "—", "—", "Whatever you author", "Roles that can veto"],
+  ["The record", "Chat history", "Its memory", "Traces, if you wired them", "Every message, run, dollar, decision, refusal"],
+];
+---
+<BaseLayout
+  title="Why yaaf"
+  description="How yaaf differs from agent frameworks like LangGraph and CrewAI, from personal agents like OpenClaw and Hermes, and from a good skill. A framework composes agents. yaaf governs them."
+>
+  <Section
+    eyebrow="Different how?"
+    title="Three questions get asked every time."
+    lede="Fair answers, because the honest comparison is more persuasive than a flattering one — and because two of the three are not competitors at all."
+  >
+    <ol class="qs">
+      <li><a href="#frameworks">How is this different from an agent framework?</a></li>
+      <li><a href="#assistants">How is this different from OpenClaw or Hermes?</a></li>
+      <li><a href="#skill">Isn't this just a skill?</a></li>
+    </ol>
+  </Section>
+
+  <!-- ------------------------------------------------------------------ -->
+  <Section eyebrow="Question one" title="A framework composes agents. yaaf governs them." id="frameworks" grid={true}
+    lede="LangGraph, CrewAI, AutoGen and friends solve a real problem: getting several models to pass work between each other. That problem is upstream of the one yaaf is about.">
+    <div class="two">
+      <div class="col">
+        <p class="eyebrow">A framework gives you</p>
+        <ul class="plain">
+          <li>A way to wire agents into a graph</li>
+          <li>Coordination you write as code</li>
+          <li>Rules expressed as prompts</li>
+          <li>“Done” when the graph returns</li>
+          <li>Whatever it cost, after it cost it</li>
+          <li>Traces, if you instrumented them</li>
+        </ul>
+      </div>
+      <div class="col hi">
+        <p class="eyebrow">yaaf adds the part underneath</p>
+        <ul class="plain">
+          <li>Agents act only through an authenticated API, on short-lived per-run tokens</li>
+          <li>Every rule is an HTTP refusal or an automatic state change — never a sentence in a prompt</li>
+          <li>Work that makes nothing true is refused: every task must serve a requirement that carries its own test</li>
+          <li>Only the platform can write “met”. There is no agent verb for it</li>
+          <li>A budget that warns at 80% and pauses the project at the cap, killed runs included</li>
+          <li>A delivery date the platform stamps from measured pace and re-projects every tick</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="quote">
+      <p>A prompt is a suggestion, and a clever model talks itself around one. So the rules live in the server, not the prompt. An agent can't be argued out of a rule it never held — break one and it doesn't get a stern reminder, it gets a 403.</p>
+    </div>
+
+    <p class="after">
+      Use a framework when you are building the flow. Reach for yaaf when the flow
+      has to survive six weeks without you and be defensible afterwards to a client,
+      an auditor, or yourself. They are not the same tool, and yaaf is the slower,
+      heavier one on purpose.
+    </p>
+  </Section>
+
+  <!-- ------------------------------------------------------------------ -->
+  <Section eyebrow="Question two" title="OpenClaw and Hermes make one agent better. yaaf makes many agents accountable." id="assistants"
+    lede="Both are excellent, both are MIT, both are self-hosted — and neither is trying to do what yaaf is trying to do. The axes are different.">
+    <div class="three">
+      <article class="who">
+        <p class="eyebrow">OpenClaw · MIT</p>
+        <h3>Reach</h3>
+        <p class="tl">“The AI that really does things.”</p>
+        <p>A local-first assistant that meets you in the channels you already use — Discord, Slack, iMessage, Telegram, WhatsApp and twenty more — on any OS. One gateway, one assistant, everywhere you are.</p>
+        <a href="https://github.com/openclaw/openclaw" rel="noopener">github.com/openclaw/openclaw ↗</a>
+      </article>
+      <article class="who">
+        <p class="eyebrow">Hermes Agent · MIT</p>
+        <h3>Continuity</h3>
+        <p class="tl">“The agent that grows with you.”</p>
+        <p>One self-hosted agent with persistent memory and a closed learning loop: after a hard task it writes itself a reusable skill, so it is more capable the longer you use it.</p>
+        <a href="https://github.com/NousResearch/hermes-agent" rel="noopener">github.com/NousResearch/hermes-agent ↗</a>
+      </article>
+      <article class="who me">
+        <p class="eyebrow">yaaf · Apache-2.0</p>
+        <h3>Accountability</h3>
+        <p class="tl">“Stop prompting, start delegating.”</p>
+        <p>An org: roles with their own charters, a CEO that picks the next piece of work, a budget that stops itself, a date the platform owns, and a record of every dollar and every refusal.</p>
+        <a href={REPO_URL} rel="noopener">the repository ↗</a>
+      </article>
+    </div>
+
+    <p class="mid">
+      The compressed version: <strong>they are one agent, in a conversation, with you
+      present.</strong> yaaf is <strong>many agents, accountable to each other, over
+      weeks, with you absent.</strong>
+    </p>
+
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th></th><th>OpenClaw</th><th>Hermes Agent</th><th>Agent frameworks</th><th class="me">yaaf</th></tr>
+        </thead>
+        <tbody>
+          {ROWS.map(([label, a, b, c, d]) => (
+            <tr>
+              <th scope="row">{label}</th>
+              <td>{a}</td><td>{b}</td><td>{c}</td><td class="me">{d}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout">
+      <p class="eyebrow">And the part that matters most</p>
+      <p>
+        <strong>These are not competitors.</strong> yaaf is an MCP server — thirty-one
+        tools across four scopes. Anything that speaks MCP is a front end for it,
+        including a personal assistant. Chair a yaaf org from wherever you already
+        talk to an agent; yaaf is the floor underneath, not the window.
+      </p>
+    </div>
+  </Section>
+
+  <!-- ------------------------------------------------------------------ -->
+  <Section eyebrow="Question three" title="Isn't this just a skill?" id="skill" grid={true}
+    lede="yaaf runs your skills — a role's skill list is an allowlist handed straight to the Agent SDK. A skill is a capability. yaaf decides which capability to point at what, checks it got done, pays for it from a capped budget, and keeps the receipt.">
+    <div class="two">
+      <div class="col">
+        <p class="eyebrow">Use a skill when</p>
+        <ul class="plain">
+          <li>You're watching</li>
+          <li>It finishes in one sitting</li>
+          <li>Nothing irreversible happens</li>
+          <li>Nobody asks in six weeks how you know</li>
+        </ul>
+      </div>
+      <div class="col hi">
+        <p class="eyebrow">Reach for yaaf when</p>
+        <ul class="plain">
+          <li>It has to run unattended for weeks</li>
+          <li>“Done” can't be self-graded</li>
+          <li>Money has to stop by itself</li>
+          <li>You'll have to reconstruct it later for a client or an auditor</li>
+          <li>You want agents to disagree — because one agent checking its own work has the same blind spots in both seats</li>
+        </ul>
+      </div>
+    </div>
+    <p class="after">
+      A good model with a good skill out-writes yaaf's agents on any single task.{" "}
+      <strong>The difference isn't capability. It's governance and duration.</strong>
+    </p>
+  </Section>
+
+  <!-- ------------------------------------------------------------------ -->
+  <Section eyebrow="The honest part" title="Nobody has proven the org beats one good agent.">
+    <div class="honest">
+      <p>
+        And yaaf doesn't claim to have. Hierarchy's main product is lossy
+        summarisation at each boundary; the CEO's judgement — what to queue, kill
+        and prioritise — is the actual bet, and everything else is transport. That
+        question is open, and nothing in the repository settles it.
+      </p>
+      <p>
+        What the repository does give you is a fair way to settle it yourself.{" "}
+        <strong>Solo mode</strong> runs a single agent under byte-identical
+        governance, so you can hand the same goal to a hierarchy and to one brain
+        and compare the bills.
+      </p>
+      <Term label="The kill condition, in the repo, in public" code={KILL} />
+      <p>
+        The salvage path is already built and already usable: yaaf as a governance
+        harness for a single agent — queues, requirements, verification, budgets,
+        approvals and audit. <a href="/docs/plan/">The whole plan, including what is
+        deliberately not built.</a>
+      </p>
+    </div>
+  </Section>
+
+  <!-- ------------------------------------------------------------------ -->
+  <Section eyebrow="Colophon" title="Who's behind this" grid={true}>
+    <div class="bio">
+      <p>
+        yaaf is one person's answer to a question that kept coming up while building
+        startups: the thing that made a team work was never a smarter individual. It
+        was the roles — who owns what, who checks it, who is allowed to say no.
+      </p>
+      <p>
+        The code was written fast, with Claude Code. The design wasn't. It is years
+        of running teams, compiled — and then held honest by a test suite that
+        attacks every rule over HTTP the way an agent would, with forged tokens,
+        wrong roles and rephrased requests.
+      </p>
+      <p class="sig">
+        Pre-1.0, actively developed, Apache-2.0. Issues and pull requests welcome.
+      </p>
+    </div>
+  </Section>
+</BaseLayout>
+
+<style>
+  .qs { margin: 0; padding-left: 1.2em; display: grid; gap: 10px; }
+  .qs li { color: var(--color-muted); font-size: 1.05rem; }
+  .qs a { color: var(--color-ink); text-decoration: none; border-bottom: 1px solid color-mix(in srgb, var(--color-accent) 50%, transparent); }
+  .qs a:hover { color: var(--color-accent-hi); }
+
+  .two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .col { background: var(--color-surface); border: 1px solid var(--color-line); border-radius: var(--radius-card); padding: 18px; }
+  .col.hi { border-color: color-mix(in srgb, var(--color-accent) 45%, transparent); background: color-mix(in srgb, var(--color-accent) 8%, var(--color-surface)); }
+  ul.plain { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 9px; }
+  ul.plain li { font-size: 14px; line-height: 1.55; color: var(--color-ink-2); padding-left: 18px; position: relative; }
+  ul.plain li::before { content: "▸"; position: absolute; left: 0; color: var(--color-muted); font-size: 10px; top: 4px; }
+  .col.hi ul.plain li::before { color: var(--color-accent); }
+
+  .quote {
+    margin-top: 22px;
+    border-left: 2px solid var(--color-accent-2);
+    background: color-mix(in srgb, var(--color-accent-2) 8%, transparent);
+    border-radius: 0 var(--radius-card) var(--radius-card) 0;
+    padding: 16px 20px;
+  }
+  .quote p { margin: 0; font-size: 1.0625rem; line-height: 1.6; color: var(--color-ink); max-width: 64ch; }
+  .after { margin: 22px 0 0; color: var(--color-ink-2); font-size: 15px; max-width: 64ch; line-height: 1.65; }
+
+  .three { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .who { background: var(--color-surface); border: 1px solid var(--color-line); border-radius: var(--radius-card); padding: 18px; display: flex; flex-direction: column; gap: 8px; }
+  .who h3 { margin: 6px 0 0; font-size: 1.35rem; font-weight: 640; letter-spacing: -0.02em; }
+  .who .tl { margin: 0; font-family: var(--font-mono); font-size: 12px; color: var(--color-muted); }
+  .who p { margin: 0; font-size: 13.5px; line-height: 1.6; color: var(--color-ink-2); }
+  .who a { margin-top: auto; padding-top: 10px; font-family: var(--font-mono); font-size: 11px; color: var(--color-muted); text-decoration: none; }
+  .who a:hover { color: var(--color-accent-hi); }
+  .who.me { border-color: color-mix(in srgb, var(--color-accent) 55%, transparent); background: color-mix(in srgb, var(--color-accent) 10%, var(--color-surface)); }
+  .who.me h3 { color: var(--color-accent-hi); }
+
+  .mid { margin: 26px 0; font-size: 1.125rem; line-height: 1.6; color: var(--color-ink-2); max-width: 62ch; }
+  .mid strong { color: var(--color-ink); font-weight: 620; }
+
+  .tablewrap { overflow-x: auto; border: 1px solid var(--color-line); border-radius: var(--radius-card); }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width: 720px; }
+  thead th {
+    text-align: left;
+    padding: 12px 14px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 1.1px;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    border-bottom: 1px solid var(--color-line);
+    background: var(--color-surface);
+  }
+  thead th.me { color: var(--color-accent-hi); }
+  tbody th {
+    text-align: left;
+    font-weight: 500;
+    color: var(--color-muted);
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--color-line-2);
+    white-space: nowrap;
+    font-size: 12.5px;
+  }
+  tbody td { padding: 11px 14px; border-bottom: 1px solid var(--color-line-2); color: var(--color-ink-2); vertical-align: top; }
+  tbody td.me { color: var(--color-ink); font-weight: 560; background: color-mix(in srgb, var(--color-accent) 7%, transparent); }
+  tbody tr:last-child th, tbody tr:last-child td { border-bottom: 0; }
+
+  .callout { margin-top: 22px; border: 1px solid color-mix(in srgb, var(--color-accent) 45%, transparent); background: color-mix(in srgb, var(--color-accent) 9%, transparent); border-radius: var(--radius-card); padding: 18px 20px; }
+  .callout p:last-child { margin: 10px 0 0; font-size: 1rem; line-height: 1.65; color: var(--color-ink-2); max-width: 66ch; }
+  .callout strong { color: var(--color-ink); }
+
+  .honest { max-width: 66ch; display: grid; gap: 16px; }
+  .honest p { margin: 0; font-size: 1rem; line-height: 1.7; color: var(--color-ink-2); }
+  .honest strong { color: var(--color-ink); }
+  .honest a { color: var(--color-accent-hi); }
+
+  .bio { max-width: 62ch; display: grid; gap: 14px; }
+  .bio p { margin: 0; font-size: 1.0625rem; line-height: 1.7; color: var(--color-ink-2); }
+  .sig { font-family: var(--font-mono); font-size: 12px !important; color: var(--color-muted) !important; letter-spacing: 0.4px; }
+
+  @media (max-width: 860px) {
+    .two, .three { grid-template-columns: minmax(0, 1fr); }
+  }
+</style>

@@ -1,0 +1,216 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Section from "../components/Section.astro";
+import RoleCard from "../components/RoleCard.astro";
+import OrgChart from "../components/OrgChart.astro";
+
+const roleEntries = await getCollection("roles");
+const roles = roleEntries.map((r) => r.data).sort((a, b) => a.name.localeCompare(b.name));
+const byCategory = roles.reduce<Record<string, number>>((acc, r) => {
+  acc[r.category] = (acc[r.category] ?? 0) + 1;
+  return acc;
+}, {});
+const categories = Object.entries(byCategory).sort((a, b) => b[1] - a[1]);
+const execs = roles.filter((r) => r.is_ceo_role);
+const challengers = roles.filter((r) => r.category === "challenge");
+
+const crewEntries = await getCollection("crews");
+const roleName = new Map(roles.map((r) => [r.slug, r.name]));
+const challengeSlugs = new Set(challengers.map((r) => r.slug));
+const crews = crewEntries
+  .map((c) => c.data)
+  .sort((a, b) => b.teams.length - a.teams.length || a.name.localeCompare(b.name));
+const headcount = (c: (typeof crews)[number]) =>
+  c.teams.reduce((n, t) => n + Math.max(t.employees.length, 1), 0);
+---
+<BaseLayout
+  title="The org"
+  description={`${roles.length} job descriptions and ${crews.length} pre-built crews. Every role has its own system prompt, model, effort level and tool permissions — and ${challengers.length} of them exist to disagree with the other ${roles.length - challengers.length}.`}
+>
+  <Section
+    eyebrow="The library"
+    title={`${roles.length} job descriptions. ${crews.length} crews. Hired, not invented.`}
+    lede="A project does not start with a blank prompt. It hires from a library — each role a system prompt, a model, an effort level and a set of tool permissions somebody already argued about."
+  >
+    <div class="counts">
+      <div class="n"><strong>{roles.length}</strong><span>roles</span></div>
+      <div class="n"><strong>{crews.length}</strong><span>crews</span></div>
+      <div class="n"><strong>{execs.length}</strong><span>CEO-eligible</span></div>
+      <div class="n hi"><strong>{challengers.length}</strong><span>hired to disagree</span></div>
+    </div>
+  </Section>
+
+  <Section
+    eyebrow="The reason it works, if it works"
+    title="A quarter of the staff is paid to attack the other three quarters."
+    lede="One agent checking its own work has the same blind spots in both seats. So the second-largest category in the library is the one whose entire job is to be hard to convince."
+    grid={true}
+    id="challenge"
+  >
+    <div class="chal">
+      {challengers.map((r) => (
+        <div class="ch">
+          <strong>{r.name}</strong>
+          <p>{r.description}</p>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  <Section eyebrow="Executive" title="Somebody has to decide what happens next." lede="Two roles can hold the executive seat. It picks the work, prices it, assigns it and answers for the date — which is the part that takes you out of the loop.">
+    <div class="execs">
+      {execs.map((r) => <RoleCard role={r} />)}
+    </div>
+  </Section>
+
+  <Section eyebrow="Every role" title="The staff directory" id="roles">
+    <div class="filters" role="group" aria-label="Filter roles by category">
+      <button class="f on" data-cat="all">All <span>{roles.length}</span></button>
+      {categories.map(([cat, n]) => (
+        <button class="f" data-cat={cat}>{cat} <span>{n}</span></button>
+      ))}
+    </div>
+    <div class="roles" id="roleGrid">
+      {roles.map((r) => <RoleCard role={r} />)}
+    </div>
+  </Section>
+
+  <Section
+    eyebrow="Pre-built crews"
+    title="Seventeen orgs you can hire whole"
+    lede="Each one is a real file in the repository: teams, the role filling each, the people in it and who leads. Names and all — because “Maya, Tobias, Ines, Owen and Ada” reads like a company in a way that “five agents” never will."
+    grid={true}
+    id="crews"
+  >
+    <div class="crews">
+      {crews.map((c) => (
+        <article class="crew">
+          <header>
+            <div>
+              <h3>{c.name}</h3>
+              <p class="out">{c.outcome}</p>
+            </div>
+            <p class="stat">
+              <span>{c.teams.length} {c.teams.length === 1 ? "team" : "teams"}</span>
+              <span>{headcount(c)} seats</span>
+              {c.domains.map((d) => <span class="dom">{d}</span>)}
+            </p>
+          </header>
+          <OrgChart
+            chairman={false}
+            ceo={roleName.get(c.ceo_role_slug) ?? c.ceo_role_slug}
+            ceoRole={c.ceo_role_slug}
+            teams={c.teams.map((t) => ({
+              name: t.name,
+              role: roleName.get(t.role_slug) ?? t.role_slug,
+              employees: t.employees,
+              lead: t.lead ?? null,
+              challenge: challengeSlugs.has(t.role_slug),
+            }))}
+          />
+        </article>
+      ))}
+    </div>
+  </Section>
+</BaseLayout>
+
+<style>
+  .counts { display: flex; flex-wrap: wrap; gap: 12px; }
+  .n {
+    flex: 1 1 140px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    padding: 18px;
+  }
+  .n strong { display: block; font-size: 2.4rem; line-height: 1; letter-spacing: -0.04em; font-weight: 640; }
+  .n span {
+    display: block;
+    margin-top: 8px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 1.1px;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+  .n.hi { border-color: color-mix(in srgb, var(--color-accent-2) 50%, transparent); background: color-mix(in srgb, var(--color-accent-2) 9%, var(--color-surface)); }
+  .n.hi strong { color: var(--color-accent-2); }
+
+  .chal { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; }
+  .ch {
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-left: 2px solid var(--color-accent-2);
+    border-radius: var(--radius-card);
+    padding: 14px 16px;
+  }
+  .ch strong { display: block; font-size: 14.5px; font-weight: 640; }
+  .ch p { margin: 6px 0 0; font-size: 13px; line-height: 1.6; color: var(--color-ink-2); }
+
+  .execs { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 12px; }
+
+  .filters { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
+  .f {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.9px;
+    text-transform: uppercase;
+    color: var(--color-ink-2);
+    background: transparent;
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    padding: 6px 13px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+  }
+  .f span { color: var(--color-muted); margin-left: 4px; }
+  .f:hover { background: rgba(255, 255, 255, 0.04); color: var(--color-ink); }
+  .f.on {
+    color: var(--color-ink);
+    border-color: color-mix(in srgb, var(--color-accent) 55%, transparent);
+    background: color-mix(in srgb, var(--color-accent) 14%, transparent);
+  }
+
+  .roles { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; align-items: start; }
+  .roles :global(article[hidden]) { display: none; }
+
+  .crews { display: grid; gap: 14px; }
+  .crew {
+    background: color-mix(in srgb, var(--color-surface) 70%, transparent);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    padding: 20px;
+  }
+  .crew header { display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: start; margin-bottom: 22px; }
+  .crew h3 { margin: 0; font-size: 17px; font-weight: 640; letter-spacing: -0.015em; }
+  .out { margin: 5px 0 0; font-size: 13.5px; color: var(--color-ink-2); max-width: 56ch; }
+  .stat { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; }
+  .stat span {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.9px;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    padding: 3px 9px;
+  }
+  .stat .dom { color: var(--color-accent-hi); border-color: color-mix(in srgb, var(--color-accent) 40%, transparent); }
+
+  @media (min-width: 1000px) { .crews { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+</style>
+
+<script>
+  const grid = document.getElementById("roleGrid");
+  const buttons = document.querySelectorAll<HTMLButtonElement>(".f");
+  buttons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const cat = btn.dataset.cat;
+      buttons.forEach((b) => b.classList.toggle("on", b === btn));
+      grid?.querySelectorAll<HTMLElement>("article[data-category]").forEach((card) => {
+        card.hidden = cat !== "all" && card.dataset.category !== cat;
+      });
+    });
+  });
+</script>

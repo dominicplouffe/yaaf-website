@@ -1,0 +1,122 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import { DOCS_GROUPS, REPO_URL, SOURCE_IS_PUBLIC } from "../site.config.mjs";
+import { getCollection } from "astro:content";
+
+interface Props {
+  title: string;
+  subtitle?: string;
+  description?: string;
+  sourceFile?: string;
+  slug?: string;
+}
+const { title, subtitle, description, sourceFile, slug } = Astro.props;
+
+const all = await getCollection("docs");
+const bySlug = new Map(all.map((d) => [d.data.slug, d]));
+const grouped = DOCS_GROUPS.map((g) => ({
+  title: g.title,
+  items: g.slugs.map((s) => bySlug.get(s)).filter(Boolean),
+}));
+const listed = new Set(DOCS_GROUPS.flatMap((g) => g.slugs));
+const rest = all.filter((d) => !listed.has(d.data.slug));
+if (rest.length) grouped.push({ title: "More", items: rest });
+---
+<BaseLayout title={title} description={description ?? subtitle}>
+  <div class="shell wrap">
+    <aside class="side" aria-label="Documentation">
+      <a href="/docs/" class:list={["home", { on: !slug }]}>All documentation</a>
+      {grouped.map((g) => (
+        <div class="group">
+          <p class="eyebrow gt">{g.title}</p>
+          <ul>
+            {g.items.map((d: any) => (
+              <li>
+                <a href={`/docs/${d.data.slug}/`} class:list={{ on: slug === d.data.slug }}>{d.data.title}</a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </aside>
+
+    <article class="body">
+      <header class="head">
+        <p class="eyebrow">Documentation</p>
+        <h1>{title}</h1>
+        {subtitle && <p class="sub">{subtitle}</p>}
+        {sourceFile && SOURCE_IS_PUBLIC && (
+          <p class="src">
+            <a href={`${REPO_URL}/blob/main/${sourceFile}`}>{sourceFile} ↗</a>
+          </p>
+        )}
+      </header>
+      <div class="prose">
+        <slot />
+      </div>
+    </article>
+  </div>
+</BaseLayout>
+
+<style>
+  .wrap {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 48px;
+    align-items: start;
+    padding-block: 40px 20px;
+  }
+  .side { position: sticky; top: 74px; max-height: calc(100vh - 90px); overflow-y: auto; padding-right: 4px; }
+  .home {
+    display: block;
+    font-size: 13px;
+    color: var(--color-ink-2);
+    text-decoration: none;
+    padding: 6px 9px;
+    border-radius: var(--radius-control);
+  }
+  .home:hover, .side a:hover { background: rgba(255, 255, 255, 0.04); color: var(--color-ink); }
+  .group { margin-top: 20px; }
+  .gt { margin: 0 0 7px 9px; }
+  .side ul { list-style: none; margin: 0; padding: 0; }
+  .side li a {
+    display: block;
+    font-size: 13.5px;
+    color: var(--color-ink-2);
+    text-decoration: none;
+    padding: 5px 9px;
+    border-radius: var(--radius-control);
+    border-left: 2px solid transparent;
+  }
+  .side li a.on {
+    color: var(--color-ink);
+    background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+    border-left-color: var(--color-accent);
+  }
+  .head { margin-bottom: 32px; }
+  .head h1 {
+    font-size: var(--text-h1);
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+    margin: 10px 0 0;
+    text-wrap: balance;
+  }
+  .sub { color: var(--color-ink-2); font-size: 1.05rem; margin: 10px 0 0; max-width: 60ch; }
+  .src { margin: 14px 0 0; font-family: var(--font-mono); font-size: 11.5px; }
+  .src a { color: var(--color-muted); text-decoration: none; }
+  .src a:hover { color: var(--color-accent-hi); }
+
+  @media (max-width: 900px) {
+    .wrap { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+    .side {
+      position: static;
+      max-height: none;
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius-card);
+      padding: 14px;
+      background: var(--color-surface);
+    }
+    .side ul { display: flex; flex-wrap: wrap; gap: 4px; }
+    .side li a { border-left: 0; border: 1px solid var(--color-line); }
+  }
+</style>

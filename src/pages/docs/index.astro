@@ -1,0 +1,72 @@
+---
+import { getCollection } from "astro:content";
+import DocsLayout from "../../layouts/DocsLayout.astro";
+import { DOCS_GROUPS } from "../../site.config.mjs";
+
+const all = await getCollection("docs");
+const bySlug = new Map(all.map((d) => [d.data.slug, d]));
+
+/** One line each, written for someone deciding what to open. */
+const BLURB: Record<string, string> = {
+  plan: "The thesis, the kill conditions, what is built, and what is deliberately not. Start here if you want to know whether to trust it.",
+  features: "The complete reference, grouped by the failure each feature prevents.",
+  "creating-a-project": "Your first project in plain English: picking a shape, writing a goal a CEO can plan from, accepting the plan.",
+  governance: "The constitution — every rule, its default, what it refuses, and how to change one.",
+  autonomy: "How much the CEO decides without you. Five authority switches, two presets, and what never moves at any setting.",
+  "goal-grammar": "The ten things a goal has to contain before the platform will let a project be planned from it.",
+  "mcp-server": "Chairing yaaf from Claude Code, Claude Desktop or anything else that speaks MCP — and the security model that makes writes safe.",
+  dashboard: "Every screen and what you do there.",
+  cli: "Every `yaaf` command, the project spec shape, and a full provisioning script.",
+  "agent-api": "The API your agents act through, and how to write a role that uses it well.",
+  deployment: "Install and run it: one script, every environment variable, backups, upgrades.",
+  integrations: "Billing, credentials, MCP data sources, Slack, GitHub, webhooks, artifact storage.",
+};
+
+const groups = DOCS_GROUPS.map((g) => ({
+  title: g.title,
+  items: g.slugs.map((s) => bySlug.get(s)).filter(Boolean),
+}));
+---
+<DocsLayout
+  title="Documentation"
+  subtitle="The whole reference. Rendered from the repository, synced with it."
+  description="yaaf documentation: the plan, the feature reference, the constitution, the autonomy dial, the MCP server, the CLI and the agent API."
+>
+  <p>
+    Everything below is the yaaf repository's own documentation, rendered here so
+    you can read it before you clone anything. New? <a href="/docs/plan/">The plan</a>{" "}
+    tells you what this is betting on and what would kill it. Ready to run something?{" "}
+    <a href="/docs/creating-a-project/">Creating a project</a>.
+  </p>
+
+  {groups.map((g) => (
+    <section class="grp">
+      <h2>{g.title}</h2>
+      <div class="cards">
+        {g.items.map((d: any) => (
+          <a class="c" href={`/docs/${d.data.slug}/`}>
+            <span class="t">{d.data.title}</span>
+            <span class="b">{BLURB[d.data.slug] ?? d.data.subtitle}</span>
+          </a>
+        ))}
+      </div>
+    </section>
+  ))}
+</DocsLayout>
+
+<style>
+  .grp h2 { font-size: 1.2rem; }
+  .cards { display: grid; gap: 10px; margin-top: 16px; }
+  .c {
+    display: block;
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    padding: 14px 16px;
+    text-decoration: none;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .c:hover { border-color: color-mix(in srgb, var(--color-accent) 55%, transparent); background: var(--color-surface-2); }
+  .t { display: block; color: var(--color-ink); font-weight: 600; font-size: 15px; }
+  .b { display: block; color: var(--color-muted); font-size: 13.5px; margin-top: 4px; line-height: 1.55; }
+</style>

@@ -1,0 +1,41 @@
+---
+interface Props {
+  eyebrow?: string;
+  title?: string;
+  lede?: string;
+  id?: string;
+  grid?: boolean;
+  class?: string;
+}
+const { eyebrow, title, lede, id, grid = false, class: cls = "" } = Astro.props;
+---
+<section id={id} class:list={["sec", cls, { grid }]}>
+  {grid && <div class="blueprint bp" aria-hidden="true"></div>}
+  <div class="shell">
+    {(eyebrow || title) && (
+      <header class="hd">
+        {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+        {title && <h2 class="balance">{title}</h2>}
+        {lede && <p class="lede pretty">{lede}</p>}
+      </header>
+    )}
+    <slot />
+  </div>
+</section>
+
+<style>
+  .sec { position: relative; padding-block: 88px; }
+  .sec.grid { border-top: 1px solid var(--color-line); border-bottom: 1px solid var(--color-line); }
+  .bp { position: absolute; inset: 0; opacity: 0.5; pointer-events: none; }
+  .shell { position: relative; }
+  .hd { max-width: 66ch; margin-bottom: 40px; }
+  .hd h2 {
+    font-size: var(--text-h2);
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+    font-weight: 620;
+    margin: 12px 0 0;
+  }
+  .lede { color: var(--color-ink-2); font-size: 1.0625rem; margin: 14px 0 0; max-width: 58ch; }
+  @media (max-width: 700px) { .sec { padding-block: 60px; } }
+</style>
