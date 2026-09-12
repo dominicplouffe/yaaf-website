@@ -7,6 +7,7 @@ import Term from "../components/Term.astro";
 import Shot from "../components/Shot.astro";
 import { SITE, REPO_URL, SOURCE_IS_PUBLIC } from "../site.config.mjs";
 
+import review from "../assets/screenshots/review.png";
 import cockpit from "../assets/screenshots/cockpit-overview.png";
 import boardroom from "../assets/screenshots/boardroom.png";
 import work from "../assets/screenshots/work-and-proof.png";
@@ -188,15 +189,15 @@ const ASKS = [
   </Section>
 
   <!-- ================= COCKPIT ================= -->
-  <Section eyebrow="The chairman's cockpit" title="Is it working? Answer, on one screen." grid={true}
-    lede="You steer from the same chat you started in. But when you want to look, everything the platform knows is already on a screen: the deliverable, the plan, spend against the cap by team, and the org roster.">
+  <Section eyebrow="The standing meeting" title="The CEO brings the numbers. You decide." grid={true}
+    lede="This is the screen the whole thing is for: what it cost against what it estimated, a date that re-projected itself, and the levers a human can pull — each one recorded with your reason and shown at the next review beside what it bought.">
     <div class="shots">
-      <Shot src={cockpit} crop={660} priority={true}
-        alt="The chairman's cockpit: is it working, the deliverable, the plan, spend against the cap broken down by team, the setup health line, and the org roster"
-        caption="Overview. One run in five ended early, so the platform says so on the way past. Spend against the cap, the plan, the deliverable, and the org roster." />
-      <Shot src={work} crop={560}
+      <Shot src={review} crop={600} priority={true}
+        alt="The Review tab: pace, requirements met since last review, the commitment at risk with its promised and projected dates, budget, audit coverage and worst offender; below them the CEO's variance narrative and the chairman's six levers"
+        caption="The CEO closes a stage 28 runs against 23 estimated, moves its own bias multiplier to 1.21, and applies it to the rest of the plan. Then it tells you the one thing it will not do without you: buy a licensed data feed. It proposes the free route instead." />
+      <Shot src={work} crop={620}
         alt="The Work tab: the platform's sampled close waiting on the chairman, the read-only board, and every piece of evidence with its verification status including a failed check"
-        caption="Work. The platform sampled a finished claim and dealt it to you to check, because AI reviewers approve nearly everything and you don't." />
+        caption="The platform picked a finished claim at random and dealt it to you, because AI reviewers approve nearly everything and you don't. One task sits blocked on a licence nobody will buy without asking." />
       <Shot src={boardroom} crop={500}
         alt="The Boardroom tab: the chairman asks the CEO how confident it is in the 30th; the CEO answers with the estimate-to-actual ratio, its re-projection, and what would move it"
         caption="Boardroom. Ask the CEO how confident it is in the 30th. It answers with the estimate-to-actual ratio, its re-projection, and what would move it." />
@@ -272,24 +273,36 @@ const ASKS = [
         <p class="lk"><a href="/docs/plan/">The plan, the kill conditions, and what is deliberately not built →</a></p>
       </div>
     </div>
+
+    <div class="failshot">
+      <Shot src={cockpit} crop={498}
+        alt="The cockpit of a project that is not working: nothing working now, one run in five ended early, no deliverable published, and CEO judgment at 20 per cent"
+        caption="And this is one that is not working. Nothing published, one run in five dead, the CEO's judgement running at 20% — one of its five bets ever produced real-world proof. The dashboard's first job is to tell you that on the way past, in red, rather than after the invoice. A screen that only looks good is a screen that is lying to you." />
+    </div>
   </Section>
 
   <!-- ================= PROVENANCE + OPEN QUESTIONS ================= -->
-  <Section eyebrow="Before you go looking" title="This repository is two weeks old." grid={true}
-    lede="You would find that in one click, so here it is first, with the part that follows from it.">
+  <Section eyebrow="Before you go looking" title="This git history is two weeks old. The project is not." grid={true}
+    lede="You would find the first half in one click, so here is both halves, with what follows from each.">
     <div class="prov">
       <div class="prov-nums">
-        <div><strong>13</strong><span>days of history</span></div>
+        <div><strong>13</strong><span>days of git history</span></div>
         <div><strong>135</strong><span>commits</span></div>
         <div><strong>~49%</strong><span>authored by Claude Code</span></div>
         <div><strong>0</strong><span>outside security reviews</span></div>
       </div>
       <div class="prov-txt">
         <p>
+          The history was restarted on 30 August, so the repository is younger than the
+          thing it holds. The screenshots further up this page are from a desk that was
+          already running a week before that first commit, and the build stamp in the
+          corner of each one says so.
+        </p>
+        <p>
           It was built fast and in the open with Claude Code, and roughly half the
-          commits are authored by it. That is not a disclaimer, it is the method, and
-          the design is older than the code: it is years of running teams, written
-          down and then built quickly.
+          commits are authored by it. That is the method, not a disclaimer. The design
+          is much older than either: years of running teams, written down first and
+          then built quickly.
         </p>
         <p>
           <strong>What that bought:</strong> a policy engine with 1,347 tests attacking
@@ -317,7 +330,7 @@ const ASKS = [
           <strong>Is a server-side refusal actually enough?</strong> An agent holds the
           credentials its role was granted, has a shell and a network, and there is no
           egress control, and that allowlist was removed on purpose, and the reasoning is
-          published. A prompt-injected agent can send what it holds anywhere.
+          published. A prompt-injected agent can send what it holds anywhere.{" "}
           <em>Is the container boundary plus a scoped grant plus an audit trail a
           defensible place to stop?</em> <a href="/docs/security/">The threat model →</a>
         </li>
@@ -326,7 +339,7 @@ const ASKS = [
           serve something that has to be true at the end and carries its own test. It
           works beautifully for artifacts and badly for objectives: a rank, a revenue
           number, a deficit resist being a test, and the honest failure mode is that
-          every requirement quietly becomes a grep over the workspace.
+          every requirement quietly becomes a grep over the workspace.{" "}
           <em>What is the better shape?</em>
         </li>
       </ol>
@@ -522,6 +535,8 @@ const ASKS = [
   .layers { margin-top: 22px; border: 1px solid color-mix(in srgb, var(--color-accent) 42%, transparent); background: color-mix(in srgb, var(--color-accent) 8%, transparent); border-radius: var(--radius-card); padding: 16px 20px; }
   .layers p { margin: 0; font-size: 15px; line-height: 1.65; color: var(--color-ink-2); max-width: 70ch; }
   .layers strong { color: var(--color-ink); }
+
+  .failshot { margin-top: 34px; padding-top: 28px; border-top: 1px solid var(--color-line); }
 
   /* ---------- honest ---------- */
   .honest { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; align-items: start; }
