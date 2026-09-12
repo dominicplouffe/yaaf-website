@@ -41,6 +41,7 @@ export const DOCS_ORDER = [
   "features",
   "creating-a-project",
   "governance",
+  "security",
   "autonomy",
   "mcp-server",
   "dashboard",
@@ -53,7 +54,7 @@ export const DOCS_ORDER = [
 
 export const DOCS_GROUPS = [
   { title: "Start here", slugs: ["plan", "features", "creating-a-project"] },
-  { title: "The rules", slugs: ["governance", "autonomy", "goal-grammar"] },
+  { title: "The rules", slugs: ["governance", "autonomy", "security", "goal-grammar"] },
   { title: "Surfaces", slugs: ["mcp-server", "dashboard", "cli", "agent-api"] },
   { title: "Running it", slugs: ["deployment", "integrations"] },
 ];

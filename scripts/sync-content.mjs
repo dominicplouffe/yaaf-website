@@ -126,12 +126,19 @@ async function syncJson(kind, fromDir, toDir) {
   return files.length;
 }
 
+/** Root-level markdown that belongs in the docs nav anyway. */
+const ROOT_DOCS = ["SECURITY.md"];
+
 async function syncDocs() {
   await reset(OUT.docs);
   const dir = path.join(SRC, "docs");
   const files = (await readdir(dir)).filter((f) => f.endsWith(".md") && !SKIP_DOCS.has(f)).sort();
-  for (const f of files) {
-    const raw = await readFile(path.join(dir, f), "utf8");
+  const sources = [
+    ...files.map((f) => [path.join(dir, f), f, `docs/${f}`]),
+    ...ROOT_DOCS.map((f) => [path.join(SRC, f), f, f]),
+  ];
+  for (const [abs, f, rel] of sources) {
+    const raw = await readFile(abs, "utf8");
     const { title, body } = splitTitle(rewriteLinks(raw, "docs"));
     const slug = docSlug(f);
     // The docs have no frontmatter of their own; the H1 is the only title.
@@ -141,14 +148,14 @@ async function syncDocs() {
       `title: ${y(name.trim())}`,
       `subtitle: ${y(rest.join(" — ").trim())}`,
       `slug: ${y(slug)}`,
-      `sourceFile: ${y(`docs/${f}`)}`,
+      `sourceFile: ${y(rel)}`,
       "---",
       "",
     ].join("\n");
     await writeFile(path.join(OUT.docs, `${slug}.md`), fm + body.trimStart() + "\n");
   }
-  log(`docs: ${files.length}`);
-  return files.length;
+  log(`docs: ${sources.length}`);
+  return sources.length;
 }
 
 async function syncExamples() {

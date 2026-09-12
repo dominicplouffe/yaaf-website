@@ -12,11 +12,12 @@ is <b>shelved</b>.`;
 
 const ROWS = [
   ["Shape", "One assistant", "One agent", "A library you wire up", "An org"],
+  ["Weight", "A daemon", "A daemon", "An import, nothing to deploy", "Postgres and two containers"],
   ["Optimises for", "Reach", "Continuity", "Composition", "Accountability"],
   ["Time horizon", "A session", "An ongoing chat", "A run", "Weeks"],
   ["Who picks the next task", "You", "You", "Your code", "A CEO"],
   ["“Done” means", "You say so", "You say so", "The graph returned", "The platform verified it"],
-  ["Cost control", "Your own instrumentation", "Your own instrumentation", "Your own instrumentation", "Capped — pauses itself"],
+  ["Cost control", "Your own instrumentation", "Your own instrumentation", "Your own instrumentation", "Capped, pauses itself"],
   ["Disagreement", "—", "—", "Whatever you author", "Roles that can veto"],
   ["The record", "Chat history", "Its memory", "Traces, if you wired them", "Every message, run, dollar, decision, refusal"],
 ];
@@ -28,7 +29,7 @@ const ROWS = [
   <Section
     eyebrow="Different how?"
     title="Three questions get asked every time."
-    lede="Fair answers, because the honest comparison is more persuasive than a flattering one — and because two of the three are not competitors at all."
+    lede="Fair answers, because the honest comparison is more persuasive than a flattering one, and because two of the three are not competitors at all."
   >
     <ol class="qs">
       <li><a href="#frameworks">How is this different from an agent framework?</a></li>
@@ -56,7 +57,7 @@ const ROWS = [
         <p class="eyebrow">yaaf adds the part underneath</p>
         <ul class="plain">
           <li>Agents act only through an authenticated API, on short-lived per-run tokens</li>
-          <li>Every rule is an HTTP refusal or an automatic state change — never a sentence in a prompt</li>
+          <li>Every rule is an HTTP refusal or an automatic state change, never a sentence in a prompt</li>
           <li>Work that makes nothing true is refused: every task must serve a requirement that carries its own test</li>
           <li>Only the platform can write “met”. There is no agent verb for it</li>
           <li>A budget that warns at 80% and pauses the project at the cap, killed runs included</li>
@@ -79,13 +80,13 @@ const ROWS = [
 
   <!-- ------------------------------------------------------------------ -->
   <Section eyebrow="Question two" title="OpenClaw and Hermes make one agent better. yaaf makes many agents accountable." id="assistants"
-    lede="Both are excellent, both are MIT, both are self-hosted — and neither is trying to do what yaaf is trying to do. The axes are different.">
+    lede="Both are excellent, both are MIT, both are self-hosted, and neither is trying to do what yaaf is trying to do. The axes are different.">
     <div class="three">
       <article class="who">
         <p class="eyebrow">OpenClaw · MIT</p>
         <h3>Reach</h3>
         <p class="tl">“The AI that really does things.”</p>
-        <p>A local-first assistant that meets you in the channels you already use — Discord, Slack, iMessage, Telegram, WhatsApp and twenty more — on any OS. One gateway, one assistant, everywhere you are.</p>
+        <p>A local-first assistant that meets you in the channels you already use: Discord, Slack, iMessage, Telegram, WhatsApp and twenty more — on any OS. One gateway, one assistant, everywhere you are.</p>
         <a href="https://github.com/openclaw/openclaw" rel="noopener">github.com/openclaw/openclaw ↗</a>
       </article>
       <article class="who">
@@ -113,7 +114,7 @@ const ROWS = [
     <div class="tablewrap">
       <table>
         <thead>
-          <tr><th></th><th>OpenClaw</th><th>Hermes Agent</th><th>Agent frameworks</th><th class="me">yaaf</th></tr>
+          <tr><th></th><th>OpenClaw</th><th>Hermes Agent</th><th>Orchestration libraries</th><th class="me">yaaf</th></tr>
         </thead>
         <tbody>
           {ROWS.map(([label, a, b, c, d]) => (
@@ -126,10 +127,17 @@ const ROWS = [
       </table>
     </div>
 
+    <p class="tnote">
+      Written by yaaf, so read the rows as claims rather than findings, and the
+      second one is the one to hold against it. LangGraph, CrewAI and AutoGen are
+      libraries you import; yaaf is a server you run. On a task that fits in one
+      sitting that trade is simply bad, and no row below buys it back.
+    </p>
+
     <div class="callout">
       <p class="eyebrow">And the part that matters most</p>
       <p>
-        <strong>These are not competitors.</strong> yaaf is an MCP server — thirty-one
+        <strong>These are not competitors.</strong> yaaf is an MCP server with thirty-one
         tools across four scopes. Anything that speaks MCP is a front end for it,
         including a personal assistant. Chair a yaaf org from wherever you already
         talk to an agent; yaaf is the floor underneath, not the window.
@@ -139,7 +147,7 @@ const ROWS = [
 
   <!-- ------------------------------------------------------------------ -->
   <Section eyebrow="Question three" title="Isn't this just a skill?" id="skill" grid={true}
-    lede="yaaf runs your skills — a role's skill list is an allowlist handed straight to the Agent SDK. A skill is a capability. yaaf decides which capability to point at what, checks it got done, pays for it from a capped budget, and keeps the receipt.">
+    lede="yaaf runs your skills: a role's skill list is an allowlist handed straight to the Agent SDK. A skill is a capability. yaaf decides which capability to point at what, checks it got done, pays for it from a capped budget, and keeps the receipt.">
     <div class="two">
       <div class="col">
         <p class="eyebrow">Use a skill when</p>
@@ -157,7 +165,7 @@ const ROWS = [
           <li>“Done” can't be self-graded</li>
           <li>Money has to stop by itself</li>
           <li>You'll have to reconstruct it later for a client or an auditor</li>
-          <li>You want agents to disagree — because one agent checking its own work has the same blind spots in both seats</li>
+          <li>You want agents to disagree, because one agent checking its own work has the same blind spots in both seats</li>
         </ul>
       </div>
     </div>
@@ -172,8 +180,8 @@ const ROWS = [
     <div class="honest">
       <p>
         And yaaf doesn't claim to have. Hierarchy's main product is lossy
-        summarisation at each boundary; the CEO's judgement — what to queue, kill
-        and prioritise — is the actual bet, and everything else is transport. That
+        summarisation at each boundary; the CEO's judgement (what to queue, kill
+        and prioritise) is the actual bet, and everything else is transport. That
         question is open, and nothing in the repository settles it.
       </p>
       <p>
@@ -185,7 +193,7 @@ const ROWS = [
       <Term label="The kill condition, in the repo, in public" code={KILL} />
       <p>
         The salvage path is already built and already usable: yaaf as a governance
-        harness for a single agent — queues, requirements, verification, budgets,
+        harness for a single agent: queues, requirements, verification, budgets,
         approvals and audit. <a href="/docs/plan/">The whole plan, including what is
         deliberately not built.</a>
       </p>
@@ -198,13 +206,22 @@ const ROWS = [
       <p>
         yaaf is one person's answer to a question that kept coming up while building
         startups: the thing that made a team work was never a smarter individual. It
-        was the roles — who owns what, who checks it, who is allowed to say no.
+        was the roles. Who owns what, who checks it, who is allowed to say no.
       </p>
       <p>
         The code was written fast, with Claude Code. The design wasn't. It is years
-        of running teams, compiled — and then held honest by a test suite that
+        of running teams, compiled, and then held honest by a test suite that
         attacks every rule over HTTP the way an agent would, with forged tokens,
         wrong roles and rephrased requests.
+      </p>
+      <p>
+        And the part you would find in one click: the repository is <strong>two weeks
+        old</strong>, and roughly half its commits are authored by Claude Code. What
+        that bought is a policy engine with 1,347 tests attacking it over HTTP. What
+        it has not bought is a month of someone else's use, a published bill, or a
+        security review by anyone who did not write it. The <a href="/docs/plan/">plan</a>{" "}
+        says which claims are load-bearing; <a href="/docs/security/">the threat model</a>{" "}
+        says what contains an agent and what does not.
       </p>
       <p class="sig">
         Pre-1.0, actively developed, Apache-2.0. Issues and pull requests welcome.
@@ -250,6 +267,7 @@ const ROWS = [
   .mid { margin: 26px 0; font-size: 1.125rem; line-height: 1.6; color: var(--color-ink-2); max-width: 62ch; }
   .mid strong { color: var(--color-ink); font-weight: 620; }
 
+  .tnote { margin: 0 0 14px; font-size: 13.5px; line-height: 1.6; color: var(--color-muted); max-width: 70ch; }
   .tablewrap { overflow-x: auto; border: 1px solid var(--color-line); border-radius: var(--radius-card); }
   table { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width: 720px; }
   thead th {

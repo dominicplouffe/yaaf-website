@@ -40,7 +40,7 @@ const HERO_TEAMS = [
 const BEATS = [
   {
     k: "Roles, not one generalist",
-    v: "A risk seat that can veto a research seat is two agents with different charters, different context and different instructions — not one model asked to “also consider the risks.”",
+    v: "A risk seat that can veto a research seat is two agents with different charters, different context and different instructions, not one model asked to “also consider the risks.”",
   },
   {
     k: "A CEO takes you out of the queue",
@@ -53,29 +53,29 @@ const BEATS = [
 ];
 
 const STEPS = [
-  { n: "01", k: "Draft the crew", v: "Goal, teams, budget, deadline — hired from a library of job descriptions rather than invented." },
+  { n: "01", k: "Draft the crew", v: "Goal, teams, budget, deadline, hired from a library of job descriptions rather than invented." },
   { n: "02", k: "Get argued with", v: "The platform grades the goal against the ten things it has to contain to work. Free, before anything exists." },
   { n: "03", k: "Rehearse it for $0", v: "The whole project simulated on scripted agents: where it stalls, what it costs, how often it stops and waits for you." },
-  { n: "04", k: "Hire it for real", v: "A CEO, the desks, a budget, a delivery date and a channel each. Next month it is still working." },
+  { n: "04", k: "Hire it for real", v: "A CEO, the desks, a budget, a delivery date and a channel each. Then it runs without you, and emails you what happened." },
 ];
 
 const RULES = [
   { k: "“Done” means verified", v: "Tests run in a sandbox, by the platform, not by the agent that wants them to pass. There is no agent verb that writes “met.”" },
-  { k: "Work that makes nothing true is refused", v: "Every task has to serve a requirement — something that must be true at the end, carrying its own test." },
+  { k: "Work that makes nothing true is refused", v: "Every task has to serve a requirement: something that must be true at the end, carrying its own test." },
   { k: "The date can't quietly slip", v: "The platform stamps the date from measured pace and re-projects every tick. Past the promise, new scope freezes." },
   { k: "Money that can't run away", v: "Every run metered against a cap that pauses the project by itself. Real-world spending has its own separate envelope." },
   { k: "Loops that can't burn a night", v: "Two agents talking to each other at full price is a failure mode with a brake, not a surprise on the invoice." },
-  { k: "Everything on the record", v: "Every message, run, dollar, decision and refusal — plus random samples of “completed” work dealt to you to spot-check." },
+  { k: "Everything on the record", v: "Every message, run, dollar, decision and refusal, plus random samples of “completed” work dealt to you to spot-check." },
 ];
 
 const ASKS = [
   {
     q: "“Run our ad account end to end. A standup every morning and a Monday memo I can forward to the client without editing it.”",
-    a: "Four desks — strategy, analytics, attribution, and an executability check whose entire job is to kill clever recommendations nobody can implement. At month close the platform pulls the platform's own reports and grades the desk against them.",
+    a: "Four desks: strategy, analytics, attribution, and an executability check whose entire job is to kill clever recommendations nobody can implement. At month close the platform pulls the platform's own reports and grades the desk against them.",
   },
   {
     q: "“Here is my brokerage account. Run it like a real desk, and stop asking me what I think.”",
-    a: "Research, macro, signals and a book — plus a risk seat and a compliance seat that can veto a trade the research seat is in love with. Every position arrives as a ticket with the argument attached.",
+    a: "Research, macro, signals and a book, plus a risk seat and a compliance seat that can veto a trade the research seat is in love with. Every position arrives as a ticket with the argument attached.",
   },
   {
     q: "“Can we afford to retire early? Don't tell me yes. Prove it.”",
@@ -100,7 +100,7 @@ const ASKS = [
         </p>
         <h1 class="balance">Agents don't need a better&nbsp;prompt.<br />They need an org&nbsp;chart.</h1>
         <p class="lede pretty">
-          yaaf hires a crew — roles with their own charters, a CEO that picks the next
+          yaaf hires a crew: roles with their own charters, a CEO that picks the next
           piece of work, a budget that stops itself, a delivery date nobody can quietly
           move. The rules live in the server, where an agent's token can't reach them.{" "}
           <strong>You're the chairman.</strong>
@@ -110,7 +110,7 @@ const ASKS = [
           <a class="btn" href="/examples/">See twelve projects</a>
           {SOURCE_IS_PUBLIC && <a class="btn ghost" href={REPO_URL}>GitHub ↗</a>}
         </p>
-        <Term class="cmd" code={REHEARSE} note="Runs your spec as a real project on the real platform — every rule, every refusal — with scripted agents standing in for models. No API key. No dollars." />
+        <Term class="cmd" code={REHEARSE} note="Runs your spec as a real project on the real platform, every rule and every refusal, with scripted agents standing in for models. No API key. No dollars." />
       </div>
 
       <div class="chartwrap">
@@ -124,8 +124,46 @@ const ASKS = [
     </div>
   </section>
 
+  <!-- ================= RULES ================= -->
+  <Section eyebrow="Layer one · the part that isn't a bet" title="A prompt is a suggestion. A 403 is not.">
+    <p class="big pretty">
+      Leave an agent running for an afternoon and you meet the failure modes. It marks
+      its own work done. It invents busywork and calls it progress. It loops with
+      another agent at full price. The usual fix is a better prompt, but a clever
+      model talks itself around one. <strong>So in yaaf the rules live in the server.</strong>{" "}
+      Agents act only through an authenticated API on short-lived tokens, and every
+      rule is a refusal or an automatic state change. An agent can't be argued out of
+      a rule it never held.
+    </p>
+    <div class="rules">
+      {RULES.map((r) => (
+        <div class="rule-c">
+          <h3>{r.k}</h3>
+          <p>{r.v}</p>
+        </div>
+      ))}
+    </div>
+    <p class="foot-note">
+      Each of those is a test, not a paragraph. <strong>1,347 of them</strong> drive the
+      real app over HTTP the way an agent would: forged tokens, wrong roles, rephrased
+      requests. They are free, offline, and they test <strong>the rules, not the models</strong>.
+      The rules are the part an agent argues with.{" "}
+      <a href="/docs/governance/">Every rule and its default →</a>{" · "}
+      <a href="/docs/security/">What contains an agent, and what doesn't →</a>
+    </p>
+    <div class="layers">
+      <p>
+        <strong>This layer does not depend on the next one.</strong> Solo mode runs a
+        single agent under byte-identical governance: same queues, same requirements,
+        same verification, same cap, same audit. If you think one good agent beats a
+        team, take this floor and skip the org chart. It was built to stand on its own,
+        because it might have to.
+      </p>
+    </div>
+  </Section>
+
   <!-- ================= THREE BEATS ================= -->
-  <Section eyebrow="The hypothesis" title="You build agents the way you build a company." lede="Multiple roles doing one thing each beat one role doing many. That's the bet — the same one that makes a company work, applied to the agents you already have.">
+  <Section eyebrow="Layer two · the bet" title="You build agents the way you build a company." lede="Multiple roles doing one thing each beat one role doing many. That is a hypothesis, not a finding. It is the same one that makes a company work, and the argument against it is good: every boundary between agents is a place context gets summarised and lost." grid={true}>
     <div class="beats">
       {BEATS.map((b) => (
         <div class="beat">
@@ -149,53 +187,26 @@ const ASKS = [
     </ol>
   </Section>
 
-  <!-- ================= RULES ================= -->
-  <Section eyebrow="The one idea underneath" title="A prompt is a suggestion. A 403 is not.">
-    <p class="big pretty">
-      Leave an agent running for an afternoon and you meet the failure modes. It marks
-      its own work done. It invents busywork and calls it progress. It loops with
-      another agent at full price. The usual fix is a better prompt — but a clever
-      model talks itself around one. <strong>So in yaaf the rules live in the server.</strong>{" "}
-      Agents act only through an authenticated API on short-lived tokens, and every
-      rule is a refusal or an automatic state change. An agent can't be argued out of
-      a rule it never held.
-    </p>
-    <div class="rules">
-      {RULES.map((r) => (
-        <div class="rule-c">
-          <h3>{r.k}</h3>
-          <p>{r.v}</p>
-        </div>
-      ))}
-    </div>
-    <p class="foot-note">
-      Each of those is a test, not a paragraph. <strong>1,340 of them</strong> drive the
-      real app over HTTP the way an agent would — forged tokens, wrong roles, rephrased
-      requests — alongside chaos tests and golden evals that gate every prompt edit.{" "}
-      <a href="/docs/governance/">Every rule and its default →</a>
-    </p>
-  </Section>
-
   <!-- ================= COCKPIT ================= -->
   <Section eyebrow="The chairman's cockpit" title="Is it working? Answer, on one screen." grid={true}
-    lede="You steer from the same chat you started in — but when you want to look, everything the platform knows is already on a screen: the deliverable, the plan, spend against the cap by team, and the org roster.">
+    lede="You steer from the same chat you started in. But when you want to look, everything the platform knows is already on a screen: the deliverable, the plan, spend against the cap by team, and the org roster.">
     <div class="shots">
       <Shot src={cockpit} crop={660} priority={true}
         alt="The chairman's cockpit: is it working, the deliverable, the plan, spend against the cap broken down by team, the setup health line, and the org roster"
-        caption="Overview — one run in five ended early, so the platform says so on the way past. Spend against the cap, the plan, the deliverable, and the org roster." />
+        caption="Overview. One run in five ended early, so the platform says so on the way past. Spend against the cap, the plan, the deliverable, and the org roster." />
       <Shot src={work} crop={560}
         alt="The Work tab: the platform's sampled close waiting on the chairman, the read-only board, and every piece of evidence with its verification status including a failed check"
-        caption="Work — the platform sampled a finished claim and dealt it to you to check, because AI reviewers approve nearly everything and you don't." />
+        caption="Work. The platform sampled a finished claim and dealt it to you to check, because AI reviewers approve nearly everything and you don't." />
       <Shot src={boardroom} crop={500}
         alt="The Boardroom tab: the chairman asks the CEO how confident it is in the 30th; the CEO answers with the estimate-to-actual ratio, its re-projection, and what would move it"
-        caption="Boardroom — ask the CEO how confident it is in the 30th. It answers with the estimate-to-actual ratio, its re-projection, and what would move it." />
+        caption="Boardroom. Ask the CEO how confident it is in the 30th. It answers with the estimate-to-actual ratio, its re-projection, and what would move it." />
     </div>
     <p class="foot-note"><a href="/docs/dashboard/">Every screen, and what you do there →</a></p>
   </Section>
 
   <!-- ================= THE ORG ================= -->
   <Section eyebrow="The library" title="Hired, not invented."
-    lede="A project doesn't start from a blank prompt. It hires from a library — each role a system prompt, a model, an effort level and tool permissions somebody already argued about.">
+    lede="A project doesn't start from a blank prompt. It hires from a library: each role a system prompt, a model, an effort level and tool permissions somebody already argued about.">
     <div class="counts">
       <a class="n" href="/org/#roles"><strong>{roles.length}</strong><span>job descriptions</span></a>
       <a class="n" href="/org/#crews"><strong>{crews.length}</strong><span>pre-built crews</span></a>
@@ -204,16 +215,16 @@ const ASKS = [
     </div>
     <p class="foot-note">
       That third number is the one that matters. A quarter of the library exists to
-      attack the other three quarters' work — a red team, a plan adversary, an
+      attack the other three quarters' work: a red team, a plan adversary, an
       executability checker, a data skeptic, a risk seat that can veto.{" "}
-      <strong>One agent checking its own work has the same blind spots in both seats.</strong>
+      <strong>One agent checking its own work has the same blind spots in both seats.</strong>{" "}
       <a href="/org/">Read the staff directory →</a>
     </p>
   </Section>
 
   <!-- ================= WHAT PEOPLE HAND IT ================= -->
-  <Section eyebrow="What people actually hand it" title="None of these is a prompt you re-run." grid={true}
-    lede="Every one has to survive weeks, wake up without you, and be graded by something that isn't itself.">
+  <Section eyebrow="What it is built to be handed" title="None of these is a prompt you re-run." grid={true}
+    lede="These are the shapes the crews and examples are designed around. Each one has to survive weeks, wake up without you, and be graded by something that isn't itself.">
     <div class="asks">
       {ASKS.map((a) => (
         <article class="ask">
@@ -251,16 +262,79 @@ const ASKS = [
         <li><strong>You deploy and run a thing.</strong> Postgres, two containers, a box. A skill is a file.</li>
         <li><strong>Setup is minutes, not seconds.</strong> A goal worth planning from takes longer to write than a prompt, on purpose.</li>
         <li><strong>The floor is higher than the ceiling is high.</strong> Planning, review and verification cost tokens. On a one-sitting task that buys you nothing.</li>
+        <li><strong>Nobody has published what it costs.</strong> Not even me. The caps in the examples are budgets you set, not bills anyone paid, and the fire drill refuses to invent a price rather than print a plausible one. A real number is coming; a guess would be worse than the silence.</li>
         <li><strong>It is pre-1.0.</strong> APIs move, and there are sharp edges.</li>
       </ul>
       <div class="kill">
-        <p class="eyebrow">And the honest part</p>
-        <p>Nobody has shown that a CEO plus a team beats one good agent on the same budget and rules, and yaaf doesn't claim to have. <strong>Solo mode</strong> runs a single agent under byte-identical governance, so you can send the same goal to a hierarchy and to one brain and compare the bills.</p>
-        <p>The repository publishes its own kill condition: if the org arm doesn't win on the pre-registered rubric, yaaf-as-an-org-framework is shelved and the governance layer stands on its own.</p>
+        <p class="eyebrow">The bet, and what would kill it</p>
+        <p>Nobody has shown that a CEO plus a team beats one good agent on the same budget and rules, and yaaf doesn't claim to have. <strong>Solo mode</strong> runs a single agent under byte-identical governance, so the same goal can go to a hierarchy and to one brain and the bills compared.</p>
+        <p>The repository publishes its own kill condition: if the org arm doesn't win on the pre-registered rubric (blind-judged quality, verified external evidence, cost, wall-clock), then yaaf-as-an-org-framework is shelved and layer one stands on its own.</p>
         <p class="lk"><a href="/docs/plan/">The plan, the kill conditions, and what is deliberately not built →</a></p>
       </div>
     </div>
-    <p class="foot-note">If you read that and thought “none of this is my problem” — believe yourself. Use a skill.</p>
+  </Section>
+
+  <!-- ================= PROVENANCE + OPEN QUESTIONS ================= -->
+  <Section eyebrow="Before you go looking" title="This repository is two weeks old." grid={true}
+    lede="You would find that in one click, so here it is first, with the part that follows from it.">
+    <div class="prov">
+      <div class="prov-nums">
+        <div><strong>13</strong><span>days of history</span></div>
+        <div><strong>135</strong><span>commits</span></div>
+        <div><strong>~49%</strong><span>authored by Claude Code</span></div>
+        <div><strong>0</strong><span>outside security reviews</span></div>
+      </div>
+      <div class="prov-txt">
+        <p>
+          It was built fast and in the open with Claude Code, and roughly half the
+          commits are authored by it. That is not a disclaimer, it is the method, and
+          the design is older than the code: it is years of running teams, written
+          down and then built quickly.
+        </p>
+        <p>
+          <strong>What that bought:</strong> a policy engine with 1,347 tests attacking
+          it over HTTP, a role library that is data rather than prose, and a suite that
+          runs offline for $0.
+          <strong> What it has not bought:</strong> a project anyone but me has run for
+          a month, a published bill, or a security review by someone who did not write
+          the thing. Both halves are true at the same time, and the second half is the
+          one that matters.
+        </p>
+      </div>
+    </div>
+
+    <div class="asks-q">
+      <p class="eyebrow qh">Three things I would rather have torn apart than praised</p>
+      <ol>
+        <li>
+          <strong>Does the org layer earn its tokens?</strong> Every boundary between
+          agents is a place context gets summarised and lost, and the case that one
+          well-contexted agent beats a hierarchy is a good one. Solo mode exists so
+          this is measurable rather than arguable. <em>What would you put in the
+          rubric?</em>
+        </li>
+        <li>
+          <strong>Is a server-side refusal actually enough?</strong> An agent holds the
+          credentials its role was granted, has a shell and a network, and there is no
+          egress control, and that allowlist was removed on purpose, and the reasoning is
+          published. A prompt-injected agent can send what it holds anywhere.
+          <em>Is the container boundary plus a scoped grant plus an audit trail a
+          defensible place to stop?</em> <a href="/docs/security/">The threat model →</a>
+        </li>
+        <li>
+          <strong>Is the requirement the right root object?</strong> Every task must
+          serve something that has to be true at the end and carries its own test. It
+          works beautifully for artifacts and badly for objectives: a rank, a revenue
+          number, a deficit resist being a test, and the honest failure mode is that
+          every requirement quietly becomes a grep over the workspace.
+          <em>What is the better shape?</em>
+        </li>
+      </ol>
+      <p class="foot-note">
+        Issues and pull requests are the fastest way in. If you break one of the
+        invariant tests, that is the contribution this project wants most.
+      </p>
+    </div>
   </Section>
 
   <!-- ================= INSTALL ================= -->
@@ -270,8 +344,9 @@ const ASKS = [
       <Term label="Then connect Claude" code={CONNECT} />
     </div>
     <p class="foot-note">
-      Start on the <code>read</code> scope: sees everything, signs nothing — most of the
-      value, none of the risk. <a href="/docs/deployment/">Deployment →</a>
+      Start on the <code>read</code> scope: sees everything, signs nothing. Most of the
+      value, none of the risk.{" "}
+      <a href="/docs/deployment/">Deployment →</a>{" · "}
       <a href="/docs/mcp-server/">Every tool and scope →</a>
     </p>
   </Section>
@@ -424,6 +499,30 @@ const ASKS = [
   .diff p:last-child { margin: 12px 0 0; font-size: 14px; line-height: 1.65; color: var(--color-ink-2); }
   .diff em { color: var(--color-ink); font-style: normal; font-weight: 600; }
 
+  /* ---------- provenance + open questions ---------- */
+  .prov { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 32px; align-items: start; }
+  .prov-nums { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .prov-nums div { background: var(--color-surface); border: 1px solid var(--color-line); border-radius: var(--radius-card); padding: 14px; }
+  .prov-nums strong { display: block; font-size: 1.75rem; line-height: 1; letter-spacing: -0.04em; font-weight: 640; }
+  .prov-nums span { display: block; margin-top: 7px; font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.9px; text-transform: uppercase; color: var(--color-muted); line-height: 1.4; }
+  .prov-txt { display: grid; gap: 14px; }
+  .prov-txt p { margin: 0; font-size: 1rem; line-height: 1.7; color: var(--color-ink-2); }
+  .prov-txt strong { color: var(--color-ink); }
+
+  .asks-q { margin-top: 40px; padding-top: 28px; border-top: 1px solid var(--color-line); }
+  .qh { margin: 0 0 18px; }
+  .asks-q ol { margin: 0; padding-left: 1.3em; display: grid; gap: 16px; max-width: 74ch; }
+  .asks-q li { font-size: 15px; line-height: 1.65; color: var(--color-ink-2); }
+  .asks-q li::marker { color: var(--color-accent); font-family: var(--font-mono); font-size: 13px; }
+  .asks-q strong { color: var(--color-ink); }
+  .asks-q em { color: var(--color-ink); font-style: italic; }
+  .asks-q a { color: var(--color-accent-hi); text-decoration: none; white-space: nowrap; }
+  .asks-q a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+  .layers { margin-top: 22px; border: 1px solid color-mix(in srgb, var(--color-accent) 42%, transparent); background: color-mix(in srgb, var(--color-accent) 8%, transparent); border-radius: var(--radius-card); padding: 16px 20px; }
+  .layers p { margin: 0; font-size: 15px; line-height: 1.65; color: var(--color-ink-2); max-width: 70ch; }
+  .layers strong { color: var(--color-ink); }
+
   /* ---------- honest ---------- */
   .honest { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; align-items: start; }
   .honest ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
@@ -448,7 +547,7 @@ const ASKS = [
   }
   @media (max-width: 820px) {
     .counts { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-    .asks, .install, .honest { grid-template-columns: minmax(0, 1fr); }
+    .asks, .install, .honest, .prov { grid-template-columns: minmax(0, 1fr); }
   }
   @media (max-width: 640px) {
     .hero { padding-block: 44px 64px; }
