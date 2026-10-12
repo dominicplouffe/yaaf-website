@@ -1,0 +1,9 @@
+---
+import Arrow from "./Arrow.astro";
+interface Props { href: string; primary?: boolean; small?: boolean; external?: boolean; class?: string }
+const { href, primary = false, small = false, external = /^https?:/.test(href), class: cls = "" } = Astro.props;
+---
+<a href={href} class:list={["btn", { primary, small }, cls]} rel={external ? "noopener" : undefined}>
+  <span><slot /></span>
+  <Arrow external={external} />
+</a>

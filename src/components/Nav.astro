@@ -2,6 +2,7 @@
 import { NAV, REPO_URL, SOURCE_IS_PUBLIC } from "../site.config.mjs";
 import Wordmark from "./Wordmark.astro";
 import Mark from "./Mark.astro";
+import Arrow from "./Arrow.astro";
 
 const here = Astro.url.pathname;
 const isOn = (href: string) => here === href || (href !== "/" && here.startsWith(href));
@@ -10,21 +11,28 @@ const isOn = (href: string) => here === href || (href !== "/" && here.startsWith
   <div class="shell inner">
     <a href="/" class="brand" aria-label="yaaf home">
       <Mark size={22} />
-      <Wordmark size="1.05rem" />
+      <Wordmark size="1.1rem" />
     </a>
 
     <nav class="links" aria-label="Primary">
       {NAV.map((item) => (
-        <a href={item.href} class:list={["link", { on: isOn(item.href) }]} aria-current={isOn(item.href) ? "page" : undefined}>
+        <a href={item.href} class:list={{ on: isOn(item.href) }} aria-current={isOn(item.href) ? "page" : undefined}>
           {item.label}
         </a>
       ))}
     </nav>
 
-    <a class="gh" href={SOURCE_IS_PUBLIC ? REPO_URL : "#notify"} rel={SOURCE_IS_PUBLIC ? "noopener" : undefined}>
-      {SOURCE_IS_PUBLIC ? "GitHub" : "Get notified"}
-      <span aria-hidden="true">↗</span>
-    </a>
+    {SOURCE_IS_PUBLIC && (
+      <a class="btn small gh" href={REPO_URL} rel="noopener"><span>GitHub</span><Arrow external /></a>
+    )}
+
+    <details class="menu">
+      <summary aria-label="Menu"><span></span><span></span></summary>
+      <nav class="panel" aria-label="Mobile">
+        {NAV.map((item) => <a href={item.href} class:list={{ on: isOn(item.href) }}>{item.label}</a>)}
+        {SOURCE_IS_PUBLIC && <a href={REPO_URL} rel="noopener">GitHub ↗</a>}
+      </nav>
+    </details>
   </div>
 </header>
 
@@ -33,57 +41,62 @@ const isOn = (href: string) => here === href || (href !== "/" && here.startsWith
     position: sticky;
     top: 0;
     z-index: 50;
-    background: color-mix(in srgb, var(--color-page) 82%, transparent);
-    backdrop-filter: blur(12px);
+    background: rgba(0, 0, 0, 0.86);
+    backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--color-line);
   }
-  .inner {
-    display: flex;
-    align-items: center;
-    gap: 18px;
-    height: 58px;
-  }
+  .inner { display: flex; align-items: center; gap: 28px; height: 68px; padding-inline: calc(var(--gutter) + var(--inset)); }
   .brand { display: flex; align-items: center; gap: 9px; text-decoration: none; flex: none; }
-  .links {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    margin-left: auto;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-  .links::-webkit-scrollbar { display: none; }
-  .link {
+  .links { display: flex; align-items: center; gap: 2px; }
+  .links a {
     color: var(--color-ink-2);
     text-decoration: none;
-    font-size: 14px;
+    font-size: 14.5px;
     padding: 6px 10px;
-    border-radius: var(--radius-control);
-    white-space: nowrap;
-    transition: color 0.15s, background 0.15s;
+    transition: color 0.2s;
   }
-  .link:hover { color: var(--color-ink); background: rgba(255, 255, 255, 0.04); }
-  .link.on { color: var(--color-ink); background: rgba(255, 255, 255, 0.06); }
-  .gh {
-    flex: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 13px;
-    font-weight: 600;
+  .links a:hover, .links a.on { color: var(--color-ink); }
+  .links a.on { text-decoration: underline; text-underline-offset: 8px; text-decoration-thickness: 1px; }
+  .gh { margin-left: auto; }
+
+  .menu { display: none; margin-left: auto; }
+  .menu summary {
+    list-style: none;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-content: center;
+    gap: 6px;
+    border: 1px solid var(--color-line-strong);
+  }
+  .menu summary::-webkit-details-marker { display: none; }
+  .menu summary span { display: block; width: 16px; height: 1px; background: var(--color-ink); transition: transform 0.25s; }
+  .menu[open] summary span:first-child { transform: translateY(3.5px) rotate(45deg); }
+  .menu[open] summary span:last-child { transform: translateY(-3.5px) rotate(-45deg); }
+  .menu:not([open]) .panel { display: none; }
+  .panel {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 68px;
+    background: #000;
+    border-bottom: 1px solid var(--color-line);
+    display: grid;
+    padding: 8px var(--gutter) 20px;
+  }
+  .panel a {
     color: var(--color-ink);
     text-decoration: none;
-    padding: 7px 12px;
-    border: 1px solid var(--color-line);
-    border-radius: var(--radius-control);
-    transition: border-color 0.15s, background 0.15s;
+    font-size: 1.5rem;
+    letter-spacing: -0.03em;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--color-line-2);
   }
-  .gh:hover { border-color: color-mix(in srgb, var(--color-accent) 55%, transparent); background: color-mix(in srgb, var(--color-accent) 10%, transparent); }
-  .gh span { color: var(--color-muted); font-size: 11px; }
+  .panel a.on { color: var(--color-accent-hi); }
 
-  @media (max-width: 720px) {
-    .gh { display: none; }
-    .links { margin-left: auto; }
-    .link { padding: 6px 8px; font-size: 13px; }
+  @media (max-width: 1060px) {
+    .links, .gh { display: none; }
+    .menu { display: block; }
   }
 </style>

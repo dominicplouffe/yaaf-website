@@ -2,350 +2,128 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Section from "../components/Section.astro";
 import runtimes from "../content/runtimes.json";
-import manifest from "../content/manifest.json";
 
 const { harnesses, providers, models } = runtimes;
-const providerLabel = new Map(providers.map((p) => [p.name, p.label]));
-const harnessLabel = new Map(harnesses.map((h) => [h.name, h.label]));
+const harnessLabel = new Map(harnesses.map((h) => [h.name, h.label.replace(/ \(.*\)$/, "")]));
 
-const FAMILY: Record<string, string> = {
-  sdk: "The Python Agent SDK, driving the CLI it wraps",
-  cli: "A coding-agent CLI, driven headless over a JSON stream",
-  loop: "yaaf's own agent loop, calling the provider's API directly",
-};
-const SEARCH: Record<string, string> = {
-  own: "its own",
-  provider: "the provider's, where it has one",
-  none: "none — a role granting web is refused",
-};
-
-/** "anthropic:subscription" -> the words the credential form uses for it. */
-const kindLabel = (k: string) => {
-  const [prov, mode] = k.split(":");
-  const p = providers.find((x) => x.name === prov);
-  const kind = p?.kinds.find((x) => x.mode === mode);
-  return kind ? kind.bills.replace(/, (billed|metered|priced) .*$/, "") : k;
-};
-const meter = (m: string) => (m === "usd" ? "USD" : "tokens");
-
-const shortName = (label: string) => label.replace(/ \(.*\)$/, "");
+const TYPE: Record<string, string> = { sdk: "SDK", cli: "CLI", loop: "API loop" };
+const short = (bills: string) => bills.replace(/, (billed|metered|priced) .*$/, "");
+const kinds = (accepts: string[]) =>
+  accepts.map((k) => {
+    const [prov, mode] = k.split(":");
+    const kind = providers.find((p) => p.name === prov)?.kinds.find((x) => x.mode === mode);
+    return kind ? short(kind.bills) : k;
+  });
 
 const RULES = [
-  ["R1", "A credential the seat's harness cannot accept is refused.", "A subscription token on yaaf's API loop; a ChatGPT login on a Gemini seat."],
-  ["R2", "A harness that cannot withhold a tool the role does not grant — or cannot honour one it does — is refused for that role.", "Codex always offers its own file edits, so a role without files cannot be hired onto it. OpenCode has no search, so a role granting web cannot."],
-  ["R3", "A model with no price is refused on a harness that prices its runs, under a dollar meter.", "A run nobody can price is a run the budget cannot stop. Price it in Settings — zero is a price, for your own server."],
-  ["R4", "One project, one meter.", "All of a project's credentials meter in dollars or all in tokens. Inventing an exchange rate between them is inventing a number."],
-  ["R5", "A seat whose provider has no credential on the project cannot be hired, and the project cannot start.", "It fails at the door, not at 3am."],
-  ["R6", "An effort the model does not support is refused, with the list it does.", "Never mapped silently, in either direction."],
-  ["R7", "A CEO seat holding the boardroom chat must be on a harness that can resume a conversation.", "Every harness registered today can; a new one earns it by being shown to."],
-];
-
-const ADMISSION = [
-  "Streams usage — running totals per model call, not one number at the end. Without that the governor has nothing to stop on.",
-  "Runs non-interactive with its own approval prompts off. The container is the containment; a harness waiting on a human it cannot see hangs to the timeout and bills for it.",
-  "Takes yaaf's tools over MCP (a CLI) or function calling (a loop).",
-  "Classifies a dead credential as auth, because the three-strikes pause depends on it.",
-  "Has its telemetry and self-update switched off.",
-  "Pins a version, recorded on every run, so a transcript is reproducible.",
-  "Passes the contract suite offline, at $0: usage, the governor, a kill mid-run, a dead key, a transient error, the tool surface per role, a withheld shell, an unlisted skill.",
-];
-
-const FOUND = [
-  { who: "Claude Code", k: "A revoked API key never paused a project.", v: "The CLI's new wording matched no marker, so the three-strikes pause never fired. Both Claude harnesses now read the structured fields beside the prose." },
-  { who: "Per-run cap", k: "The cap was per attempt, so a run could spend three times it.", v: "Each resume is a fresh model process with a fresh budget. The governor now hands each attempt only what is left of the run's cap." },
-  { who: "Codex", k: "It trusts a workspace once it has run in it — then loads config an agent planted there.", v: "Every attempt now writes a fresh home with the workspace marked untrusted and project documents off. Its retry-forever on a dead network is switched off too." },
-  { who: "Gemini CLI", k: "A planted .env once sent the key somewhere else.", v: "GEMINI.md and .gemini/.env are moved aside before every launch, and the trust switches that load a workspace's settings whole are never thrown." },
-  { who: "Gemini CLI", k: "It silently answers with another model after rate limits.", v: "A model name it would rewrite is refused before the run starts, and a call answered by a different model stops the run. A seat runs on what it was hired on." },
-  { who: "Anthropic API", k: "A stream that drops mid-reply is not the SDK's error.", v: "Failures are classified by what they are — the transport error's type, the error body's type — never by their prose. A call that dies mid-stream is metered at the prompt it stated." },
-];
-
-const ROADS = [
-  ["A CLI harness", "One driver file (argv, environment, config, a stream parser, its dead-credential words), a registry entry, a pinned install line in the image, recorded stream fixtures and a contract test file."],
-  ["A provider on the OpenAI-compatible API", "One registry entry — base URL, credential kinds, whether it states its costs or searches — and nothing else."],
-  ["A provider with another API shape", "A model client on yaaf's loop, a registry entry with its credential kinds, and fake-server contract tests."],
-  ["A model", "A row in the catalog, or none at all: provider/model names any model of a registered provider, priced in Settings."],
+  ["R1", "The seat's harness must accept the credential."],
+  ["R2", "The harness must honour the role's tool permissions."],
+  ["R3", "If yaaf prices the run, the model needs a price."],
+  ["R4", "One project, one unit: dollars or tokens, never both."],
+  ["R5", "The project needs a credential for the seat's provider."],
+  ["R6", "The model must support the effort level asked for."],
+  ["R7", "The CEO's harness must be able to hold a conversation."],
 ];
 
 const priced = models.filter((m) => m.price).length;
+const pricedBy = providers.filter((p) => p.priced.length).map((p) => p.label).join(" and ");
 ---
-<BaseLayout
-  title="Runtimes"
-  description={`Run a yaaf seat on any harness and any provider under the same rules: ${harnesses.length} harnesses and ${providers.length} providers — Claude, Codex, Gemini CLI, OpenCode, DeepSeek, OpenRouter, Kimi, Qwen, Mistral, Grok or your own server — metered against one cap.`}
->
+<BaseLayout title="Runtimes" description={`Run each yaaf agent on any of ${harnesses.length} harnesses and ${providers.length} providers — Claude, GPT, Gemini, DeepSeek, Kimi, Qwen, Mistral, Grok, OpenRouter or your own server — under one budget and the same rules.`}>
   <section class="page-hero">
-    <div class="blueprint bp" aria-hidden="true"></div>
     <div class="shell">
       <p class="eyebrow">Runtimes</p>
-      <h1>Any harness. Any provider. The same rules.</h1>
-      <p class="lede">
-        A seat can run on Claude, GPT, Gemini, DeepSeek, Kimi, Qwen, Mistral, Grok or a model on
-        your own server, through whichever harness drives it. None of the rules notice — they live
-        in the 4xx answers of <code>/agent/*</code>, and they never knew which model was on the other
-        side of the token. <strong>A harness decides how a model is driven, never what it may do.</strong>
-      </p>
-      <div class="stats">
-        <div><strong>{harnesses.length}</strong><span>harnesses</span></div>
-        <div><strong>{providers.length}</strong><span>providers</span></div>
-        <div><strong>{models.length}</strong><span>catalogued models</span></div>
-        <div class="hi"><strong>1</strong><span>cap per project</span></div>
-      </div>
-      <nav class="toc" aria-label="On this page">
-        <a href="#why">Why</a>
-        <a href="#harnesses">Harnesses</a>
-        <a href="#providers">Providers</a>
-        <a href="#rules">The seven rules</a>
-        <a href="#admission">Admission</a>
-        <a href="#found">What hardening found</a>
-        <a href="#status">What is not proven yet</a>
-      </nav>
+      <h1>Any model. Same rules.</h1>
+      <p class="lede">Run each agent on Claude, GPT, Gemini, DeepSeek or your own server. One budget covers them all, and the rules don't change.</p>
     </div>
   </section>
 
-  <!-- ============ WHY ============ -->
-  <Section id="why" eyebrow="Why it exists" title="Two seats on one model share its blind spots.">
-    <div class="tiles c2">
-      <div class="tile warm">
-        <h3>Disagreement is the product</h3>
-        <p>
-          A risk seat that can veto a research seat is the strongest version of yaaf's argument when the
-          two are not even the same vendor's model. Hire the analyst on Claude and the critic on GPT or
-          DeepSeek, both metered against one cap, and the receipt says which spent what.
-        </p>
-      </div>
-      <div class="tile">
-        <h3>A governance layer shouldn't govern one vendor</h3>
-        <p>
-          If the org layer turns out not to be worth its tokens, what survives is yaaf as a governance
-          harness for a single agent. Every rule that makes that harness worth having already lived
-          behind <code>/agent/*</code>; only metering rode on one vendor's accounting. Owning the loop
-          moved it.
-        </p>
-      </div>
+  <Section first={true}>
+    <div class="cells">
+      <div class="cell"><p class="num">{harnesses.length}</p><p>Harnesses</p></div>
+      <div class="cell"><p class="num">{providers.length}</p><p>Providers</p></div>
+      <div class="cell"><p class="num">{models.length}</p><p>Models in the catalog</p></div>
+      <div class="cell warm"><p class="num">1</p><p>Budget per project</p></div>
     </div>
-    <blockquote class="principle">
-      <p>A harness is transport. It decides how a model is driven, never what the model may do.</p>
-      <p>A harness that cannot report what it spent, while it is spending it, is not admitted.</p>
-      <cite>— the two constraints every harness is held to, <a href="/docs/runtimes/#the-governing-constraint">docs/RUNTIMES.md</a></cite>
-    </blockquote>
   </Section>
 
-  <!-- ============ HARNESSES ============ -->
-  <Section id="harnesses" grid={true} eyebrow="Harnesses" title={`${harnesses.length} ways to drive a model, read from the registry.`}
-    lede="A harness is what runs the agent loop inside the sandbox. Every one runs in yaaf's container, on yaaf's per-run token, under yaaf's meter — this table is generated from the same registry the credential form, the fire drill and the lease read.">
+  <Section eyebrow="Why" title="Two agents on one model share its blind spots.">
+    <div class="cells c2">
+      <div class="cell warm"><h3>Critics on a different model</h3><p>Put your researcher on Claude and its critic on GPT. Disagreement gets real.</p></div>
+      <div class="cell"><h3>Not tied to one vendor</h3><p>The rules never depended on the model. Now the metering doesn't either.</p></div>
+    </div>
+  </Section>
+
+  <Section id="harnesses" eyebrow="Harnesses" title="What drives the model.">
     <div class="kit-table stack">
       <table>
-        <thead>
-          <tr><th>Harness</th><th>What runs</th><th>Pays with</th><th>Cost</th><th>Web search</th><th>Pinned</th></tr>
-        </thead>
+        <thead><tr><th>Harness</th><th>Type</th><th>Pays with</th><th>Version</th></tr></thead>
         <tbody>
           {harnesses.map((h) => (
             <tr>
-              <th scope="row"><strong class="hn">{h.label}</strong><span class="mono id">{h.name}</span></th>
-              <td data-label="What runs">{FAMILY[h.family]}{h.family === "loop" && h.providers.length > 1 && <span class="sub"> — {h.providers.map((p) => shortName(providerLabel.get(p) ?? p)).join(", ")}</span>}</td>
-              <td data-label="Pays with">{h.accepts.map(kindLabel).join(" · ")}</td>
-              <td data-label="Cost">{h.cost === "reported" ? "reported by the harness, checked against the catalog" : "priced by yaaf from the catalog"}</td>
-              <td data-label="Web search">{SEARCH[h.search]}</td>
-              <td class="mono" data-label="Pinned">{h.pinned ?? (h.package ? "latest" : "—")}</td>
+              <th scope="row">{h.label.replace(/ \(.*\)$/, "")}</th>
+              <td data-label="Type">{TYPE[h.family]}</td>
+              <td data-label="Pays with">{kinds(h.accepts).join(" · ")}</td>
+              <td class="mono" data-label="Version">{h.pinned ?? (h.package ? "latest" : "—")}</td>
             </tr>
           ))}
         </tbody>
       </table>
     </div>
-    <p class="note">
-      Every harness can withhold a shell and the web from a role that doesn't grant them; only{" "}
-      {harnesses.filter((h) => !h.withholds.includes("files")).map((h) => h.label).join(", ")} cannot withhold
-      file edits, so a role without them is refused there rather than quietly widened. A harness that reports its
-      own bill is still priced by yaaf, and a model whose bills drift more than 10% from the catalog raises a health
-      line — the price table is checked against the bills it is supposed to predict.
-    </p>
+    <p class="note">Every harness runs inside yaaf's sandbox, on yaaf's meter. If it can't report spend as it spends, it isn't allowed in.</p>
   </Section>
 
-  <!-- ============ PROVIDERS ============ -->
-  <Section id="providers" eyebrow="Providers" title={`${providers.length} places to buy tokens, one meter per project.`}
-    lede="A provider is who sells the tokens: its credential kinds, the unit each meters in, and how a dead one reads. A project pays its billing credential's provider, and any other provider a seat needs, all in the same unit.">
+  <Section id="providers" eyebrow="Providers" title="Who sells the tokens.">
     <div class="kit-table stack">
       <table>
-        <thead>
-          <tr><th>Provider</th><th>Credentials</th><th>Reached through</th><th>Models shipped</th></tr>
-        </thead>
+        <thead><tr><th>Provider</th><th>Credentials</th><th>Through</th></tr></thead>
         <tbody>
           {providers.map((p) => (
             <tr>
-              <th scope="row"><strong class="hn">{p.label}</strong></th>
-              <td data-label="Credentials">{p.kinds.map((k) => <span class="cred">{k.bills.replace(/, (billed|metered|priced) .*$/, "")} <span class="pill dim">{meter(k.meter)}</span></span>)}</td>
-              <td data-label="Reached through">{p.served_by.map((h) => harnessLabel.get(h) ?? h).join(" · ")}</td>
-              <td data-label="Models shipped">
-                {p.models.length
-                  ? <>{p.models.length} {p.priced.length ? <span class="yes">· priced</span> : <span class="no">· price them in Settings</span>}</>
-                  : p.reports_cost ? <span>any — it states each call's cost</span>
-                  : p.credential_base_url ? <span>any — your server, your price (zero is one)</span>
-                  : <span class="no">name any as {p.name}/&lt;model&gt;</span>}
-              </td>
+              <th scope="row">{p.label}</th>
+              <td data-label="Credentials">{p.kinds.map((k) => short(k.bills)).join(" · ")}</td>
+              <td data-label="Through">{p.served_by.map((h) => harnessLabel.get(h) ?? h).join(" · ")}</td>
             </tr>
           ))}
         </tbody>
       </table>
     </div>
-    <p class="note">
-      <strong>Why only {priced} models ship with prices:</strong> yaaf ships a price only when it could check it
-      against the vendor's own published list, and an unpriced model is refused under a dollar meter (R3) with the
-      place to price it — safer than a guessed number the budget would trust. Ollama, vLLM and any other server
-      that speaks the OpenAI chat API arrive as a custom endpoint, with its address in the credential.
-    </p>
+    <p class="note">{priced} models ship with prices, all from {pricedBy}. Price any other model in Settings. Zero is fine for your own server.</p>
   </Section>
 
-  <!-- ============ NOT BYOA ============ -->
-  <Section eyebrow="What this is not" title="Not “bring your own agent”." grid={true}>
-    <div class="tiles">
-      <div class="tile hi-warm">
-        <h3>Nothing runs outside the sandbox</h3>
-        <p>
-          yaaf never calls out to an agent running somewhere else and trusts what it reports about its own
-          work or its own bill. The container is part of the containment, so an agent yaaf cannot put in one
-          is an agent yaaf cannot run.
-        </p>
-      </div>
-      <div class="tile">
-        <h3>Not a model router</h3>
-        <p>
-          No automatic fallback from one provider to another when a call fails. A seat runs on what it was
-          hired on, is priced on what it was hired on, and a dead credential is a flag and a pause.
-        </p>
-      </div>
-      <div class="tile">
-        <h3>Not session continuity</h3>
-        <p>
-          Runs stay stateless: a fresh container, a context pack in, a result out. A harness that can resume
-          a session uses it only to survive a transient error inside one run — and to hold the boardroom chat.
-        </p>
-      </div>
-    </div>
-  </Section>
-
-  <!-- ============ RULES ============ -->
-  <Section id="rules" eyebrow="The rules this adds" title="Seven refusals, none of which names a harness."
-    lede="Each reads the registries rather than a vendor's name, fires at every door a seat comes through — creation, hiring, repinning, a credential change, a recall — and again at lease time as a backstop. Each has an attack in the invariant suite, and each shows up in the health checklist and the fire drill.">
-    <div class="rules">
-      {RULES.map(([n, k, v]) => (
-        <div class="tile rule">
+  <Section id="rules" eyebrow="Seven rules" title="Checked when a seat is hired, and again before every run.">
+    <div class="cells">
+      {RULES.map(([n, v]) => (
+        <div class="cell">
           <span class="eyebrow">{n}</span>
-          <h3>{k}</h3>
-          <p>{v}</p>
+          <p class="rule">{v}</p>
         </div>
       ))}
     </div>
   </Section>
 
-  <!-- ============ ADMISSION ============ -->
-  <Section id="admission" grid={true} eyebrow="Admission" title="What a harness has to do before it is merged."
-    lede="A harness that fails any of these is not admitted, whatever else it does well.">
-    <ol class="adm">
-      {ADMISSION.map((a) => <li>{a}</li>)}
-    </ol>
-    <div class="callout warm proof">
-      <p>
-        <strong>The contract suite proves the plumbing, never the judgment.</strong> A model that passes it can
-        be driven, metered, stopped and refused. Whether it is good at the job is a different question: yaaf's
-        role prompts were written and tuned against Claude. A weaker model is still bounded by every rule — its
-        bad calls are 403s and the refusal cap revokes its token — but being bounded is not being useful.
-      </p>
-    </div>
-  </Section>
-
-  <!-- ============ FOUND ============ -->
-  <Section id="found" eyebrow="What hardening found" title="Every CLI arrived with a way to loosen a rule. Each is now a guard with a test."
-    lede="The fastest way to learn what a harness will do with an agent's workspace is to run one against a stand-in API and watch. A selection from the milestone log:">
-    <div class="tiles">
-      {FOUND.map((f) => (
-        <div class="tile">
-          <span class="eyebrow">{f.who}</span>
-          <h3>{f.k}</h3>
-          <p>{f.v}</p>
-        </div>
-      ))}
-    </div>
-    <p class="note"><a href="/docs/runtimes/#milestones">The full milestone log, with everything each one found →</a></p>
-  </Section>
-
-  <!-- ============ STATUS ============ -->
-  <Section id="status" grid={true} eyebrow="Honest status" title="Built and contract-tested. Not yet proven live.">
-    <div class="tiles c2">
-      <div class="tile hi">
-        <h3>What is true today</h3>
+  <Section eyebrow="Status" title="Built and tested. Not yet proven live.">
+    <div class="cells c2">
+      <div class="cell">
+        <h3>Done</h3>
         <ul>
-          <li>Every harness above is built, merged and driven by a contract suite that replays its real recorded stream (or a fake server speaking its API) offline, at $0, inside the {manifest.tests.toLocaleString("en-US")}-test suite.</li>
-          <li>Two providers metered against one cap, with the receipt saying which spent what, is a test, not a promise.</li>
-          <li>The boardroom chat runs on the CEO's own seat, and the Founder and the goal grader run on any provider's platform key.</li>
+          <li>Every harness passes its contract tests, offline</li>
+          <li>Mixed providers on one budget is a test, not a promise</li>
+          <li>The boardroom chat runs on any harness</li>
         </ul>
       </div>
-      <div class="tile hi-warm">
-        <h3>What is not, yet</h3>
+      <div class="cell warm">
+        <h3>Not yet</h3>
         <ul>
-          <li>Each milestone's last line is <strong>one seat of a live project on that harness</strong>, and only a deployment can tick it. Today the production seats are Claude.</li>
-          <li><strong>The Cursor CLI is not built.</strong> Its installer was unreachable where this was built, and a driver written from documentation is the guess this design refuses everywhere else.</li>
-          <li><strong>No non-Anthropic model is recommended for a seat yet.</strong> That waits for a paid smoke run and the planning-quality test pointed at it.</li>
+          <li>A live run on each non-Claude harness</li>
+          <li>A Cursor CLI driver</li>
+          <li>A recommended non-Claude model</li>
         </ul>
       </div>
     </div>
-
-    <div class="roads">
-      <p class="eyebrow">Adding the next one</p>
-      <div class="kit-table">
-        <table>
-          <tbody>
-            {ROADS.map(([k, v]) => <tr><th scope="row"><strong class="hn">{k}</strong></th><td>{v}</td></tr>)}
-          </tbody>
-        </table>
-      </div>
-      <p class="note">
-        Everything else — the credential form, the role editor, the health checklist, the fire drill, the spend
-        report, the receipt, the MCP catalog, export and clone — reads the registries and does not change. And
-        forgetting one still fails a test, because the registries are tested for completeness.{" "}
-        <a href="/docs/runtimes/">The design doc →</a>
-      </p>
-    </div>
+    <p class="note"><a href="/docs/runtimes/">The full design, and what each harness taught us →</a></p>
   </Section>
 </BaseLayout>
 
 <style>
-  .page-hero code { font-family: var(--font-mono); font-size: 0.85em; color: var(--color-ink); }
-  .stats { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
-  .stats div { flex: 0 1 150px; background: var(--color-surface); border: 1px solid var(--color-line); border-radius: var(--radius-card); padding: 14px 16px; }
-  .stats strong { display: block; font-size: 2rem; line-height: 1; letter-spacing: -0.04em; font-weight: 640; }
-  .stats span { display: block; margin-top: 7px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--color-muted); }
-  .stats .hi { border-color: color-mix(in srgb, var(--color-accent-2) 50%, transparent); background: color-mix(in srgb, var(--color-accent-2) 9%, var(--color-surface)); }
-  .stats .hi strong { color: var(--color-accent-2); }
-
-  .principle {
-    margin: 26px 0 0;
-    border-left: 2px solid var(--color-accent);
-    background: color-mix(in srgb, var(--color-accent) 7%, transparent);
-    border-radius: 0 var(--radius-card) var(--radius-card) 0;
-    padding: 18px 22px;
-    max-width: 820px;
-  }
-  .principle p { margin: 0; font-size: 1.15rem; line-height: 1.5; font-weight: 560; letter-spacing: -0.012em; }
-  .principle p + p { margin-top: 10px; }
-  .principle cite { display: block; margin-top: 12px; font-style: normal; font-size: 13px; color: var(--color-muted); }
-  .principle a { color: var(--color-accent-hi); }
-
-  .hn { display: block; color: var(--color-ink); font-weight: 600; }
-  .id { display: block; margin-top: 3px; color: var(--color-muted); }
-  .sub { color: var(--color-muted); }
-  .cred { display: block; }
-  .cred + .cred { margin-top: 6px; }
-  .cred .pill { margin-left: 4px; padding: 1px 7px; font-size: 9.5px; }
-  .kit-table table { min-width: 860px; }
-
-  .rules { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
-
-  .adm { margin: 0; padding-left: 1.4em; display: grid; gap: 10px; max-width: 80ch; list-style: decimal; }
-  .adm li { font-size: 15px; line-height: 1.65; color: var(--color-ink-2); }
-  .adm li::marker { color: var(--color-accent-hi); font-family: var(--font-mono); font-size: 13px; }
-  .proof { margin-top: 26px; }
-
-  .roads { margin-top: 34px; }
-  .roads .eyebrow { margin: 0 0 12px; }
-  .roads .kit-table table { min-width: 0; }
-  .roads th { width: 30%; }
+  .rule { color: var(--color-ink) !important; font-size: 1.05rem !important; }
 </style>
