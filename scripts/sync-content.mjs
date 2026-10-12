@@ -84,6 +84,7 @@ function rewriteLinks(md, kind) {
       // directories and source files that only exist in the repository
       .replace(/\]\(\.\.\/yaaf\/([^)]+)\)/g, `](${GH}/blob/main/yaaf/$1)`)
       .replace(/\]\(\.\.\/(evals|crews|migrations|deploy|tests)\/?\)/g, `](${GH}/tree/main/$1)`)
+      .replace(/\]\((?:\.\.\/)?(?:docs\/)?ux-redesign\/([^)]*)\)/g, `](${GH}/blob/main/docs/ux-redesign/$1)`)
       // screenshots -> the public copies written by syncScreenshots()
       .replace(/\]\((?:\.\.\/)?(?:docs\/)?screenshots\/([a-z0-9-]+)\.png\)/g, "](/screenshots/$1.webp)")
       .replace(/src="(?:\.\.\/)?(?:docs\/)?screenshots\/([a-z0-9-]+)\.png"/g, 'src="/screenshots/$1.webp"')

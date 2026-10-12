@@ -6,12 +6,15 @@ interface Props {
   caption?: string;
   /** Crop to the top of a tall full-page capture instead of showing all of it. */
   crop?: number;
+  /** Crop to an aspect ratio from the top instead, e.g. "16 / 10". Scales with the width. */
+  ratio?: string;
   priority?: boolean;
 }
-const { src, alt, caption, crop, priority = false } = Astro.props;
+const { src, alt, caption, crop, ratio, priority = false } = Astro.props;
+const style = [crop && `--crop:${crop}px`, ratio && `aspect-ratio:${ratio}`].filter(Boolean).join(";") || undefined;
 ---
 <figure class="shot">
-  <div class="frame" style={crop ? `--crop:${crop}px` : undefined}>
+  <div class="frame" style={style}>
     <Image src={src} alt={alt} widths={[640, 960, 1440]} sizes="(max-width: 900px) 100vw, 900px" loading={priority ? "eager" : "lazy"} />
   </div>
   {caption && <figcaption>{caption}</figcaption>}

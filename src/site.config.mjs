@@ -22,24 +22,24 @@ export const PRIMARY_CTA = SOURCE_IS_PUBLIC
 export const SITE = {
   name: "yaaf",
   /** Used in <title> and og:site_name. */
-  tagline: "Stop prompting. Start delegating.",
+  tagline: "Hire an AI team. Get the project done.",
   description:
-    "yaaf is open-source, self-hosted software that runs a team of AI agents on one goal for weeks. The server checks their work, caps their spend and keeps the deadline honest.",
+    "Describe a project in plain English. yaaf builds a team of AI agents, manages them for days or weeks and checks every result. Free and open source.",
   themeColor: "#000000",
 };
 
 export const NAV = [
   { label: "How it works", href: "/how-it-works/" },
+  { label: "Use cases", href: "/examples/" },
   { label: "Features", href: "/features/" },
-  { label: "Runtimes", href: "/runtimes/" },
+  { label: "The team", href: "/org/" },
   { label: "Compare", href: "/compare/" },
-  { label: "The org", href: "/org/" },
-  { label: "Examples", href: "/examples/" },
   { label: "Docs", href: "/docs/" },
 ];
 
 /** Pages that are reference rather than navigation; the footer lists them. */
 export const MORE = [
+  { label: "Supported models", href: "/runtimes/" },
   { label: "FAQ", href: "/faq/" },
   { label: "What's new", href: "/changelog/" },
   { label: "Security model", href: "/docs/security/" },

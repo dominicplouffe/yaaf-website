@@ -11,10 +11,10 @@ const { cta = true } = Astro.props;
 <footer class="foot">
   {cta && (
     <div class="shell">
-      <div class="cta">
+      <div class="cta" id="try">
         <h2>Stop prompting.<br />Start delegating.</h2>
         <div class="cta-r">
-          <p>Rehearse an example project for free. No key, no server.</p>
+          <p>Run a full example project with practice agents. No account, no API key, no cost.</p>
           <Cmd cmd="yaaf rehearse examples/01-your-first-hour.json" />
           <div class="btns">
             <Button href="/docs/creating-a-project/" primary>Get started</Button>
@@ -29,7 +29,7 @@ const { cta = true } = Astro.props;
     <div class="grid">
       <div class="about">
         <Wordmark size="1.25rem" />
-        <p>Open-source rules for AI agent teams. Self-hosted. Apache-2.0.</p>
+        <p>A free, open-source AI team for your projects. Runs on your server.</p>
       </div>
       <nav aria-label="Footer">
         <p class="eyebrow">Product</p>

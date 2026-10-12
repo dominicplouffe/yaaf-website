@@ -157,6 +157,12 @@ asset that is already gone.
 Short, plain English. One idea per sentence. If a sentence can lose words, it
 should. Long explanations belong in the docs, not on the marketing pages.
 
+Sell the outcome before the mechanism. A first-time visitor should know within
+one screen what yaaf does for them: they describe a project, an AI team does the
+work, and they get finished, checked results on budget. Words like "server",
+"API", "policy" and "harness" belong on the docs and How it works pages, not in
+the home page's headlines.
+
 Four rules, because they are why it doesn't read like every other landing page:
 
 1. **Prefer the repo's own sentences.** The yaaf README, the CONTRIBUTING house
