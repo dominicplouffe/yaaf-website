@@ -3,111 +3,124 @@ import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Section from "../components/Section.astro";
 import Button from "../components/Button.astro";
-import Cmd from "../components/Cmd.astro";
-import Term from "../components/Term.astro";
 import Shot from "../components/Shot.astro";
-import Drill from "../components/Drill.astro";
-import { SITE, SOURCE_IS_PUBLIC } from "../site.config.mjs";
-import manifest from "../content/manifest.json";
-import autonomous from "../content/drills/autonomous.txt?raw";
+import { SITE } from "../site.config.mjs";
 
-import review from "../assets/screenshots/review.png";
-import boardroom from "../assets/screenshots/boardroom.png";
-import work from "../assets/screenshots/work-and-proof.png";
+import overview from "../assets/screenshots/cockpit-overview.png";
+import inbox from "../assets/screenshots/inbox.png";
+import chat from "../assets/screenshots/boardroom.png";
+import team from "../assets/screenshots/team.png";
+import roadmap from "../assets/screenshots/plan-and-promise.png";
 
 const roles = await getCollection("roles");
 const crews = await getCollection("crews");
-const critics = roles.filter((r) => r.data.category === "challenge");
-const tests = manifest.tests.toLocaleString("en-US");
+const examples = await getCollection("examples");
 
-const RULES = [
-  { k: "Done means verified", v: "Only the platform can mark work done. It runs the tests itself." },
-  { k: "No busywork", v: "Every task must serve a goal and carry a test that can fail." },
-  { k: "Budgets that stop", v: "Every run is metered. At the limit, the project pauses." },
-  { k: "Honest deadlines", v: "Dates come from real pace. If one slips, new work stops." },
+const WHY = [
+  { k: "Work that's really done", v: "Nothing counts as finished until yaaf checks it. An agent saying so isn't enough." },
+  { k: "No surprise bills", v: "Every dollar is tracked. At the limit you set, work pauses." },
+  { k: "A date you can trust", v: "The finish date comes from real progress. If it slips, you know." },
+  { k: "No busywork", v: "Every task ties back to your goal. Nothing is invented to look busy." },
 ];
 
 const STEPS = [
-  { n: "01", k: "Describe", v: "Write what you want in a paragraph. yaaf drafts the goal, team and budget." },
-  { n: "02", k: "Review", v: "The draft is graded against ten things a good goal needs." },
-  { n: "03", k: "Rehearse", v: "Run it free on scripted agents. Fix what breaks." },
-  { n: "04", k: "Run", v: "Hire the team for real. It works for weeks and reports back." },
+  { n: "01", k: "Describe it", v: "Write what you want in a paragraph. yaaf drafts the plan, the team, the budget and the deadline." },
+  { n: "02", k: "Try it free", v: "Watch the whole project play out with practice agents first. No AI costs." },
+  { n: "03", k: "Let it run", v: "The team works for days or weeks. You get a daily summary and only the decisions that need you." },
 ];
 
-const CLAUDE = [
-  { k: "Its own key", v: "Claude never uses your login, and every action is marked as Claude's." },
-  { k: "Two steps for big moves", v: "Anything you can't undo needs a preview, then a confirm." },
-  { k: "Agents can't instruct it", v: "Text written by agents is labeled untrusted and never obeyed." },
-  { k: "No secrets out", v: "No tool returns an API key, at any permission level." },
+const USES = [
+  { k: "Fix your code overnight", v: "Each night, a crew picks the most useful fix in your repo and opens a pull request.", slug: "04-an-overnight-crew" },
+  { k: "Research you can defend", v: "Analysts read a company's filings and write the report. Every claim links to its source.", slug: "10-read-the-filings" },
+  { k: "Test a business idea", v: "Thirty days to prove real people want it, or a clear reason to stop.", slug: "09-one-idea-thirty-days" },
+  { k: "Run a content engine", v: "Writers and an editor publish on your topic and learn what readers respond to.", slug: "12-a-content-engine" },
+  { k: "Build a small app or game", v: "A developer, a designer and a tester build it together. You can read how they decided.", slug: "08-a-game-you-can-play" },
+  { k: "Get a weekly briefing", v: "What changed in the things you depend on. Nothing you already know.", slug: "07-tell-me-what-changed" },
+];
+
+const TOUR = [
+  {
+    k: "Only what needs you.",
+    v: "Your inbox holds the calls only you can make. Each one comes with a recommendation and says what happens if you do nothing.",
+    src: inbox,
+    alt: "The Inbox: four decisions waiting, with a $180 data purchase open on the right showing the case for it, the CEO's recommendation, and that it is denied automatically in three hours if nobody answers",
+  },
+  {
+    k: "One manager to talk to.",
+    v: "Ask your AI lead anything. Why did the date move? What's blocked? Say “from now on…” and it becomes a rule.",
+    src: chat,
+    alt: "Chat with Iris, the project's CEO agent: the user asks how confident she is in the deadline and tells her not to buy anything yet, and she answers with the numbers and a free alternative",
+  },
+  {
+    k: "See who's doing what.",
+    v: "Every agent has a name, a job and a running tab. Open one to see what it's working on and what it has cost today.",
+    src: team,
+    alt: "The Team page: an org chart of named agents with their status, and a drawer open on Maya, a research lead, showing her current task, runs today and $1.80 spent",
+  },
+  {
+    k: "Know if you'll make the date.",
+    v: "Progress is measured, not guessed. You see what's proven done, what's left, and when it will really finish.",
+    src: roadmap,
+    alt: "The Roadmap: 2 of 6 requirements settled, the promised date of Oct 30 and a projected finish of Oct 13, then each requirement in stages with its status",
+  },
+];
+
+const OPEN = [
+  { k: "Free", v: "No subscription, no account. You pay your AI provider directly, at their prices." },
+  { k: "Yours", v: "It runs on your own server. Your projects, files and keys stay with you." },
+  { k: "Any AI", v: "Claude, GPT, Gemini, DeepSeek and more. Mix them on one team." },
+  { k: "Open", v: "Apache-2.0. Read every line and change anything." },
 ];
 
 const VS = [
-  { who: "vs. Paperclip", v: "Paperclip coordinates agents wherever they run. yaaf runs them in its own sandbox, so only the platform decides what's done.", href: "/compare/#paperclip" },
-  { who: "vs. agent frameworks", v: "LangGraph and CrewAI help you build agent flows. yaaf enforces the rules around them.", href: "/compare/#frameworks" },
-  { who: "vs. a Claude skill", v: "A skill does one task while you watch. yaaf runs work for weeks while you don't.", href: "/compare/#skill" },
+  { who: "A chatbot", v: "You ask, it answers, you check. Great for one task, but you're the project manager." },
+  { who: "An agent framework", v: "You write the code that runs the agents. Great if you're building a product." },
+  { who: "yaaf", v: "You describe the project. A managed AI team delivers it, checked and on budget.", us: true },
 ];
-
-const KNOW = [
-  { k: "You run a server", v: "Docker, Postgres and one machine. A skill is just a file." },
-  { k: "It's early", v: "Pre-1.0. First commit August 2026. One maintainer." },
-  { k: "No outside security review", v: "Agents can reach the network. Read the threat model first." },
-  { k: "No published costs", v: "Nobody has shared a real bill yet. The rehearsal shows break-even." },
-];
-
-const PROVIDERS = ["Claude", "GPT", "Gemini", "DeepSeek", "Kimi", "Qwen", "Mistral", "Grok", "OpenRouter", "Your own models"];
-
-const DEPLOY = `<b>$</b> git clone ${SOURCE_IS_PUBLIC ? "https://github.com/dominicplouffe/yaaf.git" : "&lt;your-yaaf-remote&gt;"} yaaf &amp;&amp; cd yaaf
-<b>$</b> ./deploy_single_server.sh --admin-email you@example.com`;
-
-const CONNECT = `<b>$</b> yaaf login
-<b>$</b> yaaf mcp-token mint my-laptop --scopes read
-<b>$</b> claude mcp add --transport http yaaf http://localhost:8080/mcp \\
-    --header <u>"Authorization: Bearer ymt_…"</u>`;
 ---
 <BaseLayout title={`yaaf — ${SITE.tagline}`} bare={true} description={SITE.description}>
   <!-- ============ HERO ============ -->
   <section class="hero">
     <div class="glow" aria-hidden="true"></div>
     <div class="shell">
-      <p class="tags"><span>Open source</span><span>Self-hosted</span><span>Pre-1.0</span></p>
-      <h1>Rules your AI agents can't argue&nbsp;with.</h1>
+      <p class="tags"><span>Free</span><span>Open source</span><span>Self-hosted</span></p>
+      <h1>Hire an AI team.<br /> Get the project&nbsp;done.</h1>
       <div class="hero-row">
         <p class="sub">
-          yaaf runs a team of AI agents on one goal for weeks. The server checks their work,
-          caps their spend and keeps the deadline honest. You stay in charge.
+          Describe what you want in plain English. yaaf builds a team of AI agents, manages them for days or
+          weeks, and checks every result. You step in only for the big decisions.
         </p>
         <div class="hero-act">
           <div class="btns">
-            <Button href="/docs/creating-a-project/" primary>Get started</Button>
-            <Button href="/how-it-works/">How it works</Button>
+            <Button href="#try" primary>Try it free</Button>
+            <Button href="#tour">See it in action</Button>
           </div>
-          <Cmd cmd="yaaf rehearse examples/01-your-first-hour.json" />
-          <p class="hint">Try a full project for $0. No API key needed.</p>
+          <p class="hint">No account. No API key to try it. Pay only for the AI you use.</p>
         </div>
       </div>
     </div>
     <div class="shell shotwrap">
-      <Shot src={review} crop={640} priority={true}
-        alt="The Review screen: pace, requirements met, the delivery date at risk with its promised and projected dates, budget and audit coverage, with the CEO's notes and the chairman's six levers below"
-        caption="The weekly review. Cost against estimate, a date that re-projected itself, and six levers you can pull." />
+      <Shot src={overview} ratio="16 / 10" priority={true}
+        alt="A project's Overview: on track for its Oct 30 date, 2 of 6 requirements met, $130 of a $400 budget spent, 3 agents working, three decisions waiting for you, and a message from the CEO agent"
+        caption="One screen tells you if you're on track: progress, spend, who's working, and what needs you." />
     </div>
   </section>
 
-  <!-- ============ RUNS ON ============ -->
+  <!-- ============ WORKS WITH ============ -->
   <section class="runs">
     <div class="shell">
       <div class="runs-in">
-        <p class="eyebrow">Runs on</p>
-        <ul>{PROVIDERS.map((p) => <li>{p}</li>)}</ul>
+        <p class="eyebrow">Works with</p>
+        <ul>{["Claude", "GPT", "Gemini", "DeepSeek", "Kimi", "Qwen", "Mistral", "Grok", "Your own models"].map((p) => <li>{p}</li>)}</ul>
       </div>
     </div>
   </section>
 
-  <!-- ============ RULES ============ -->
-  <Section eyebrow="Why yaaf" title="Prompts are suggestions. yaaf makes them rules."
-    lede="Left alone, agents mark their own work done, invent busywork and burn money. A better prompt won't fix that. A server that says no will.">
+  <!-- ============ WHY ============ -->
+  <Section eyebrow="Why yaaf" title="AI agents start strong. yaaf makes them finish."
+    lede="Left alone, agents say they're done when they aren't, wander off task and run up the bill. yaaf manages them like a good boss would.">
     <div class="cells">
-      {RULES.map((r, i) => (
+      {WHY.map((r, i) => (
         <div class="cell">
           <span class="eyebrow">0{i + 1}</span>
           <h3>{r.k}</h3>
@@ -115,91 +128,76 @@ const CONNECT = `<b>$</b> yaaf login
         </div>
       ))}
     </div>
-    <p class="note">Every rule is enforced by the server and attacked by a test. {tests} tests, free to run. <a href="/features/">All features →</a></p>
-  </Section>
-
-  <!-- ============ DRILL ============ -->
-  <Section eyebrow="Try before you spend" title="Rehearse the whole project for $0."
-    lede="yaaf runs your exact setup on scripted agents with every rule switched on. You see where it stalls, what it costs and how often it needs you.">
-    <div class="rehearse">
-      <div class="cells c2 drill-l">
-        <div class="cell"><h3>Where it breaks</h3><p>A missing role, an empty schedule, a plan over budget. Each one named, with the fix.</p></div>
-        <div class="cell"><h3>How often it waits</h3><p>This example never waits for you. With approvals turned on, it stops 7 times.</p></div>
-        <div class="cell"><h3>What it costs</h3><p>The most a run can cost before the plan stops fitting your budget.</p></div>
-        <div class="cell"><h3>What it can't tell you</h3><p>Whether a real model does good work. The rehearsal tests your setup, not the AI.</p></div>
-      </div>
-      <Drill report={autonomous} only={["The walk", "It never", "What it still needs"]} label="yaaf rehearse · real output" />
-    </div>
   </Section>
 
   <!-- ============ STEPS ============ -->
-  <Section eyebrow="How it works" title="From one paragraph to a working team.">
-    <div class="cells">
-      {STEPS.map((s, i) => (
-        <div class:list={["cell", { free: i < 3 }]}>
-          <span class="eyebrow">{s.n}{i < 3 && " · free"}</span>
+  <Section eyebrow="How it works" title="Three steps. Then it runs without you.">
+    <div class="cells c3">
+      {STEPS.map((s) => (
+        <div class="cell">
+          <span class="eyebrow">{s.n}</span>
           <h3>{s.k}</h3>
           <p>{s.v}</p>
         </div>
       ))}
     </div>
-    <p class="note"><a href="/how-it-works/">See every step →</a></p>
+    <p class="note"><a href="/how-it-works/">How it works, in detail →</a></p>
   </Section>
 
-  <!-- ============ COCKPIT ============ -->
-  <Section eyebrow="The cockpit" title="See everything. Decide what matters.">
-    <div class="shots">
-      <Shot src={work} crop={460}
-        alt="The Work screen: a randomly sampled finished task waiting for the chairman to check, the board, and every piece of evidence with its verification status"
-        caption="A random sample of finished work, dealt to you to check. AI reviewers approve almost everything. You won't." />
-      <Shot src={boardroom} crop={460}
-        alt="The Boardroom: the chairman asks the CEO how confident it is in the deadline, and the CEO answers with its estimate-to-actual ratio and re-projection"
-        caption="Ask the CEO anything. It answers with numbers, not reassurance." />
-    </div>
-  </Section>
-
-  <!-- ============ TEAM ============ -->
-  <Section eyebrow="The team" title="Hire from a library, not a blank prompt."
-    lede="A CEO plans and assigns the work. Specialists do it. Critics, like a red team or a risk manager, can block it.">
-    <div class="cells">
-      <a class="cell" href="/org/#roles"><p class="num">{roles.length}</p><p>Roles, each with its own prompt, model and tools</p></a>
-      <a class="cell" href="/org/#crews"><p class="num">{crews.length}</p><p>Ready-made teams you can hire whole</p></a>
-      <a class="cell warm" href="/org/#challenge"><p class="num">{critics.length}</p><p>Roles paid to disagree. The CEO can't fire the last one.</p></a>
-      <a class="cell" href="/runtimes/"><p class="num">{manifest.providers}</p><p>Model providers, mixed freely under one budget</p></a>
-    </div>
-  </Section>
-
-  <!-- ============ CLAUDE ============ -->
-  <Section eyebrow="Chair it from Claude" title="Run your projects from the Claude window you already use."
-    lede="yaaf is an MCP server. Claude can check status, talk to the CEO and approve decisions, with guardrails.">
-    <div class="cells">
-      {CLAUDE.map((c) => (
-        <div class="cell">
-          <h3>{c.k}</h3>
-          <p>{c.v}</p>
-        </div>
-      ))}
-    </div>
-    <p class="note">32 tools in four scopes: read, steer, create and configure. Start with read. <a href="/docs/mcp-server/">MCP docs →</a></p>
-  </Section>
-
-  <!-- ============ COMPARE ============ -->
-  <Section eyebrow="Compared" title="How yaaf is different.">
+  <!-- ============ USE CASES ============ -->
+  <Section eyebrow="Use cases" title="What will you hand off?"
+    lede={`Start from one of ${crews.length} ready-made teams, or describe your own.`}>
     <div class="cells c3">
-      {VS.map((x) => (
-        <a class="cell" href={x.href}>
-          <span class="eyebrow">{x.who}</span>
-          <p class="vs">{x.v}</p>
-          <span class="go">Read more →</span>
+      {USES.map((u) => (
+        <a class="cell" href={`/examples/${u.slug}/`}>
+          <h3>{u.k}</h3>
+          <p>{u.v}</p>
+          <span class="go">See the example →</span>
         </a>
       ))}
     </div>
+    <p class="note">
+      <a href="/examples/">All {examples.length} examples →</a>
+      <span class="sep">·</span>
+      <a href="/org/">{roles.length} roles to hire from →</a>
+    </p>
   </Section>
 
-  <!-- ============ KNOW ============ -->
-  <Section eyebrow="Before you install" title="What you should know.">
+  <!-- ============ TOUR ============ -->
+  <Section id="tour" eyebrow="See it in action" title="You're the boss. Without the busywork."
+    lede="Check in when you want. Approve what matters. The team handles the rest.">
+    <div class="tour">
+      {TOUR.map((t, i) => (
+        <div class:list={["row", { flip: i % 2 === 1 }]}>
+          <div class="copy">
+            <span class="eyebrow">0{i + 1}</span>
+            <h3>{t.k}</h3>
+            <p>{t.v}</p>
+          </div>
+          <div class="pic"><Shot src={t.src} ratio="16 / 10" alt={t.alt} /></div>
+        </div>
+      ))}
+    </div>
+    <p class="note">Check in from the app, Slack, a daily email or <a href="/docs/mcp-server/">Claude</a>.</p>
+  </Section>
+
+  <!-- ============ COMPARE ============ -->
+  <Section eyebrow="Compared" title="Why not just use ChatGPT?">
+    <div class="cells c3">
+      {VS.map((x) => (
+        <div class:list={["cell", { us: x.us }]}>
+          <span class="eyebrow">{x.who}</span>
+          <p class="vs">{x.v}</p>
+        </div>
+      ))}
+    </div>
+    <p class="note"><a href="/compare/">Full comparison, including Paperclip →</a></p>
+  </Section>
+
+  <!-- ============ OPEN ============ -->
+  <Section eyebrow="Free and open source" title="No subscription. No lock-in.">
     <div class="cells">
-      {KNOW.map((k) => (
+      {OPEN.map((k) => (
         <div class="cell">
           <h3>{k.k}</h3>
           <p>{k.v}</p>
@@ -207,18 +205,8 @@ const CONNECT = `<b>$</b> yaaf login
       ))}
     </div>
     <p class="note">
-      The open question: does a team of agents beat one good agent? Nobody knows yet. Solo mode runs one
-      agent under the same rules so you can compare. <a href="/docs/plan/">Read the plan →</a>
+      Early days: yaaf is pre-1.0 with one maintainer. <a href="/docs/plan/">What's done and what isn't →</a>
     </p>
-  </Section>
-
-  <!-- ============ INSTALL ============ -->
-  <Section id="install" eyebrow="Install" title="One script. One machine.">
-    <div class="install">
-      <Term label="1 · Deploy" code={DEPLOY} />
-      <Term label="2 · Connect Claude" code={CONNECT} />
-    </div>
-    <p class="note">Needs Linux and Docker. The dashboard stays on localhost; reach it over SSH. <a href="/docs/deployment/">Deployment guide →</a></p>
   </Section>
 </BaseLayout>
 
@@ -251,7 +239,7 @@ const CONNECT = `<b>$</b> yaaf login
     background: linear-gradient(to bottom, transparent 30%, #000 72%);
   }
   .hero .shell { position: relative; }
-  .tags { display: flex; gap: 0; margin: 0 0 2.2rem var(--inset); }
+  .tags { display: flex; flex-wrap: wrap; gap: 0; margin: 0 0 2.2rem var(--inset); }
   .tags span {
     font-family: var(--font-mono);
     font-size: 11.5px;
@@ -269,7 +257,6 @@ const CONNECT = `<b>$</b> yaaf login
     line-height: 0.95;
     letter-spacing: -0.055em;
     font-weight: 500;
-    max-width: 12ch;
     padding-left: var(--inset);
   }
   .hero-row {
@@ -280,44 +267,51 @@ const CONNECT = `<b>$</b> yaaf login
     align-items: start;
   }
   .hero-row > * { padding-inline: var(--inset); }
-  .sub { grid-column: 1 / span 2; margin: 0; font-size: 1.3rem; line-height: 1.45; color: var(--color-ink-2); max-width: 34ch; }
+  .sub { grid-column: 1 / span 2; margin: 0; font-size: 1.3rem; line-height: 1.45; color: var(--color-ink-2); max-width: 36ch; }
   .hero-act { grid-column: 3 / span 2; display: grid; gap: 14px; }
   .hint { margin: 0; font-size: 13.5px; color: var(--color-muted); }
   .shotwrap { margin-top: 5rem; padding-bottom: 6rem; }
 
-  /* ---------- runs on ---------- */
+  /* ---------- works with ---------- */
   .runs-in { border-top: 1px solid var(--color-line); padding-block: 2.2rem; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px 0; align-items: center; }
   .runs-in > * { padding-inline: var(--inset); }
   .runs-in .eyebrow { margin: 0; }
   .runs-in ul { grid-column: 2 / span 3; list-style: none; margin: 0; padding-block: 0; display: flex; flex-wrap: wrap; gap: 10px 28px; }
   .runs-in li { font-size: 1.15rem; letter-spacing: -0.02em; color: var(--color-ink-2); }
 
-  /* ---------- drill ---------- */
-  .rehearse { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .drill-l { grid-column: 1 / span 2; grid-template-columns: 1fr; }
-  .rehearse :global(.drill) { grid-column: 3 / span 2; border-left: 0; }
+  /* ---------- tour ---------- */
+  .tour { border-top: 1px solid var(--color-line); }
+  .row {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    border-bottom: 1px solid var(--color-line);
+    align-items: center;
+  }
+  .copy { grid-column: 1; padding: 2.5rem var(--inset); }
+  .copy h3 { margin: 1rem 0 0; font-size: 1.6rem; line-height: 1.15; letter-spacing: -0.035em; font-weight: 500; }
+  .copy p { margin: 0.9rem 0 0; color: var(--color-ink-2); font-size: 16px; line-height: 1.55; }
+  .pic { grid-column: 2 / span 3; padding: 2.5rem var(--inset); }
+  .flip .copy { grid-column: 4; grid-row: 1; }
+  .flip .pic { grid-column: 1 / span 3; grid-row: 1; }
 
-  /* ---------- steps ---------- */
-  .free .eyebrow { color: var(--color-good); }
+  /* ---------- compare ---------- */
+  .vs { font-size: 1.15rem !important; color: var(--color-ink) !important; line-height: 1.45 !important; letter-spacing: -0.015em; }
+  .us { background: var(--color-surface-2) !important; }
+  .us .eyebrow { color: var(--color-accent-hi); }
 
-  /* ---------- shots ---------- */
-  .shots { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-
-  .vs { font-size: 1.05rem !important; color: var(--color-ink) !important; line-height: 1.45 !important; }
-
-  /* ---------- install ---------- */
-  .install { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
+  .sep { margin: 0 10px; color: var(--color-muted); }
 
   @media (max-width: 1024px) {
     .hero { padding-top: 5rem; }
     .sub, .hero-act { grid-column: 1 / -1; }
     .runs-in .eyebrow, .runs-in ul { grid-column: 1 / -1; }
-    .rehearse { grid-template-columns: 1fr; }
-    .drill-l, .rehearse :global(.drill) { grid-column: 1 / -1; }
-    .rehearse :global(.drill) { border-left: 1px solid var(--color-line); border-top: 0; }
-    .shots, .install { grid-template-columns: 1fr; }
+    .row, .flip { grid-template-columns: 1fr; }
+    .copy, .pic, .flip .copy, .flip .pic { grid-column: 1; grid-row: auto; }
+    .copy { padding-bottom: 0; }
   }
   @media (max-width: 640px) {
     .shotwrap { margin-top: 3.5rem; padding-bottom: 4rem; }
+    .copy { padding-top: 2rem; }
+    .pic { padding-block: 1.5rem 2rem; }
   }
 </style>

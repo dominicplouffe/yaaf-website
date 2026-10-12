@@ -8,18 +8,34 @@ const examples = (await getCollection("examples")).sort((a, b) => a.data.number.
 const basics = examples.filter((e) => Number(e.data.number) <= 2);
 const rest = examples.filter((e) => Number(e.data.number) > 2);
 
+/** What each example does, in a line. The repo's own titles are names, not descriptions. */
+const BLURB: Record<string, string> = {
+  "01": "A short briefing on any topic. The gentlest way to see yaaf work.",
+  "02": "A clear answer to a hard question, with sources and the best case against it.",
+  "03": "Watches your app. Errors, signups and emails get handled the same hour.",
+  "04": "Picks the most useful fix in your repo each night and opens a pull request.",
+  "05": "One lesson a week on any subject, adjusted to what you got wrong.",
+  "06": "Builds a small tool, then a separate team tries to break it.",
+  "07": "A weekly note on what changed in the tools you depend on. Nothing else.",
+  "08": "A playable browser game, built by a developer, a designer and a tester.",
+  "09": "One product idea, thirty days, and proof that real people want it.",
+  "10": "An investment note on one company, built only from its public filings.",
+  "11": "Answers a question from public data. Every number can be re-checked.",
+  "12": "Publishes posts on your topic and learns which ones readers respond to.",
+};
+
 const MODES = [
   ["deliver", "Ship one thing, then stop."],
   ["operate", "Repeat on a schedule, learning from the last three runs."],
   ["explore", "Chase a goal with no fixed end."],
 ];
 ---
-<BaseLayout title="Examples" description={`${examples.length} ready-to-run yaaf projects. Rehearse any of them for free before spending anything.`}>
+<BaseLayout title="Use cases" description={`${examples.length} projects you can hand to an AI team today: code, research, content, data and more. Try any of them free.`}>
   <section class="page-hero">
     <div class="shell">
-      <p class="eyebrow">Examples</p>
-      <h1>{examples.length} projects, ready to run.</h1>
-      <p class="lede">Each is a real spec file. Rehearse it for free, then import it.</p>
+      <p class="eyebrow">Use cases</p>
+      <h1>{examples.length} projects you can hand off today.</h1>
+      <p class="lede">Each one is ready to run. Try it free with practice agents, then make it yours.</p>
       <div class="try"><Cmd cmd="yaaf rehearse examples/01-your-first-hour.json" /></div>
     </div>
   </section>
@@ -30,6 +46,7 @@ const MODES = [
         <a class="cell ex" href={`/examples/${e.id}/`}>
           <span class="eyebrow">{e.data.number}</span>
           <h3>{e.data.title}</h3>
+          {BLURB[e.data.number] && <p>{BLURB[e.data.number]}</p>}
           <div class="pills">
             <span class:list={["pill", `m-${e.data.mode}`]}>{e.data.mode}</span>
             {e.data.cap && <span class="pill dim">${e.data.cap} cap</span>}
@@ -40,12 +57,13 @@ const MODES = [
     </div>
   </Section>
 
-  <Section eyebrow="Real work" title={`${rest.length} that need the platform.`} lede="Each one breaks without it: a claim nobody checks, a retry that posts twice, a budget that burns overnight.">
+  <Section eyebrow="Real work" title={`${rest.length} that run for days or weeks.`} lede="Code, research, content, data and teaching. Each one keeps going without you.">
     <div class="cells">
       {rest.map((e) => (
         <a class="cell ex" href={`/examples/${e.id}/`}>
           <span class="eyebrow">{e.data.number}</span>
           <h3>{e.data.title}</h3>
+          {BLURB[e.data.number] && <p>{BLURB[e.data.number]}</p>}
           <div class="pills">
             <span class:list={["pill", `m-${e.data.mode}`]}>{e.data.mode}</span>
             {e.data.cap && <span class="pill dim">${e.data.cap} cap</span>}
@@ -71,7 +89,8 @@ const MODES = [
 <style>
   .try { margin-top: 2rem; max-width: 560px; }
   .ex { display: flex; flex-direction: column; gap: 0; min-height: 210px; }
-  .ex h3 { margin-bottom: 1.4rem; }
+  .ex h3 { margin-bottom: 0.6rem; }
+  .ex p { margin: 0 0 1.4rem; }
   .ex .pills { margin-top: auto; }
   .cell > .pill + p { margin-top: 1rem; }
   .m-deliver { color: var(--color-accent-hi); border-color: color-mix(in srgb, var(--color-accent) 50%, transparent); }

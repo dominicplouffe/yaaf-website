@@ -39,7 +39,7 @@ const GROUPS: { title: string; items: QA[] }[] = [
     title: "Running it",
     items: [
       { id: "try", q: "Can I try it for free?", a: "Yes. Clone the repo, install it with pip and run <code>yaaf rehearse examples/01-your-first-hour.json</code>. No key, no Docker." },
-      { id: "install", q: "What do I need to install it?", a: `A Linux machine with Docker. One script does the rest. <a href="/#install">Install →</a>` },
+      { id: "install", q: "What do I need to install it?", a: `A Linux machine with Docker. One script does the rest. <a href="/docs/deployment/">Install guide →</a>` },
       { id: "claude", q: "Can I run it from Claude?", a: "Yes. yaaf is an MCP server. Claude Code, Claude Desktop and Cursor connect with a token. claude.ai needs a public address." },
       { id: "secure", q: "Is it secure?", a: `Agents run in sandboxes with limited secrets, but they can reach the internet. No outside review yet. <a href="/docs/security/">Security model →</a>` },
     ],

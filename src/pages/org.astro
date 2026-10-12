@@ -25,14 +25,14 @@ const headcount = (c: (typeof crews)[number]) =>
   c.teams.reduce((n, t) => n + Math.max(t.employees.length, 1), 0);
 ---
 <BaseLayout
-  title="The org"
+  title="The team"
   description={`${roles.length} roles and ${crews.length} ready-made teams. Each role has its own prompt, model and tools, and ${challengers.length} exist to disagree.`}
 >
   <section class="page-hero">
     <div class="shell">
-      <p class="eyebrow">The org</p>
-      <h1>Hire from a library, not a blank prompt.</h1>
-      <p class="lede">Each role has its own prompt, model, effort level and tools. Edit a role once and every new project gets it.</p>
+      <p class="eyebrow">The team</p>
+      <h1>Hire the right AI for every job.</h1>
+      <p class="lede">Pick from {roles.length} ready-made roles, or hire a whole team at once. Each role has its own instructions, AI model and tools.</p>
     </div>
   </section>
 

@@ -4,7 +4,7 @@
   "crews": 17,
   "examples": 12,
   "docs": 15,
-  "screenshots": 5,
+  "screenshots": 7,
   "harnesses": 7,
   "providers": 10,
   "tests": 1813,
@@ -12,7 +12,7 @@
   "history": {
     "firstCommit": "2026-08-14",
     "lastCommit": "2026-10-12",
-    "commits": 457,
+    "commits": 462,
     "activeDays": 37,
     "claudeShare": 95
   }

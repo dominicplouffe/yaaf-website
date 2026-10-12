@@ -42,7 +42,7 @@ What it will cost
 
 What paces it, over 30 days
   it fits — nothing is on the board that needs a run before then
-  4463 run(s) can start, 0 needed, 0.0 held back for the retries your measured failure rate predicts, 4463.0 spare
+  4448 run(s) can start, 0 needed, 0.0 held back for the retries your measured failure rate predicts, 4448.0 spare
 
 What it still needs before it can really run
   ! no billing credential attached — agents cannot run

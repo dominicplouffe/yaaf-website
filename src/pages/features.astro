@@ -90,8 +90,8 @@ const total = GROUPS.reduce((n, g) => n + g.items.length, 0);
   <section class="page-hero">
     <div class="shell">
       <p class="eyebrow">Features</p>
-      <h1>Everything the server enforces.</h1>
-      <p class="lede">{total} features. Each one is a rule in the server, with a test that tries to break it.</p>
+      <h1>Everything that keeps your AI team honest.</h1>
+      <p class="lede">{total} features. Each one is backed by a test that tries to break it.</p>
       <nav class="toc" aria-label="On this page">
         {GROUPS.map((g) => <a href={`#${g.id}`}>{g.title}</a>)}
       </nav>
