@@ -1,8 +1,19 @@
 {
-  "syncedAt": "2026-09-12",
+  "syncedAt": "2026-10-12",
   "roles": 38,
   "crews": 17,
   "examples": 12,
-  "docs": 13,
-  "screenshots": 5
+  "docs": 15,
+  "screenshots": 5,
+  "harnesses": 7,
+  "providers": 10,
+  "tests": 1813,
+  "testsCollectedAt": "2026-10-12",
+  "history": {
+    "firstCommit": "2026-08-14",
+    "lastCommit": "2026-10-12",
+    "commits": 456,
+    "activeDays": 37,
+    "claudeShare": 95
+  }
 }

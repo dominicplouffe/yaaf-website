@@ -54,8 +54,9 @@ that the verbs a language model must not hold are verbs it *does not have*.
 `requirement_verdict`, `commitment_accept`, `review_lever` and `audit_decide`
 exist on the admin surface precisely because agents are refused them.
 
-An MCP server carrying `YAAF_ADMIN_TOKEN` hands those verbs back to a language
-model. It is an **authority-laundering machine**: the platform spends its
+An MCP server carrying a person's own credential — the static admin token when
+this was written; a session or personal token since people got accounts
+([AUTH.md](/docs/auth/)) — hands those verbs back to a language model. It is an **authority-laundering machine**: the platform spends its
 architecture denying a model the right to mark work done, and then a tool call
 reaches around the whole thing. Worse, it launders *identity* too — the audit
 log would record the chairman doing it.
@@ -76,8 +77,8 @@ house rule 1, and the invariant test that attacks it, per house rule 2.
 
 | # | Rule | Enforced by | Attacked in |
 |---|---|---|---|
-| 1 | An MCP client is never the admin principal. | A third principal (`mcp_auth`) with its own token table; `settings().admin_token` is not accepted on `/mcp` at all. | `test_mcp_auth.py` |
-| 2 | A token holds only the scopes it was issued for, and reaches only what its chairman chairs. | The scope is checked at dispatch against the tool's declaration, never at the call site; every project-addressed tool resolves its reference through `resolve_project`, which reads chairmanship on every call and refuses another chairman's project in the same words as one that does not exist. | `test_mcp_scopes.py` |
+| 1 | An MCP client is never its person's own principal. | A third principal (`mcp_auth`) with its own token table; a personal token is refused on `/mcp` by name, and the surface reads no session cookie. (It was the admin token this row named; that was retired, and the rule outlived it.) | `test_mcp_auth.py` |
+| 2 | A token holds only the scopes it was issued for, and reaches only what its person may. | The scope is checked at dispatch against the tool's declaration, never at the call site; every project-addressed tool resolves its reference through `resolve_project`, which reads membership on every call — any role to read, chairman or co-chair to steer or configure, derived from the dispatched tool's own scope — and refuses a project its person is not on in the same words as one that does not exist. The instance admin's read-everything does not extend to its model clients. | `test_mcp_scopes.py`, `test_auth_roles.py` |
 | 3 | Every write is attributed as machine-mediated, permanently. | `AuditLog.actor` is written as `user:<id> via mcp:<client>`; the field is never the bare `user:<id>` form on this path. | `test_mcp_attribution.py` |
 | 4 | Irreversible writes cannot happen in one call. | Server-issued `confirm_token`: bound to a hash of the exact arguments, single-use, 5-minute TTL. A second call with different arguments is refused. | `test_mcp_confirm.py` |
 | 5 | Agent-authored text is data, never instruction. | Every tool result carrying agent-written content wraps it in an `<untrusted_agent_content>` envelope naming the agent, and no tool result is ever executed as a directive. | `test_mcp_untrusted.py` |
@@ -200,6 +201,10 @@ consent screen does — but an open endpoint that mints rows still gets a limit.
 
 ### 3. A chairman login has to exist — this is the real work
 
+*(Since absorbed: people have accounts, sessions and personal tokens, and
+`yaaf set-password` is gone — [AUTH.md](/docs/auth/). What follows is the slice
+that came first, kept because the consent screen still works this way.)*
+
 `yaaf/server/deps.py` says it plainly: "full user auth arrives with the UI
 milestone." There is one static admin token and no way to authenticate a
 *person* in a browser. OAuth's `/authorize` needs exactly that.
@@ -273,9 +278,11 @@ another chairman, and it stops being reachable with nothing to revoke. Scopes
 stay on the consent screen, because *what a client may do* is a real decision
 that no other record answers.
 
-The narrowing that remains is the one that matters: `configure` on a project
-nobody else chairs is still a smaller thing than the admin bearer, which is
-every verb on every project with no name attached.
+The narrowing that remains is the one that matters: `configure` on the projects
+its person chairs is still a smaller thing than its person's own credential,
+which is every verb they hold with no machine's name attached. With co-chairs,
+"what its chairman owns" reads "what its person is on": membership is the gate
+now, read the same way on every call.
 
 ### 4. Tokens rotate; grants and attribution do not
 
@@ -366,7 +373,7 @@ Status column tracks implementation. `M1`…`M4` are the milestones below.
 | `work` | Runs, one run's trace, the context pack it ran on. Long text walks by `offset`. | `GET /observe/projects/{id}/runs`, `/runs/{id}/trace` `/context` | **done** (M1) |
 | `proof` | Evidence, provenance, snapshots, audit samples. | `GET /observe/projects/{id}/evidence` `/audit_samples` `/spot_audit`, `/observe/evidence/{id}/snapshot` | **done** (M1) |
 | `receipt` | Whole-life cost beside what the platform verified. `format=text` returns the pasteable block. No envelope, because it carries no agent prose. | `GET /observe/projects/{id}/receipt` | **done** |
-| `org` | Teams, agents, schedules, one agent's detail, the board. | `GET /observe/projects/{id}/org` `/board`, `/observe/agents/{id}` | **done** (M1) |
+| `org` | Teams, agents, schedules, one agent's detail, the board — and what each seat actually did in a window (`since`: `today`, `yesterday`, `7d`, a date). | `GET /observe/projects/{id}/org` `/board` `/activity`, `/observe/agents/{id}` | **done** (M1) |
 | `channels` | Channel list and messages. **Wraps agent text.** | `GET /observe/projects/{id}/channels`, `/observe/channels/{id}/messages` | **done** (M1) |
 | `files` | Workspace listing and file content. **Wraps agent text.** Long files walk by `offset`. | `GET /observe/projects/{id}/files` `/files/content` | **done** (M1) |
 | `record` | The judgement record. `view`: `decisions` \| `reviews` \| `cycles` \| `hypotheses` \| `suggestions` \| `memories` \| `approvals`. | `GET /observe/projects/{id}/ceo_decisions` and siblings | **done** (M1) |
@@ -381,7 +388,7 @@ Status column tracks implementation. `M1`…`M4` are the milestones below.
 | `commitment_decide` | `verb`: `accept` \| `decline` \| `move`. | `POST /admin/commitments/{id}/…` | yes | **done** (M3) |
 | `review_decide` | `verb`: `lever` \| `close`. | `POST /admin/reviews/{id}/lever` `/close` | yes | **done** (M3) |
 | `audit_decide` | Open a spot audit, judge a sample, audit an evidence row or task. | `POST /admin/audit_samples/{id}/decide`, `/admin/evidence/{id}/audit`, `/admin/tasks/{id}/audit` | yes | **done** (M3) |
-| `lifecycle` | `verb`: `start` \| `pause` \| `stop` \| `complete` \| `pause_agent` \| `set_schedule` \| `unfreeze_thread` \| `briefing_seen`. | `POST /admin/projects/{id}/start` and siblings | yes, except `briefing_seen` | **done** (M3) |
+| `lifecycle` | `verb`: `start` \| `pause` \| `stop` \| `complete` \| `pause_agent` \| `resume_agent` \| `stand_down` \| `recall` \| `set_schedule` \| `unfreeze_thread` \| `briefing_seen`. `stand_down`/`recall` take `team` and are the staffing verbs — a role whose job is finished stops costing wake-ups and comes back whole. `pause_agent` is the different thing: an intervention on one person, which `recall` deliberately will not undo. | `POST /admin/projects/{id}/start` and siblings | yes, except `briefing_seen` | **done** (M3) |
 
 `requirement_decide` with `verb: verdict` is the single most dangerous call on
 this surface — it is the platform writing "met" on something a script could not
@@ -396,7 +403,7 @@ discovering later.
 
 | Tool | Does | Backing | Confirm? | Status |
 |---|---|---|---|---|
-| `catalog` | Search the role and crew library; with `what: credentials`, list the LLM credentials a project may pay with — names and billing modes, never values. | `yaaf/founder/tools.py: search_roles, search_crews, list_credentials` | no | **done** (M4) |
+| `catalog` | Search the role and crew library; with `what: credentials`, list the LLM credentials a project may pay with — names and billing modes, never values; with `what: harnesses`, what can drive a seat's model; with `what: providers`, who sells the tokens and the credential kinds each takes ([RUNTIMES.md](/docs/runtimes/)). | `yaaf/founder/tools.py: search_roles, search_crews, list_credentials`; `GET /admin/harnesses`; `GET /admin/providers` | no | **done** (M4) |
 | `read_source` | What a candidate data source actually serves. | `yaaf/founder/tools.py: read_source` | no | **done** (M4) |
 | `grade_goal` | Grade a draft goal against [GOAL_GRAMMAR.md](/docs/goal-grammar/) — ten things a goal must contain. | `yaaf/founder/tools.py` | no | **done** (M4) |
 | `rehearse` | The fire drill: simulate the project for N days, create nothing. | `POST /admin/rehearse` | no | **done** (M4) |
@@ -414,7 +421,7 @@ drafting a bundle and being graded on it.
 
 | Tool | Does | Backing | Confirm? | Status |
 |---|---|---|---|---|
-| `project_configure` | Settings, teams, repin a team's role version. | `PATCH /admin/projects/{id}`, `POST /admin/projects/{id}/teams`, `/admin/teams/{id}/repin` | yes | **done** (M5) |
+| `project_configure` | Settings, teams, repin a team's role version; pay a second provider, or stop. | `PATCH /admin/projects/{id}`, `POST /admin/projects/{id}/teams`, `/admin/teams/{id}/repin`, `PUT`/`DELETE /admin/projects/{id}/credentials/{provider}` | yes | **done** (M5) |
 | `data_source` | `verb`: `add` \| `check` \| `oauth_start` \| `remove`. | `POST /admin/projects/{id}/mcp_servers` `/check` `/oauth/start`, `DELETE …/{name}` | yes on `add`/`remove` | **done** (M5) |
 | `credential` | Create or scope a secret **by reference only** — the value is never read back, and a value passed in is written and forgotten. `filename` makes it a *file* credential, so granted roles get a path; text only here, binary goes through the dashboard. | `POST /admin/secrets`, `GET /admin/secrets` (names only) | yes | **done** (M5) |
 | `amend` | Propose or cancel a constitution amendment; read the schema. | `POST /admin/projects/{id}/amendments`, `/admin/amendments/{id}/cancel`, `GET /admin/constitution/schema` | yes | **done** (M5) |

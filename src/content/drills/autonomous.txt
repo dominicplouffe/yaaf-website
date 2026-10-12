@@ -1,0 +1,60 @@
+Fire drill — A Red Team That Can Block (deliver)
+========================================================================
+
+This project gets off the ground: it planned, opened its board, did work and closed it with evidence.
+
+The walk
+  ✓ Roles resolved — 3 role(s) resolved
+  ✓ Project created — deliver · 2 team(s), 4 agent(s)
+  ✓ Clock rules lifted for the drill — 7 clock rules lifted for the drill; every other rule you wrote is in force
+  ✓ Project started — the project is running
+  ✓ An agent woke — 1 run(s) across 1 agent(s) — the dispatcher found a reason  beat 1
+  ✓ The CEO proposed a plan — 3 requirement(s), 12 estimated runs  beat 1
+  ✓ Scope entered the plan — 3 accepted  beat 1
+  ✓ The plan gate closed — the board opened — the plan is staged, estimated and fits the money  beat 1
+  ✓ Work was created — 1 task(s)  beat 2
+  ✓ Work was claimed — an agent picked it up  beat 3
+  ✓ Evidence was filed — 1 row(s) filed  beat 3
+  – Finished work was read by somebody else — not in an Explore project's shape
+  ✓ Work closed with evidence — 1 closed  beat 3
+  ✓ A delivery date was proposed — platform-projected, delivering by 2026-10-12  beat 2
+  ✓ The delivery date was signed — status accepted  beat 2
+  ✓ A requirement settled true — R-01 — the platform ran the test  beat 4
+
+It never had to wait for you.
+
+Walls it hit
+  1× /agent/tasks
+      R-02 is in stage 2 and stage 1 is still open. The chairman owns this order. Finish or cut what is left in stage 1 and this opens by itself.
+
+What it will cost
+  the plan is 3 requirement(s), 12 estimated run(s)
+  this box has never priced a run, so it cannot tell you the total
+  it fits your $90 cap if a run costs under $7.5 — check that against a bill you have seen
+
+What paces it, over 30 days
+  it fits — nothing is on the board that needs a run before then
+  4481 run(s) can start, 0 needed, 0.0 held back for the retries your measured failure rate predicts, 4481.0 spare
+
+What it still needs before it can really run
+  ! no billing credential attached — agents cannot run
+
+Not exercised by this drill
+  · command success tests — the drill writes observables only, so no command out of a spec file is ever executed
+  · evidence verification — evidence carries no URL, so the verifier never reaches the network
+  · credentials and data sources — a drill reads no secret and opens no socket
+  · Slack — the drill opens no socket, so it says nothing either way about the workspace this install talks to
+  · chairman notifications — the mail and webhook channels are unset for the duration, so the notices this pretend project raised were logged and never delivered to anyone
+  · the workspace — the drill works in a directory it deletes, and a github_repo in the spec is not cloned into it
+
+Rules the drill lifted (yours are otherwise in force)
+  · wakes_per_agent_per_hour — one wake per agent per hour is a rule about clock time; the drill compresses a fortnight into seconds and would spend every agent's hour in the first beat
+  · runs_per_project_per_day — the daily ceiling is a rule about clock time, and the drill has no days
+  · runs_per_project_per_hour — the trailing-hour ceiling is a rule about clock time, and a drill spends a fortnight of them in one second
+  · inbox_runs_per_project_per_hour — reading the inbox has its own hourly purse, for the same clock reason and with the same effect on a compressed drill
+  · max_concurrent_runs — concurrency protects a shared provider rate limit; the drill calls no provider
+  · ceo_heartbeat_hours — the CEO plans every few HOURS; a drill that waited for the second heartbeat would end after the first and report a project that never got past planning
+  · ceo_heartbeat_always — an idle planning wake is suppressed to save a full-price run, and a drill's runs are free — suppressing them here would only hide whether the board ever opens
+  · notice and message batching — the dispatcher holds a wake for minutes until it is worth a run; a drill has no minutes
+
+The crew that ran this is competent and dull by construction. A clean drill is evidence about your CONFIGURATION and no evidence at all about whether a real model does the job well.

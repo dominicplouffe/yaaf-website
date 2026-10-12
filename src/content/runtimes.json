@@ -1,0 +1,588 @@
+{
+  "harnesses": [
+    {
+      "name": "claude_agent_sdk",
+      "label": "Claude Agent SDK",
+      "family": "sdk",
+      "providers": [
+        "anthropic"
+      ],
+      "accepts": [
+        "anthropic:api_key",
+        "anthropic:subscription"
+      ],
+      "withholds": [
+        "files",
+        "bash",
+        "web"
+      ],
+      "cost": "reported",
+      "search": "own",
+      "conversation": true,
+      "package": "@anthropic-ai/claude-code",
+      "pinned": null
+    },
+    {
+      "name": "claude_cli",
+      "label": "Claude Code CLI (claude -p)",
+      "family": "cli",
+      "providers": [
+        "anthropic"
+      ],
+      "accepts": [
+        "anthropic:api_key",
+        "anthropic:subscription"
+      ],
+      "withholds": [
+        "files",
+        "bash",
+        "web"
+      ],
+      "cost": "reported",
+      "search": "own",
+      "conversation": true,
+      "package": "@anthropic-ai/claude-code",
+      "pinned": null
+    },
+    {
+      "name": "anthropic_api",
+      "label": "Anthropic API (yaaf's own loop)",
+      "family": "loop",
+      "providers": [
+        "anthropic"
+      ],
+      "accepts": [
+        "anthropic:api_key"
+      ],
+      "withholds": [
+        "files",
+        "bash",
+        "web"
+      ],
+      "cost": "priced",
+      "search": "provider",
+      "conversation": true,
+      "package": null,
+      "pinned": null
+    },
+    {
+      "name": "openai_compatible",
+      "label": "OpenAI-compatible API (yaaf's own loop)",
+      "family": "loop",
+      "providers": [
+        "deepseek",
+        "openrouter",
+        "custom",
+        "moonshot",
+        "qwen",
+        "mistral",
+        "xai"
+      ],
+      "accepts": [
+        "deepseek:api_key",
+        "openrouter:api_key",
+        "custom:api_key",
+        "moonshot:api_key",
+        "qwen:api_key",
+        "mistral:api_key",
+        "xai:api_key"
+      ],
+      "withholds": [
+        "files",
+        "bash",
+        "web"
+      ],
+      "cost": "priced",
+      "search": "provider",
+      "conversation": true,
+      "package": null,
+      "pinned": null
+    },
+    {
+      "name": "codex_cli",
+      "label": "Codex CLI",
+      "family": "cli",
+      "providers": [
+        "openai"
+      ],
+      "accepts": [
+        "openai:api_key",
+        "openai:subscription"
+      ],
+      "withholds": [
+        "bash",
+        "web"
+      ],
+      "cost": "priced",
+      "search": "own",
+      "conversation": true,
+      "package": "@openai/codex",
+      "pinned": "0.162.1"
+    },
+    {
+      "name": "gemini_cli",
+      "label": "Gemini CLI",
+      "family": "cli",
+      "providers": [
+        "google"
+      ],
+      "accepts": [
+        "google:api_key",
+        "google:subscription"
+      ],
+      "withholds": [
+        "files",
+        "bash",
+        "web"
+      ],
+      "cost": "priced",
+      "search": "own",
+      "conversation": true,
+      "package": "@google/gemini-cli",
+      "pinned": "0.63.0"
+    },
+    {
+      "name": "opencode",
+      "label": "OpenCode CLI",
+      "family": "cli",
+      "providers": [
+        "openai",
+        "deepseek",
+        "custom",
+        "moonshot",
+        "qwen",
+        "mistral",
+        "xai"
+      ],
+      "accepts": [
+        "openai:api_key",
+        "deepseek:api_key",
+        "custom:api_key",
+        "moonshot:api_key",
+        "qwen:api_key",
+        "mistral:api_key",
+        "xai:api_key"
+      ],
+      "withholds": [
+        "files",
+        "bash",
+        "web"
+      ],
+      "cost": "priced",
+      "search": "none",
+      "conversation": true,
+      "package": "opencode-ai",
+      "pinned": "1.19.0"
+    }
+  ],
+  "providers": [
+    {
+      "name": "anthropic",
+      "label": "Anthropic",
+      "default_harness": "claude_agent_sdk",
+      "kinds": [
+        {
+          "mode": "api_key",
+          "meter": "usd",
+          "bills": "Anthropic API key, billed in USD"
+        },
+        {
+          "mode": "subscription",
+          "meter": "tokens",
+          "bills": "Claude subscription, metered in tokens"
+        }
+      ],
+      "served_by": [
+        "claude_agent_sdk",
+        "claude_cli",
+        "anthropic_api"
+      ],
+      "credential_base_url": false,
+      "search": true,
+      "reports_cost": false,
+      "models": [
+        "claude-haiku-4-5",
+        "claude-sonnet-5",
+        "claude-sonnet-5-5",
+        "claude-opus-5",
+        "claude-opus-5-5",
+        "claude-fable-5-1"
+      ],
+      "priced": [
+        "claude-haiku-4-5",
+        "claude-sonnet-5",
+        "claude-sonnet-5-5",
+        "claude-opus-5",
+        "claude-opus-5-5",
+        "claude-fable-5-1"
+      ]
+    },
+    {
+      "name": "deepseek",
+      "label": "DeepSeek",
+      "default_harness": "openai_compatible",
+      "kinds": [
+        {
+          "mode": "api_key",
+          "meter": "usd",
+          "bills": "DeepSeek API key, billed in USD"
+        }
+      ],
+      "served_by": [
+        "openai_compatible",
+        "opencode"
+      ],
+      "credential_base_url": false,
+      "search": false,
+      "reports_cost": false,
+      "models": [
+        "deepseek-chat",
+        "deepseek-reasoner"
+      ],
+      "priced": []
+    },
+    {
+      "name": "openrouter",
+      "label": "OpenRouter",
+      "default_harness": "openai_compatible",
+      "kinds": [
+        {
+          "mode": "api_key",
+          "meter": "usd",
+          "bills": "OpenRouter API key, billed in USD"
+        }
+      ],
+      "served_by": [
+        "openai_compatible"
+      ],
+      "credential_base_url": false,
+      "search": false,
+      "reports_cost": true,
+      "models": [],
+      "priced": []
+    },
+    {
+      "name": "custom",
+      "label": "Custom endpoint (OpenAI-compatible)",
+      "default_harness": "openai_compatible",
+      "kinds": [
+        {
+          "mode": "api_key",
+          "meter": "usd",
+          "bills": "Custom endpoint key, priced in USD at the rates set in Settings"
+        }
+      ],
+      "served_by": [
+        "openai_compatible",
+        "opencode"
+      ],
+      "credential_base_url": true,
+      "search": false,
+      "reports_cost": false,
+      "models": [],
+      "priced": []
+    },
+    {
+      "name": "moonshot",
+      "label": "Moonshot (Kimi)",
+      "default_harness": "openai_compatible",
+      "kinds": [
+        {
+          "mode": "api_key",
+          "meter": "usd",
+          "bills": "Moonshot (Kimi) API key, billed in USD"
+        }
+      ],
+      "served_by": [
+        "openai_compatible",
+        "opencode"
+      ],
+      "credential_base_url": false,
+      "search": false,
+      "reports_cost": false,
+      "models": [],
+      "priced": []
+    },
+    {
+      "name": "qwen",
+      "label": "Qwen (Alibaba Model Studio)",
+      "default_harness": "openai_compatible",
+      "kinds": [
+        {
+          "mode": "api_key",
+          "meter": "usd",
+          "bills": "Alibaba Model Studio (DashScope) API key, billed in USD"
+        }
+      ],
+      "served_by": [
+        "openai_compatible",
+        "opencode"
+      ],
+      "credential_base_url": false,
+      "search": false,
+      "reports_cost": false,
+      "models": [],
+      "priced": []
+    },
+    {
+      "name": "mistral",
+      "label": "Mistral",
+      "default_harness": "openai_compatible",
+      "kinds": [
+        {
+          "mode": "api_key",
+          "meter": "usd",
+          "bills": "Mistral API key, billed in USD"
+        }
+      ],
+      "served_by": [
+        "openai_compatible",
+        "opencode"
+      ],
+      "credential_base_url": false,
+      "search": false,
+      "reports_cost": false,
+      "models": [],
+      "priced": []
+    },
+    {
+      "name": "xai",
+      "label": "xAI (Grok)",
+      "default_harness": "openai_compatible",
+      "kinds": [
+        {
+          "mode": "api_key",
+          "meter": "usd",
+          "bills": "xAI API key, billed in USD"
+        }
+      ],
+      "served_by": [
+        "openai_compatible",
+        "opencode"
+      ],
+      "credential_base_url": false,
+      "search": false,
+      "reports_cost": false,
+      "models": [],
+      "priced": []
+    },
+    {
+      "name": "openai",
+      "label": "OpenAI",
+      "default_harness": "codex_cli",
+      "kinds": [
+        {
+          "mode": "api_key",
+          "meter": "usd",
+          "bills": "OpenAI API key, billed in USD"
+        },
+        {
+          "mode": "subscription",
+          "meter": "tokens",
+          "bills": "ChatGPT plan (Codex login), metered in tokens"
+        }
+      ],
+      "served_by": [
+        "codex_cli",
+        "opencode"
+      ],
+      "credential_base_url": false,
+      "search": false,
+      "reports_cost": false,
+      "models": [
+        "gpt-5.5",
+        "gpt-5.6-luna",
+        "gpt-5.6-terra",
+        "gpt-5.6-sol",
+        "gpt-6-luna",
+        "gpt-6-sol",
+        "gpt-6.1-sol",
+        "gpt-6-astra"
+      ],
+      "priced": []
+    },
+    {
+      "name": "google",
+      "label": "Google (Gemini)",
+      "default_harness": "gemini_cli",
+      "kinds": [
+        {
+          "mode": "api_key",
+          "meter": "usd",
+          "bills": "Gemini API key, billed in USD"
+        },
+        {
+          "mode": "subscription",
+          "meter": "tokens",
+          "bills": "Google account login (Gemini CLI), metered in tokens"
+        }
+      ],
+      "served_by": [
+        "gemini_cli"
+      ],
+      "credential_base_url": false,
+      "search": false,
+      "reports_cost": false,
+      "models": [
+        "gemini-2.5-flash",
+        "gemini-3-flash-preview",
+        "gemini-3.8-flash",
+        "gemini-2.5-pro",
+        "gemini-3.1-pro-preview"
+      ],
+      "priced": []
+    }
+  ],
+  "models": [
+    {
+      "id": "claude-haiku-4-5",
+      "provider": "anthropic",
+      "tier": 1,
+      "price": {
+        "input": 1,
+        "output": 5,
+        "as_of": "2026-10-12"
+      }
+    },
+    {
+      "id": "claude-sonnet-5",
+      "provider": "anthropic",
+      "tier": 2,
+      "price": {
+        "input": 2,
+        "output": 10,
+        "as_of": "2026-10-12"
+      }
+    },
+    {
+      "id": "claude-sonnet-5-5",
+      "provider": "anthropic",
+      "tier": 3,
+      "price": {
+        "input": 2,
+        "output": 10,
+        "as_of": "2026-10-12"
+      }
+    },
+    {
+      "id": "claude-opus-5",
+      "provider": "anthropic",
+      "tier": 4,
+      "price": {
+        "input": 5,
+        "output": 25,
+        "as_of": "2026-10-12"
+      }
+    },
+    {
+      "id": "claude-opus-5-5",
+      "provider": "anthropic",
+      "tier": 5,
+      "price": {
+        "input": 4,
+        "output": 20,
+        "as_of": "2026-10-12"
+      }
+    },
+    {
+      "id": "claude-fable-5-1",
+      "provider": "anthropic",
+      "tier": 6,
+      "price": {
+        "input": 10,
+        "output": 50,
+        "as_of": "2026-10-12"
+      }
+    },
+    {
+      "id": "deepseek-chat",
+      "provider": "deepseek",
+      "tier": 1,
+      "price": null
+    },
+    {
+      "id": "deepseek-reasoner",
+      "provider": "deepseek",
+      "tier": 2,
+      "price": null
+    },
+    {
+      "id": "gpt-5.5",
+      "provider": "openai",
+      "tier": 1,
+      "price": null
+    },
+    {
+      "id": "gpt-5.6-luna",
+      "provider": "openai",
+      "tier": 2,
+      "price": null
+    },
+    {
+      "id": "gpt-5.6-terra",
+      "provider": "openai",
+      "tier": 3,
+      "price": null
+    },
+    {
+      "id": "gpt-5.6-sol",
+      "provider": "openai",
+      "tier": 4,
+      "price": null
+    },
+    {
+      "id": "gpt-6-luna",
+      "provider": "openai",
+      "tier": 5,
+      "price": null
+    },
+    {
+      "id": "gpt-6-sol",
+      "provider": "openai",
+      "tier": 6,
+      "price": null
+    },
+    {
+      "id": "gpt-6.1-sol",
+      "provider": "openai",
+      "tier": 7,
+      "price": null
+    },
+    {
+      "id": "gpt-6-astra",
+      "provider": "openai",
+      "tier": 8,
+      "price": null
+    },
+    {
+      "id": "gemini-2.5-flash",
+      "provider": "google",
+      "tier": 1,
+      "price": null
+    },
+    {
+      "id": "gemini-3-flash-preview",
+      "provider": "google",
+      "tier": 2,
+      "price": null
+    },
+    {
+      "id": "gemini-3.8-flash",
+      "provider": "google",
+      "tier": 3,
+      "price": null
+    },
+    {
+      "id": "gemini-2.5-pro",
+      "provider": "google",
+      "tier": 4,
+      "price": null
+    },
+    {
+      "id": "gemini-3.1-pro-preview",
+      "provider": "google",
+      "tier": 5,
+      "price": null
+    }
+  ]
+}

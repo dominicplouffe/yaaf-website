@@ -4,8 +4,20 @@ subtitle: "every screen, and what you do there"
 slug: "dashboard"
 sourceFile: "docs/DASHBOARD.md"
 ---
-The chairman's cockpit is a React SPA served by the API at **`/app`**. Log in
-with your admin token (`YAAF_ADMIN_TOKEN`).
+The chairman's cockpit is a React SPA served by the API at **`/app`**. Sign in
+with your email and password; the first admin's comes from the one-time link
+the install prints, and everybody else's from an invite (see
+[AUTH.md](/docs/auth/)). The browser holds a session cookie it cannot read from
+script, and nothing is kept in `localStorage`.
+
+Two places are about people rather than projects. **Settings → Account** is
+yours: your password, the personal tokens the CLI and your scripts hold, and the
+browsers you are signed in on. **Settings → People** is the instance admin's:
+invite somebody (the link is shown, not mailed), send a fresh password link,
+promote, deactivate. A project's own people — its chairman, co-chairs and
+observers — are under that project's **Settings → People**, and anybody who is
+only observing sees a line under the project header saying so, without the
+Start and Stop buttons.
 
 Everything below is also reachable from the [CLI](/docs/cli/), but the dashboard is
 the intended way to run a project.
@@ -190,7 +202,7 @@ A role you write yourself can be left unfiled; it sits under **Uncategorised**
 at the bottom of every list and is never filtered away.
 
 Each role shows its current version, its
-system prompt, model and effort, tool permissions, secret scopes — and its
+system prompt, model, effort and harness, tool permissions, secret scopes — and its
 **blast radius**: which projects run it, at which version.
 
 Editing a role creates a **new version**. Live teams keep the version they
@@ -357,7 +369,15 @@ Read top to bottom: what needs you, what is true now, what happens next.
   a team on an outdated role version. **A healthy project collapses this to one
   green line.**
 - **The project** — the org roster: teams, leads, employees, who's awake, and
-  each team's open work.
+  each team's open work. Each seat carries its own day under its name — runs,
+  tasks closed, what it is holding, tokens and money — so "who is actually
+  doing the work here" is a glance rather than a query. The same numbers reach
+  the CEO, from the same producer, so you and it cannot be reading different
+  answers to the same question. Each team carries **stand down** / **recall**,
+  which is how you overrule a staffing call — your CEO hires and stands roles
+  down itself, and this is the same verb on your side of the desk. A team that
+  declared when its job ends says so on the card; the platform stops it when
+  that comes true.
 
 ## Boardroom — talk to your CEO
 
@@ -390,7 +410,13 @@ The tab that answers "when will this be done, and how would you know?"
   pace per week, waste (dead runs, with the worst offender named), and how many
   runs the remaining budget actually buys.
 - **The burn-up.** Requirements settled true against scope, with the committed
-  date and the projected date as two lines you can compare at a glance.
+  date and the projected date as marks you can compare at a glance. **Deliver
+  projects only** — work that comes round again has no line to burn up, so an
+  Operate project gets "Owed every cycle" instead, which says which obligation
+  slipped and in which turn. When a plan is too small or too young to have a
+  shape — fewer than three settled, fewer than three in scope, or everything
+  settled inside one day — the same facts are stated as numbers rather than
+  drawn as a line through one point.
 - **Stages and dependencies.** One toggle over the same data: stages in order,
   or the dependency graph with the server-computed critical path. Work in a
   stage beyond the open one is refused until the open one settles.
