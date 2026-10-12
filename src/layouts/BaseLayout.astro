@@ -1,6 +1,6 @@
 ---
-import "@fontsource-variable/instrument-sans";
-import "@fontsource-variable/jetbrains-mono";
+import "@fontsource-variable/geist";
+import "@fontsource-variable/geist-mono";
 import "../styles/global.css";
 import Nav from "../components/Nav.astro";
 import Foot from "../components/Foot.astro";
@@ -12,9 +12,11 @@ interface Props {
   /** Set on pages that should not carry the site name suffix. */
   bare?: boolean;
   ogImage?: string;
+  /** The closing call to action above the footer. Off on reference pages. */
+  cta?: boolean;
 }
 
-const { title, description = SITE.description, bare = false, ogImage = "/og.png" } = Astro.props;
+const { title, description = SITE.description, bare = false, ogImage = "/og.png", cta = true } = Astro.props;
 const fullTitle = bare ? title : `${title} · ${SITE.name}`;
 const canonical = new URL(Astro.url.pathname, SITE_URL).href;
 const og = new URL(ogImage, SITE_URL).href;
@@ -61,11 +63,25 @@ const jsonLd = {
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
-    <Nav />
-    <main id="main">
-      <slot />
-    </main>
-    <Foot />
+    <div class="page-lines" aria-hidden="true"><div class="shell"><div class="lines"></div></div></div>
+    <div class="layer">
+      <Nav />
+      <main id="main">
+        <slot />
+      </main>
+      <Foot cta={cta} />
+    </div>
+    <script is:inline>
+      // Copy buttons on command lines. Inline and tiny: the site loads no scripts.
+      document.addEventListener("click", function (e) {
+        var b = e.target.closest && e.target.closest("[data-copy]");
+        if (!b || !navigator.clipboard) return;
+        navigator.clipboard.writeText(b.getAttribute("data-copy")).then(function () {
+          b.setAttribute("data-done", "");
+          setTimeout(function () { b.removeAttribute("data-done"); }, 1400);
+        });
+      });
+    </script>
     <style is:global>
       .skip {
         position: absolute;

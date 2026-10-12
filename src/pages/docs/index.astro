@@ -8,20 +8,21 @@ const bySlug = new Map(all.map((d) => [d.data.slug, d]));
 
 /** One line each, written for someone deciding what to open. */
 const BLURB: Record<string, string> = {
-  plan: "The thesis, the kill conditions, what is built, and what is deliberately not. Start here if you want to know whether to trust it.",
-  features: "The complete reference, grouped by the failure each feature prevents.",
-  "creating-a-project": "Your first project in plain English: picking a shape, writing a goal a CEO can plan from, accepting the plan.",
-  governance: "The constitution — every rule, its default, what it refuses, and how to change one.",
-  autonomy: "How much the CEO decides without you. Five authority switches, two presets, and what never moves at any setting.",
-  "goal-grammar": "The rubric itself: the ten things a goal has to contain, why each earns its place, and how the grader decides a goal is ready.",
-  "mcp-server": "Chairing yaaf from Claude Code, Claude Desktop or anything else that speaks MCP — and the security model that makes writes safe.",
-  dashboard: "Every screen and what you do there.",
-  cli: "Every `yaaf` command, the project spec shape, and a full provisioning script.",
-  "agent-api": "The API your agents act through, and how to write a role that uses it well.",
-  deployment: "Install and run it: one script, every environment variable, backups, upgrades.",
-  integrations: "Billing, credentials, MCP data sources, Slack, GitHub, webhooks, artifact storage.",
-  runtimes: "Any harness, any provider, the same rules: Claude, Codex, Gemini, OpenCode and yaaf's own loop — the design, the seven rules it adds, and what each CLI taught it.",
-  auth: "People: accounts, sessions and personal tokens; chairman, co-chairs and observers; and the eight rules that decide who may decide.",
+  plan: "What yaaf is betting on, what would prove it wrong, and what's built.",
+  features: "Every feature, grouped by the problem it solves.",
+  "creating-a-project": "Your first project, step by step.",
+  governance: "Every rule and its default.",
+  autonomy: "How much the CEO decides without you.",
+  "goal-grammar": "The ten things a good goal needs.",
+  "mcp-server": "Run yaaf from Claude or any MCP client.",
+  dashboard: "Every screen and what it's for.",
+  cli: "Every yaaf command.",
+  "agent-api": "What agents can do, and how to write a role.",
+  deployment: "Install, configure, back up and upgrade.",
+  integrations: "Billing, Slack, GitHub, data sources, webhooks and storage.",
+  runtimes: "Run agents on any model and provider.",
+  auth: "Accounts, co-chairs, observers and permissions.",
+  security: "What contains an agent, and what doesn't.",
 };
 
 const groups = DOCS_GROUPS.map((g) => ({
@@ -31,13 +32,11 @@ const groups = DOCS_GROUPS.map((g) => ({
 ---
 <DocsLayout
   title="Documentation"
-  subtitle="The whole reference. Rendered from the repository, synced with it."
+  subtitle="Synced from the yaaf repository."
   description="yaaf documentation: the plan, the feature reference, the constitution, the autonomy dial, the MCP server, runtimes and providers, people and roles, the CLI and the agent API."
 >
   <p>
-    Everything below is the yaaf repository's own documentation, rendered here so
-    you can read it before you clone anything. New? <a href="/docs/plan/">The plan</a>{" "}
-    tells you what this is betting on and what would kill it. Ready to run something?{" "}
+    New here? Start with{" "}
     <a href="/docs/creating-a-project/">Creating a project</a>.
   </p>
 

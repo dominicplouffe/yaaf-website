@@ -3,436 +3,190 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import Section from "../components/Section.astro";
 import Drill from "../components/Drill.astro";
 import manifest from "../content/manifest.json";
-import autonomous from "../content/drills/autonomous.txt?raw";
 import supervised from "../content/drills/supervised.txt?raw";
 
-const PRINCIPALS = [
-  {
-    who: "A person",
-    cred: "password → session, or a personal token ypt_…",
-    door: "/admin · /observe",
-    can: "What their role on each project holds: chairman, co-chair or observer. An instance admin runs the box and decides nothing on a project it does not chair.",
-  },
-  {
-    who: "Claude, via MCP",
-    cred: "its own scoped token ymt_…, never its person's",
-    door: "/mcp",
-    can: "Only its scopes, only on its person's projects. Nothing irreversible in one call. Every write stamped “via mcp” forever.",
-  },
-  {
-    who: "An agent run",
-    cred: "a per-run token yrt_…, one run, one agent",
-    door: "/agent/*",
-    can: "Only its own project, only for the life of the run. Every rule is a refusal on this surface, and past five refusals the token is revoked.",
-  },
-  {
-    who: "Everything an agent reads",
-    cred: "nothing",
-    door: "—",
-    can: "Web pages, documents, Slack, another agent's output. All of it is input, none of it is trusted — and it will try.",
-    warn: true,
-  },
+const WHO = [
+  { door: "/admin", k: "You", v: "Sign in with a password. Each project has a chair, co-chairs and observers." },
+  { door: "/mcp", k: "Claude", v: "Its own scoped key. Never your login. Every write is marked as Claude's." },
+  { door: "/agent/*", k: "An agent", v: "A key that lives for one run. Too many refusals and it's revoked." },
+  { door: "—", k: "Everything agents read", v: "Web pages, docs, other agents' output. Treated as data, never as orders.", warm: true },
 ];
 
-const PLATFORM = [
-  ["Verifier", "runs command tests in a sandbox, fetches and hashes external evidence, and is the only writer of “met”"],
-  ["Janitor", "re-projects the date every tick, opens reviews at zero tokens, rolls cycles, fires stand-downs and expiries"],
-  ["Dispatcher", "decides who wakes and why, under the hourly, daily and pair brakes"],
-  ["Runner", "leases a run, resolves the seat, starts a fresh container, meters every call"],
-];
-
-const LIFECYCLE = [
-  {
-    k: "Describe it",
-    v: "Write a paragraph. The Founder replies with a whole project — goal prose, shape, roster, the few rules it can defend — then says what it assumed, what it added that you never asked for, and what it still needs to know.",
-    link: ["/docs/features/#18-the-founding-conversation", "The founding conversation"],
-  },
-  {
-    k: "Get argued with",
-    v: "The draft is graded against the ten elements a goal has to contain. Five are load-bearing — a finish line with the record that settles it, the standard it is judged against, anti-metrics, a quality bar, and what is owed if it fails. Missing one is “not ready”.",
-    link: ["/docs/goal-grammar/", "The goal grammar"],
-  },
-  {
-    k: "Rehearse it for $0",
-    v: "The whole project runs on scripted agents against the real policy engine: where it stalls, what it costs, which walls it hits, and how many times it will stop and wait for you.",
-    link: ["#dial", "Two real drill reports, below"],
-  },
-  {
-    k: "Hire it",
-    v: "A CEO, the teams, a budget, a credential to pay with, a delivery date and a boardroom channel. From here it runs without you and tells you what happened.",
-    link: ["/docs/creating-a-project/", "Creating a project"],
-  },
-  {
-    k: "The plan gate",
-    v: "A Deliver or Operate project starts owing a plan. Until requirements exist, are staged, are estimated and fit the money, no work may be created. The gate is arithmetic in the server, not a judgement.",
-    link: ["/docs/features/#2-work-that-has-a-terminus", "Work that has a terminus"],
-  },
-  {
-    k: "The board",
-    v: "Only the CEO creates top-level work, and every task must serve a requirement and carry a success test that can actually fail. Employees file suggestions. One claim at a time, a queue ceiling, one level of subtasks.",
-    link: ["/docs/features/#5-work-that-cant-be-invented", "Work that can't be invented"],
-  },
-  {
-    k: "Proof",
-    v: "A command test is run by the platform in a sandbox, not by the agent that wants it to pass. A URL is fetched, hashed and snapshotted server-side. Nothing but the platform writes “met”, and a random sample of closes is dealt to you.",
-    link: ["/docs/features/#6-done-means-verified", "“Done” means verified"],
-  },
-  {
-    k: "The rhythm",
-    v: "The date re-projects itself every tick from measured pace. When it lands past the promise, new scope freezes. A review opens on schedule at zero tokens, with six levers for you. Operate projects restart on a rhythm and read their last three cycles verbatim.",
-    link: ["/docs/features/#3-a-delivery-date-the-project-cannot-quietly-break", "The commitment"],
-  },
+const STEPS = [
+  ["Describe", "Write a paragraph. yaaf drafts the goal, team, budget and rules."],
+  ["Review", "The goal is graded against ten things it needs. Missing a key one means not ready."],
+  ["Rehearse", "Run the whole project free on scripted agents. See where it breaks."],
+  ["Hire", "Create it for real: a CEO, teams, a budget and a deadline."],
+  ["Plan", "No work starts until the plan is staged, estimated and fits the budget."],
+  ["Work", "Every task must serve a goal and carry a test that can fail."],
+  ["Prove", "The platform runs the tests and checks the evidence. Only it marks work done."],
+  ["Keep pace", "The date re-projects itself. If it slips, new scope freezes."],
 ];
 
 const RUN = [
-  { k: "A reason to wake", v: "An assignment, a message from you, a schedule, the CEO's heartbeat. Agent chatter is batched; only the chairman's word wakes an agent on the spot. Idle heartbeats on an empty board are suppressed rather than billed.", brake: "6 wakes / agent / hour · 15 runs / project / hour · pair breaker at 10 messages" },
-  { k: "The lease", v: "The seat resolves: model → provider → harness → credential. Seven rules about what a seat can run on are checked at every door it came through, and again here as a backstop.", brake: "R1–R7, read from the registries" },
-  { k: "A fresh container", v: "No privileges, CPU and memory caps, the project workspace mounted, the role's secrets on a tmpfs outside it, and a token that is valid for this run and nothing else.", brake: "dies when the run does" },
-  { k: "The context pack", v: "The goal, the plan, its own task, its notices — and, for the CEO, every rule you changed since it last looked, with your reason. Agents are told when the chairman moves a value; they cannot move one.", brake: "the constitution is not agent-writable" },
-  { k: "The loop", v: "The harness drives the model. Usage streams in as it is spent; the result is checkpointed after every event, so a killed run is metered rather than free. The governor holds the per-run cap across resumes.", brake: "$2 per run by default, stopped at the line" },
-  { k: "Every act is a request", v: "Claiming, closing, posting, buying, remembering: all of it is a call to /agent/*, and every rule is an answer there. A refusal names the rule and what to say instead.", brake: "5 refusals and the token is revoked" },
-  { k: "The record", v: "The run, its cost, its trace, its refusals and the exact context it was sent land in Postgres. Spend is checked against the plan and the wall; the CEO-judgment metric moves when its claims survive verification, or don't.", brake: "every message, run, dollar, decision and refusal" },
+  ["Wake", "An assignment, a message from you, a schedule or the CEO's heartbeat.", "6 wakes per agent per hour"],
+  ["Lease", "yaaf picks the model, provider and harness for the seat, and checks it can pay.", "7 seat rules"],
+  ["Sandbox", "A fresh container with only this role's secrets and a one-run key.", "Gone when the run ends"],
+  ["Brief", "The goal, the plan, the task and any rule changes you made.", "Agents can't change rules"],
+  ["Work", "The model works. Every call is metered as it happens.", "$2 per run by default"],
+  ["Act", "Every action is an API call. Breaking a rule returns a refusal.", "Key revoked past 5 refusals"],
+  ["Record", "Cost, trace, refusals and the exact context are saved.", "Everything is kept"],
 ];
 
 const SWITCHES = [
-  ["plan_authority", "Proposed requirements wait for your click.", "The CEO accepts its own proposals; the plan gate runs the same arithmetic."],
-  ["scope_authority", "Cut, reopen, restage, reword are yours.", "The CEO wields them itself, on the record, reversibly."],
-  ["commitment_authority", "A proposed date waits for your signature.", "Proposing adopts the platform's own projection — never a date the CEO picked."],
-  ["verdict_policy", "Closes no script can check park on your desk.", "The CEO judges and keeps going; every self-judged close is disclosed in full."],
-  ["capability_authority", "Credential grants are yours.", "The CEO re-scopes credentials it already holds across its own team."],
-];
-
-const NEVER = [
-  "The platform verifies everything it can verify, and nothing unverifiable is quietly trusted.",
-  "A promise that stops holding still freezes new scope.",
-  "Money is metered and walled; the real-world spend envelope has no approval that overrides it.",
-  "No agent route writes a rule. Amendments carry your reason and are disclosed to the CEO.",
-  "Captchas and 2FA go to a human, always.",
-  "Pause, stop, veto, amend, reopen and audit stay yours at every setting.",
+  ["Accept the plan", "You", "The CEO"],
+  ["Change scope", "You", "The CEO, on the record"],
+  ["Set the deadline", "You sign it", "The platform's projection"],
+  ["Judge uncheckable work", "You", "The CEO, and you see every call"],
+  ["Grant credentials", "You", "The CEO, within what it already has"],
 ];
 
 const MONEY = [
-  { k: "The budget is a plan", v: "Sized by how much the project matters. The CEO is warned at 80%. Crossing it records an overrun: the platform writes the facts from the ledger, the CEO writes why, you decide whether the number was wrong or the work was. It stops nothing." },
-  { k: "The wall is a separate number", v: "Budget × <code>hard_stop_multiple</code>, three by default. There the project pauses itself, live runs are revoked and the queue is purged. They used to be one number, and three CEOs on three projects refused money they were offered, because going over was fatal." },
-  { k: "One project, one meter", v: "A project meters in dollars (API keys) or tokens (subscriptions), never both, so one cap can stop it. Seats on two providers draw on the same meter, and the receipt says which spent what." },
-  { k: "Every run is priced", v: "Killed and timed-out ones included, cache reads and writes included. On yaaf's own loop over the Anthropic API each call is priced as it is billed, and a call whose prompt alone would cross the per-run cap is abandoned before it writes a word." },
-  { k: "Money in the world has its own wall", v: "Purchases and services draw on an external envelope enforced in every billing mode. A single purchase over the line needs you even below the approval threshold, and crash-retries can never buy twice." },
-  { k: "A receipt, not a claim", v: "<code>yaaf receipt</code> prints the project's life in two columns: metered spend on one side, and on the other only what the platform itself verified. No agent-written text, so it is safe to paste anywhere." },
-];
-
-const TENSES = [
-  { tense: "Past", k: "The briefing", v: "What happened while you were away, composed from the record at zero tokens — so it still arrives on a project that is paused, broke or idle, the three mornings you most need to hear something. In your inbox daily if you want it." },
-  { tense: "Present", k: "The desk and the inbox", v: "Only what needs you. Alarms always interrupt; actions interrupt up to five a day; a decision you delegated is never mailed at all. In one project's record, that was two lines in a briefing instead of forty-six emails." },
-  { tense: "Future", k: "The agenda", v: "A fourteen-day strip: wakes, the review, the cycle roll, kill dates, expiries, the budget reset, and the promised date with the platform's projection beside it. It explains its own blanks." },
+  ["A budget is a plan", "Warned at 80%. Going over means explaining why, not stopping."],
+  ["A wall stops runaways", "At 3× the budget by default, the project pauses itself."],
+  ["Every run is metered", "Including failed and killed runs."],
+  ["One meter per project", "Mix providers freely. One budget covers all of them."],
+  ["Real-world spending is separate", "Purchases have their own limit. No approval overrides it."],
+  ["A receipt at the end", "What it cost, next to what the platform verified."],
 ];
 ---
-<BaseLayout
-  title="How it works"
-  description="How yaaf works: four principals and one policy engine, the path from a paragraph to a running project, the life of a single agent run, the autonomy dial, the money, and what contains an agent."
->
+<BaseLayout title="How it works" description="How yaaf works: who can do what, the steps from a paragraph to a running team, one agent run, the autonomy dial, money and containment.">
   <section class="page-hero">
-    <div class="blueprint bp" aria-hidden="true"></div>
     <div class="shell">
       <p class="eyebrow">How it works</p>
-      <h1>The rules live in the server. Everything else is a seat.</h1>
-      <p class="lede">
-        yaaf is a control plane that agents can reach only through an authenticated API,
-        on a token that lives as long as one run. Every rule is an HTTP refusal or an
-        automatic state change — so verification, the budget, the date and the record
-        don't depend on the agent agreeing to them. <strong>An agent can't be argued out
-        of a rule it never held.</strong>
-      </p>
+      <h1>The server makes the rules. Agents follow them.</h1>
+      <p class="lede">Agents can only act through yaaf's API. Every rule is a refusal they can't talk their way past.</p>
       <nav class="toc" aria-label="On this page">
-        <a href="#principals">Four principals</a>
-        <a href="#lifecycle">Paragraph to payroll</a>
-        <a href="#run">The life of a run</a>
-        <a href="#dial">The autonomy dial</a>
-        <a href="#money">The money</a>
-        <a href="#tenses">Three tenses</a>
-        <a href="#containment">Containment</a>
-        <a href="#stack">What you run</a>
+        <a href="#who">Who can do what</a>
+        <a href="#steps">The steps</a>
+        <a href="#run">One run</a>
+        <a href="#dial">Autonomy</a>
+        <a href="#money">Money</a>
+        <a href="#safety">Safety</a>
       </nav>
     </div>
   </section>
 
-  <!-- ============ PRINCIPALS ============ -->
-  <Section id="principals" eyebrow="The trust boundary" title="Four principals, and they are not equal."
-    lede="Every request to yaaf is made by exactly one of these, on a credential that names it. The fourth row is the one the design is about.">
-    <div class="arch" role="img" aria-label="Diagram: four principals reach three doors, all of which pass through one policy engine into one record. The platform's own processes write what agents cannot.">
-      <div class="lanes">
-        {PRINCIPALS.map((p) => (
-          <div class:list={["lane", { warn: p.warn }]}>
-            <p class="eyebrow">{p.door}</p>
-            <h3>{p.who}</h3>
-            <p class="cred">{p.cred}</p>
-            <p class="can">{p.can}</p>
-          </div>
-        ))}
-      </div>
-      <div class="flow" aria-hidden="true"><span></span><span></span><span></span><span class="x"></span></div>
-      <div class="engine">
-        <div>
-          <p class="eyebrow">The policy engine</p>
-          <p class="big">Every rule is a 4xx or an automatic state change.</p>
-          <p class="sm">Queue and subtask ceilings · the plan gate · stages · success tests · one claim at a time · evidence floors and droughts · the commitment freeze · budgets and walls · loop brakes · reporting cadence · memory caps · who may decide what. About two hundred refusal sites, each with a test that attacks it over HTTP.</p>
+  <Section id="who" eyebrow="Who can do what" title="Four kinds of caller. One set of rules.">
+    <div class="cells">
+      {WHO.map((w) => (
+        <div class:list={["cell", { warm: w.warm }]}>
+          <span class="eyebrow">{w.door}</span>
+          <h3>{w.k}</h3>
+          <p>{w.v}</p>
         </div>
-        <div class="plat">
-          <p class="eyebrow">The platform's own hands</p>
-          <ul>
-            {PLATFORM.map(([k, v]) => <li><strong>{k}</strong> — {v}</li>)}
-          </ul>
-        </div>
+      ))}
+      <div class="cell span4 engine">
+        <span class="eyebrow">The policy engine</span>
+        <h3>Every rule is a refusal or an automatic change.</h3>
+        <p>Around two hundred of them, each with a test that attacks it over HTTP.</p>
       </div>
-      <div class="flow one" aria-hidden="true"><span></span></div>
-      <div class="record">
-        <p class="eyebrow">The record · Postgres</p>
-        <p>Every message, task transition, run, dollar, decision, amendment and refusal — and the exact context each run was sent.</p>
+      <div class="cell span4">
+        <span class="eyebrow">The record</span>
+        <p>Every message, run, dollar, decision and refusal, stored in Postgres.</p>
       </div>
     </div>
-    <p class="note">
-      The table is <a href="/docs/security/">the security model</a>'s, and the people half of it
-      is <a href="/docs/auth/">People</a>: every human route declares the authority it needs, and a
-      test walks the live app and fails on any that doesn't.
-    </p>
   </Section>
 
-  <!-- ============ LIFECYCLE ============ -->
-  <Section id="lifecycle" grid={true} eyebrow="From a paragraph to a payroll" title="Eight steps, and the first three cost nothing."
-    lede="The riskiest moment in this product is the one before the first real run: you write a goal, hire a crew, hand over a key and go to bed. So the first half of the lifecycle exists to make that moment survivable.">
-    <ol class="life">
-      {LIFECYCLE.map((s, i) => (
-        <li>
-          <span class="n">{String(i + 1).padStart(2, "0")}</span>
-          <div>
-            <h3>{s.k}</h3>
-            <p>{s.v}</p>
-            <a href={s.link[0]}>{s.link[1]} →</a>
-          </div>
-        </li>
+  <Section id="steps" eyebrow="The steps" title="From a paragraph to a working team." lede="The first three steps are free.">
+    <div class="cells">
+      {STEPS.map(([k, v], i) => (
+        <div class:list={["cell", { free: i < 3 }]}>
+          <span class="eyebrow">{String(i + 1).padStart(2, "0")}{i < 3 && " · free"}</span>
+          <h3>{k}</h3>
+          <p>{v}</p>
+        </div>
       ))}
-    </ol>
+    </div>
   </Section>
 
-  <!-- ============ RUN ============ -->
-  <Section id="run" eyebrow="One run, start to finish" title="The life of a run."
-    lede="A run is one agent, woken for one reason, in one container, for as long as it takes to do one thing. This is every stage it passes through and the brake that sits on each.">
-    <ol class="run">
-      {RUN.map((s, i) => (
-        <li>
-          <div class="rn"><span>{i + 1}</span></div>
-          <div class="rb">
-            <h3>{s.k}</h3>
-            <p>{s.v}</p>
-            <p class="brake">{s.brake}</p>
-          </div>
-        </li>
-      ))}
-    </ol>
-    <p class="note">
-      The harness in step five can be the Claude Agent SDK, the Claude, Codex, Gemini or OpenCode
-      CLI, or yaaf's own loop on an API. It decides how the model is driven and never what the
-      model may do. <a href="/runtimes/">Runtimes →</a>
-    </p>
-  </Section>
-
-  <!-- ============ DIAL ============ -->
-  <Section id="dial" grid={true} eyebrow="The autonomy dial" title="Authority is configuration. Integrity is structure."
-    lede="Who accepts scope, who signs the date, who judges a close no script can check: five switches in the constitution, moved whenever you like. What the platform checks does not move at any setting. An autonomous CEO is not a less-audited CEO; it is a CEO with more buttons of its own.">
+  <Section id="run" eyebrow="One run" title="What happens when an agent wakes up.">
     <div class="kit-table stack">
       <table>
-        <thead><tr><th>Switch</th><th>Supervised · you hold it</th><th class="me">Autonomous · the CEO holds it</th></tr></thead>
+        <thead><tr><th>Step</th><th>What happens</th><th>Limit</th></tr></thead>
         <tbody>
-          {SWITCHES.map(([k, a, b]) => (
-            <tr><th scope="row"><code>{k}</code></th><td data-label="Supervised">{a}</td><td class="me" data-label="Autonomous">{b}</td></tr>
+          {RUN.map(([k, v, l], i) => (
+            <tr>
+              <th scope="row"><span class="n">{i + 1}</span>{k}</th>
+              <td data-label="What happens">{v}</td>
+              <td class="mono" data-label="Limit">{l}</td>
+            </tr>
           ))}
         </tbody>
       </table>
     </div>
-
-    <p class="drill-lede">
-      What that difference costs you is a number, and the fire drill prints it. Below is the same
-      crew — example 06, a build team and a red team that can block — rehearsed twice by the real{" "}
-      <code>yaaf rehearse</code>, once as it ships and once with the five switches handed back to you.
-    </p>
-    <div class="drills">
-      <Drill report={autonomous} only={["The walk", "It never", "It stopped"]} label="Autonomous · as shipped" />
-      <Drill report={supervised} only={["It never", "It stopped"]} label="Supervised · five switches to chairman"
-        note="Every one of those is a morning the project is idle until you open the app. Neither setting changes a single check the platform makes." />
-    </div>
-
-    <div class="tiles c2 never">
-      <div class="tile hi">
-        <h3>What never moves, at any setting</h3>
-        <ul>{NEVER.map((n) => <li>{n}</li>)}</ul>
-      </div>
-      <div class="tile">
-        <h3>A granted authority always has a verb behind it</h3>
-        <p>
-          A fully autonomous project whose date slipped once had no honest move left but to put the
-          decision back on its chairman's desk. Now, where the dial grants the date, the CEO can reset a
-          promise that has stopped holding — to the platform's own projection, never to a date it chose,
-          with a running count you can see. And an approval for a decision you already delegated is a
-          403 that names the verb to use instead.
-        </p>
-        <a class="more" href="/docs/autonomy/">The autonomy doc →</a>
-      </div>
-    </div>
   </Section>
 
-  <!-- ============ MONEY ============ -->
-  <Section id="money" eyebrow="The money" title="A budget you can plan with, and a wall you can't walk past."
-    lede="You are not trusting an agent to be sensible about money. Every number below is enforced by the server, and the CEO cannot write any of them.">
-    <div class="tiles">
-      {MONEY.map((m) => (
-        <div class="tile rule">
-          <h3>{m.k}</h3>
-          <p set:html={m.v} />
+  <Section id="dial" eyebrow="Autonomy" title="You choose how much to decide."
+    lede="Five switches decide who holds each call. The checks never change.">
+    <div class="kit-table stack">
+      <table>
+        <thead><tr><th>Decision</th><th>Supervised</th><th class="me">Autonomous</th></tr></thead>
+        <tbody>
+          {SWITCHES.map(([k, a, b]) => (
+            <tr><th scope="row">{k}</th><td data-label="Supervised">{a}</td><td class="me" data-label="Autonomous">{b}</td></tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <div class="cells c2 waits">
+      <div class="cell"><p class="num">0</p><p>Times it waited for you, <strong>autonomous</strong></p></div>
+      <div class="cell warm"><p class="num">7</p><p>Times it waited for you, <strong>supervised</strong></p></div>
+    </div>
+    <Drill report={supervised} only={["It stopped"]} label="Supervised · real output" />
+    <p class="note">Same team, rehearsed twice. Spending over your limit, legal questions and anything only a human can do always come to you. <a href="/docs/autonomy/">Autonomy docs →</a></p>
+  </Section>
+
+  <Section id="money" eyebrow="Money" title="A budget you plan with. A wall you can't pass.">
+    <div class="cells c3">
+      {MONEY.map(([k, v]) => (
+        <div class="cell">
+          <h3>{k}</h3>
+          <p>{v}</p>
         </div>
       ))}
     </div>
-    <p class="note">Every default and what it does: <a href="/docs/governance/#budgets">Governance → Budgets</a>.</p>
+    <p class="note"><a href="/docs/governance/#budgets">Every limit and its default →</a></p>
   </Section>
 
-  <!-- ============ TENSES ============ -->
-  <Section id="tenses" grid={true} eyebrow="Coming back after a week" title="Three tenses, so nothing has to be reconstructed."
-    lede="A project that runs while you are away owes you three different answers: what happened, what needs you, and what it is about to do. Each is its own surface, because a narrative laid on top of a status screen just restates the screen.">
-    <div class="tiles">
-      {TENSES.map((t) => (
-        <div class="tile">
-          <span class="eyebrow">{t.tense}</span>
-          <h3>{t.k}</h3>
-          <p>{t.v}</p>
-        </div>
-      ))}
-    </div>
-  </Section>
-
-  <!-- ============ CONTAINMENT ============ -->
-  <Section id="containment" eyebrow="Containment" title="What contains an agent, and what doesn't."
-    lede="yaaf runs language models with credentials, a shell and a network, unattended, for weeks. That is the product, so the honest version of this section has two columns.">
-    <div class="tiles c2">
-      <div class="tile hi">
+  <Section id="safety" eyebrow="Safety" title="What contains an agent, and what doesn't.">
+    <div class="cells c2">
+      <div class="cell">
         <h3>Contains it</h3>
         <ul>
-          <li><strong>A fresh container per run</strong> — no privileges, CPU and memory caps, gone when the run ends.</li>
-          <li><strong>A role-scoped credential set</strong> — a role gets the secrets it declares and nothing else, on a tmpfs outside the workspace it commits from.</li>
-          <li><strong>A metered budget</strong> — at the wall the project pauses and live run tokens are revoked.</li>
-          <li><strong>An audited API</strong> — every act is a request on a per-run token, and every rule is a refusal there.</li>
+          <li>A fresh container per run, with no privileges</li>
+          <li>Only the secrets its role needs</li>
+          <li>A metered budget that pauses the project</li>
+          <li>An API where every rule is a refusal</li>
         </ul>
       </div>
-      <div class="tile hi-warm">
-        <h3>Does not contain it</h3>
+      <div class="cell warm">
+        <h3>Doesn't contain it</h3>
         <ul>
-          <li><strong>The network.</strong> There is no egress allowlist. One existed and was removed on purpose: a blocked request surfaced as an unlogged proxy 403 three layers from the agent that made it.</li>
-          <li><strong>A prompt.</strong> Agents are told that what they read is data, not instruction. That is a hint, and it is counted as a control nowhere in the design.</li>
-          <li>So: <strong>an injected agent can send what its role holds anywhere.</strong> Give a project its own credentials, prefer roles without a shell, and run it on a box you would not mind rebuilding.</li>
+          <li>The network. Agents can reach the internet.</li>
+          <li>Prompts. Telling an agent to behave is not a control.</li>
+          <li>So an agent tricked by a web page can leak what its role holds.</li>
         </ul>
       </div>
     </div>
-    <p class="note">No outside security review has happened yet, and the threat model says so on its first line. <a href="/docs/security/">The security model and its sharp edges →</a></p>
+    <p class="note">No outside security review yet. <a href="/docs/security/">Read the security model →</a></p>
   </Section>
 
-  <!-- ============ STACK ============ -->
-  <Section id="stack" grid={true} eyebrow="What you run" title="One box, Docker Compose, your own Postgres.">
-    <div class="tiles c4">
-      <div class="tile"><span class="eyebrow">api</span><h3>The control plane</h3><p>Python, FastAPI, SQLAlchemy and Alembic. The policy engine, the dashboard's API, the MCP server, and the dispatcher, janitor and verifier.</p></div>
-      <div class="tile"><span class="eyebrow">runner</span><h3>The runner</h3><p>Leases runs and starts sibling sandbox containers through the Docker socket, under <code>max_concurrent_runs</code>.</p></div>
-      <div class="tile"><span class="eyebrow">sandbox</span><h3>The sandbox image</h3><p>Node, Python with pandas, DuckDB and Playwright, Chromium for services with no API, and one pinned install line per harness.</p></div>
-      <div class="tile"><span class="eyebrow">db · web</span><h3>Postgres 16 and a React app</h3><p>The record, and the dashboard served under <code>/app</code>. SQLite runs the {manifest.tests.toLocaleString("en-US")}-test suite offline.</p></div>
+  <Section eyebrow="What you run" title="One machine. Docker. Postgres.">
+    <div class="cells">
+      <div class="cell"><span class="eyebrow">api</span><h3>Control plane</h3><p>Python and FastAPI. The rules, the dashboard API and the MCP server.</p></div>
+      <div class="cell"><span class="eyebrow">runner</span><h3>Runner</h3><p>Starts a sandbox container for each run.</p></div>
+      <div class="cell"><span class="eyebrow">sandbox</span><h3>Sandbox image</h3><p>Python, Node, Chromium and each agent harness.</p></div>
+      <div class="cell"><span class="eyebrow">db</span><h3>Postgres 16</h3><p>The record. Tests run on SQLite: {manifest.tests.toLocaleString("en-US")} of them.</p></div>
     </div>
-    <p class="note">
-      Deliberately not built: multi-tenant orgs, Kubernetes, a worker fleet and a model router. Agent runs
-      are I/O-bound on somebody else's inference, so account rate limits arrive long before one box runs
-      out. <a href="/docs/deployment/">Deployment →</a>
-    </p>
   </Section>
 </BaseLayout>
 
 <style>
-  /* ---------- the architecture diagram ---------- */
-  .arch { display: grid; gap: 0; }
-  .lanes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
-  .lane { background: var(--color-surface); border: 1px solid var(--color-line); border-radius: var(--radius-card); padding: 16px; }
-  .lane h3 { margin: 6px 0 0; font-size: 16px; font-weight: 640; }
-  .lane .cred { margin: 6px 0 0; font-family: var(--font-mono); font-size: 11px; color: var(--color-accent-hi); line-height: 1.5; }
-  .lane .can { margin: 10px 0 0; font-size: 13.5px; line-height: 1.6; color: var(--color-ink-2); }
-  .lane.warn { border-style: dashed; border-color: color-mix(in srgb, var(--color-accent-2) 55%, transparent); }
-  .lane.warn .cred { color: var(--color-accent-2); }
-
-  .flow { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; height: 34px; }
-  .flow span { position: relative; }
-  .flow span::before { content: ""; position: absolute; left: 50%; top: 0; bottom: 6px; width: 1px; background: var(--color-line); }
-  .flow span::after { content: ""; position: absolute; left: calc(50% - 4px); bottom: 2px; border: 4px solid transparent; border-top: 5px solid var(--color-muted); }
-  .flow span.x::before { background: repeating-linear-gradient(to bottom, var(--color-accent-2) 0 4px, transparent 4px 8px); opacity: 0.6; }
-  .flow span.x::after { border-top-color: var(--color-accent-2); }
-  .flow.one { grid-template-columns: 1fr; }
-
-  .engine {
-    display: grid;
-    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-    gap: 24px;
-    border: 1px solid color-mix(in srgb, var(--color-accent) 50%, transparent);
-    background: color-mix(in srgb, var(--color-accent) 9%, var(--color-surface));
-    border-radius: var(--radius-card);
-    padding: 20px 22px;
-  }
-  .engine .big { margin: 8px 0 0; font-size: 1.2rem; font-weight: 620; letter-spacing: -0.015em; line-height: 1.35; }
-  .engine .sm { margin: 10px 0 0; font-size: 13.5px; line-height: 1.65; color: var(--color-ink-2); }
-  .plat ul { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 8px; }
-  .plat li { font-size: 13.5px; line-height: 1.55; color: var(--color-ink-2); }
-  .plat strong { color: var(--color-ink); }
-  .record { background: var(--color-surface); border: 1px solid var(--color-line); border-radius: var(--radius-card); padding: 14px 18px; }
-  .record p:last-child { margin: 6px 0 0; font-size: 14px; color: var(--color-ink-2); }
-
-  /* ---------- lifecycle ---------- */
-  .life { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; counter-reset: none; }
-  .life li { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 4px; background: var(--color-surface); border: 1px solid var(--color-line); border-radius: var(--radius-card); padding: 18px 18px 16px 14px; }
-  .life li:nth-child(-n+3) { border-color: color-mix(in srgb, var(--color-good) 40%, transparent); }
-  .life .n { font-family: var(--font-mono); font-size: 12px; color: var(--color-accent-hi); padding-top: 2px; }
-  .life li:nth-child(-n+3) .n { color: var(--color-good); }
-  .life h3 { margin: 0; font-size: 15.5px; font-weight: 640; }
-  .life p { margin: 7px 0 0; font-size: 14px; line-height: 1.65; color: var(--color-ink-2); }
-  .life a { display: inline-block; margin-top: 9px; font-size: 13px; color: var(--color-accent-hi); text-decoration: none; }
-  .life a:hover { text-decoration: underline; text-underline-offset: 3px; }
-
-  /* ---------- the run ---------- */
-  .run { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; max-width: 880px; }
-  .run li { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 16px; }
-  .rn { position: relative; display: flex; justify-content: center; }
-  .rn::before { content: ""; position: absolute; top: 0; bottom: 0; width: 1px; background: var(--color-line); }
-  .run li:first-child .rn::before { top: 14px; }
-  .run li:last-child .rn::before { bottom: calc(100% - 14px); }
-  .rn span {
-    position: relative;
-    width: 28px; height: 28px;
-    display: grid; place-items: center;
-    border-radius: 50%;
-    background: var(--color-page);
-    border: 1px solid color-mix(in srgb, var(--color-accent) 60%, transparent);
-    font-family: var(--font-mono); font-size: 12px; color: var(--color-accent-hi);
-  }
-  .rb { padding-bottom: 22px; }
-  .rb h3 { margin: 3px 0 0; font-size: 15.5px; font-weight: 640; }
-  .rb p { margin: 6px 0 0; font-size: 14px; line-height: 1.65; color: var(--color-ink-2); max-width: 70ch; }
-  .rb .brake { font-family: var(--font-mono); font-size: 11.5px; color: var(--color-warning); margin-top: 8px; }
-
-  /* ---------- dial ---------- */
-  .drill-lede { margin: 34px 0 16px; font-size: 15px; line-height: 1.65; color: var(--color-ink-2); max-width: 72ch; }
-  .drill-lede code { font-family: var(--font-mono); font-size: 0.85em; }
-  .drills { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 12px; align-items: start; }
-  .never { margin-top: 24px; }
-
-  @media (max-width: 1000px) {
-    .lanes, .flow { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .flow span:nth-child(n+3) { display: none; }
-    .engine, .drills { grid-template-columns: minmax(0, 1fr); }
-  }
-  @media (max-width: 760px) {
-    .life { grid-template-columns: minmax(0, 1fr); }
-  }
-  @media (max-width: 560px) {
-    .lanes { grid-template-columns: minmax(0, 1fr); }
-    .flow { grid-template-columns: 1fr; }
-    .flow span:nth-child(n+2) { display: none; }
-  }
+  .engine { background: var(--color-surface) !important; }
+  .engine h3 { font-size: 1.4rem !important; }
+  .free .eyebrow { color: var(--color-good); }
+  .n { display: inline-block; width: 1.6rem; font-family: var(--font-mono); font-size: 12px; color: var(--color-muted); font-weight: 400; }
+  .waits { margin-top: 24px; }
+  .waits + :global(.drill) { border-top: 0; }
 </style>

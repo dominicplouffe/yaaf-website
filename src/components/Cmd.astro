@@ -1,0 +1,54 @@
+---
+/** One shell command, with a button that copies it. */
+interface Props { cmd: string; class?: string }
+const { cmd, class: cls = "" } = Astro.props;
+---
+<div class:list={["cmd", cls]}>
+  <code><span class="p" aria-hidden="true">$</span>{cmd}</code>
+  <button type="button" data-copy={cmd} aria-label="Copy command">
+    <svg class="i-copy" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" /><path d="M10.5 5.5v-3h-8v8h3" /></svg>
+    <svg class="i-ok" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 8.5l3 3 7-7" /></svg>
+  </button>
+</div>
+
+<style>
+  .cmd {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: 1px solid var(--color-line-strong);
+    background: var(--color-surface);
+    padding: 0.55rem 0.55rem 0.55rem 1rem;
+    max-width: 100%;
+    min-width: 0;
+  }
+  code {
+    flex: 1;
+    min-width: 0;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--color-ink);
+    white-space: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  code::-webkit-scrollbar { display: none; }
+  .p { color: var(--color-muted); margin-right: 0.6rem; user-select: none; }
+  button {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    background: none;
+    border: 0;
+    color: var(--color-muted);
+    cursor: pointer;
+    transition: color 0.2s, background 0.2s;
+  }
+  button:hover { color: var(--color-ink); background: var(--color-surface-2); }
+  svg { width: 16px; height: 16px; }
+  .i-ok { display: none; color: var(--color-good); }
+  button[data-done] .i-copy { display: none; }
+  button[data-done] .i-ok { display: block; }
+</style>

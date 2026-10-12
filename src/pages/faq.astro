@@ -1,190 +1,55 @@
 ---
-import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { REPO_URL } from "../site.config.mjs";
 import manifest from "../content/manifest.json";
 
-const roles = await getCollection("roles");
-const crews = await getCollection("crews");
-const tests = manifest.tests.toLocaleString("en-US");
 const h = manifest.history;
-const firstCommit = new Date(h.firstCommit).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" });
+const firstCommit = new Date(h.firstCommit).toLocaleDateString("en-US", { month: "long", year: "numeric", timeZone: "UTC" });
 
 interface QA { id: string; q: string; a: string }
-interface Group { title: string; items: QA[] }
-
-const GROUPS: Group[] = [
+const GROUPS: { title: string; items: QA[] }[] = [
   {
-    title: "What it is",
+    title: "Basics",
     items: [
-      {
-        id: "what",
-        q: "What is yaaf, in one sentence?",
-        a: `<p>An open-source, self-hosted platform that runs a crew of AI agents — a CEO, specialists and critics — on one goal for weeks, under rules the server enforces rather than rules written into a prompt. You are the chairman: the human the project answers to.</p>`,
-      },
-      {
-        id: "name",
-        q: "What does “yaaf” stand for?",
-        a: `<p>“Yet Another Agent Framework?” — and the answer is no. A framework composes agents. yaaf is the org chart, the boardroom and the accounting department <em>around</em> agents: who may do what, how “done” is checked, what it may spend, and the record of all of it.</p>`,
-      },
-      {
-        id: "hosted",
-        q: "Is there a hosted version? Can I pay for it?",
-        a: `<p>No. yaaf is an open-source project and only that: no hosted tier, no account to create, no paid plan, and no telemetry. You run it on your own box and pay your model provider directly, with your own key. The license is Apache-2.0.</p>`,
-      },
-      {
-        id: "who",
-        q: "Who is it for?",
-        a: `<p>Anyone handing off work that has to run unattended for weeks and be defensible afterwards: an ad account that gets a memo every Monday, a research desk that wakes before you do, a build-and-break cycle with a red team, a recurring report a client will read. <strong>Not</strong> for a task that finishes in one sitting while you watch — a good model with a good skill is better and cheaper there, and yaaf says so.</p>`,
-      },
-      {
-        id: "paperclip",
-        q: "How is it different from Paperclip?",
-        a: `<p>Both put an org chart around AI agents. Paperclip coordinates agents that run wherever they already run — “if it can receive a heartbeat, it's hired” — with tasks, budgets and configurable review stages, and it has far more adoption, adapters and plugins than yaaf. yaaf runs every agent inside its own sandbox, on its own token and meter, so the parts that make the work trustworthy — “met”, the bill, the date — are written by the platform rather than reported by the agent. <a href="/compare/#paperclip">The side-by-side, including where Paperclip is ahead →</a></p>`,
-      },
-      {
-        id: "frameworks",
-        q: "How is it different from LangGraph, CrewAI or AutoGen?",
-        a: `<p>Those are libraries for wiring agents into a flow: coordination as code, rules as prompts, “done” when the graph returns. yaaf is a server underneath that kind of work — the layer that refuses, meters and verifies. Use a framework while you are building the flow; reach for yaaf when it has to survive six weeks without you. <a href="/compare/#frameworks">More →</a></p>`,
-      },
-      {
-        id: "skill",
-        q: "Isn't this just a Claude skill?",
-        a: `<p>yaaf runs your skills — a role's skill list is an allowlist handed to its harness. A skill is a capability; yaaf decides which capability to point at what, checks it got done, pays for it from a capped budget and keeps the receipt. The difference isn't capability. It's governance and duration. Every one of the twelve <a href="/examples/">examples</a> answers “why not just a skill?” for itself.</p>`,
-      },
+      { id: "what", q: "What is yaaf?", a: "Open-source software that runs a team of AI agents on one goal for weeks. The server enforces the rules, not the prompt." },
+      { id: "hosted", q: "Is there a hosted version or a paid plan?", a: "No. It's open source and self-hosted. You pay your model provider directly. No account, no telemetry." },
+      { id: "who", q: "Who is it for?", a: "Anyone handing off work that runs unattended for weeks and must be checked. Not for quick tasks; use a skill for those." },
+      { id: "paperclip", q: "How is it different from Paperclip?", a: `Paperclip coordinates agents wherever they run. yaaf runs them itself, so only the platform marks work done. <a href="/compare/#paperclip">Full comparison →</a>` },
     ],
   },
   {
     title: "How it works",
     items: [
-      {
-        id: "server",
-        q: "What does “the rules live in the server” mean in practice?",
-        a: `<p>Agents can act only through an authenticated API, <code>/agent/*</code>, on a token that lives as long as one run. Every rule is an answer on that API: a refusal or an automatic state change. This is a real one, from a fire drill:</p><pre>409  R-02 is in stage 2 and stage 1 is still open. The chairman owns
-     this order. Finish or cut what is left in stage 1 and this opens
-     by itself.</pre><p>An agent can't talk its way past a 409, and rephrasing doesn't help: past five refusals in one run, its token is revoked. <a href="/how-it-works/#run">The life of a run →</a></p>`,
-      },
-      {
-        id: "done",
-        q: "How does yaaf know work is actually done?",
-        a: `<p>It checks, and nothing else is allowed to say so. Every task carries a success test that can fail: a <em>command</em>, which the platform runs itself in a sandbox, or an <em>observable</em> a stranger could check. External evidence is fetched server-side, hashed, snapshotted and checked against domains the project controls. Signed webhooks count because agents can't forge them. There is no agent verb that marks a requirement met — only the platform writes it.</p>`,
-      },
-      {
-        id: "uncheckable",
-        q: "What about work no script can check?",
-        a: `<p>It never disappears quietly. On a supervised project it parks on your desk for a verdict. On an autonomous one the CEO judges it and keeps going, and every self-judged close is disclosed to you in full. Either way, the platform deals a random sample of those closes — one in five by default — to you to spot-check, because AI reviewers approve nearly everything and you don't.</p>`,
-      },
-      {
-        id: "how-often",
-        q: "How often will it need me?",
-        a: `<p>That is a setting, and the fire drill turns it into a number. Five authority switches decide who accepts scope, signs the date, judges uncheckable closes and scopes credentials. The same crew rehearsed twice: as shipped (autonomous), it never had to wait for you; with the five switches handed back, it stopped and waited seven times. Spends over your threshold, legal questions and anything only a human can do reach you at every setting. <a href="/how-it-works/#dial">The dial, with both drill reports →</a></p>`,
-      },
-      {
-        id: "away",
-        q: "What do I see when I come back after a week?",
-        a: `<p>Three things, each its own surface. <strong>The briefing</strong>: what happened while you were away, composed from the record at zero tokens, so it arrives even when the project is paused or out of money — daily by email if you want it. <strong>The desk</strong>: only what needs you. <strong>The agenda</strong>: the next fourteen days, with the promised date beside the platform's projection.</p>`,
-      },
-      {
-        id: "runaway",
-        q: "What stops a runaway bill?",
-        a: `<p>Several walls, none of which the CEO can move. Every run is metered as it spends, killed ones included. A per-run governor stops a run at its cap. Wakes per agent per hour, runs per project per day and hour, and a pair breaker for two agents talking in circles brake the loops. The monthly budget is a plan the CEO must account for when it crosses; the wall — three times the plan by default — pauses the project and revokes live runs. Real-world purchases have a separate envelope no approval can override.</p>`,
-      },
-      {
-        id: "date",
-        q: "Can the CEO just move the deadline?",
-        a: `<p>No. The CEO proposes; the platform stamps the date from measured pace and re-projects it every tick. When the projection lands past the promise, new scope freezes and two honest exits remain: cut something, or move the date with a written reason. Where you have delegated the date, the CEO may reset it — but only to the platform's own projection, never to a date it picked, and every reset is counted where you can see it.</p>`,
-      },
+      { id: "done", q: "How does it know work is really done?", a: "Every task has a test. The platform runs it, or fetches and checks the evidence. Agents can't mark anything done." },
+      { id: "how-often", q: "How often will it need me?", a: `Your choice. Five switches decide what you approve. An example team needed you 0 times, or 7 with approvals on. <a href="/how-it-works/#dial">See both →</a>` },
+      { id: "runaway", q: "What stops a runaway bill?", a: "Every run is metered live. Runs have a cap, loops are braked, and the project pauses at a hard limit." },
+      { id: "date", q: "Can the CEO move the deadline?", a: "No. The date comes from measured pace. If it slips, new work freezes until scope is cut or the date is reset." },
     ],
   },
   {
     title: "Models and cost",
     items: [
-      {
-        id: "models",
-        q: "Which models and providers does it support?",
-        a: `<p>${manifest.harnesses} harnesses and ${manifest.providers} providers: Anthropic through the Claude Agent SDK, the Claude Code CLI or yaaf's own loop on the API; OpenAI through the Codex CLI; Google through the Gemini CLI; and DeepSeek, OpenRouter, Moonshot (Kimi), Qwen, Mistral, xAI (Grok) or your own OpenAI-compatible server through yaaf's loop or OpenCode. Seats on one project can be on different vendors' models and still share one cap. <a href="/runtimes/">Runtimes →</a></p>`,
-      },
-      {
-        id: "subscription",
-        q: "Can I run it on my Claude subscription?",
-        a: `<p>The credential exists — yaaf meters a subscription in tokens and shows what Anthropic says is left on the plan — but Anthropic's consumer terms don't permit running fleets on a personal Claude subscription. Subscription mode is for single-user tinkering; use an API key for anything real. ChatGPT-plan and Google-login credentials work the same way for Codex and the Gemini CLI: check your provider's terms.</p>`,
-      },
-      {
-        id: "cost",
-        q: "How much does a project cost to run?",
-        a: `<p>Honestly: nobody has published a bill yet, including the maintainer, and the site won't invent one. The defaults are a $1,000 monthly plan, a wall at three times that, and $2 per run — all yours to set, and every example ships a much smaller cap. Before you spend anything, the fire drill tells you the <em>break-even</em>: what a run must cost for your plan to fit. Afterwards, <code>yaaf receipt</code> prints spend on one side and only what the platform verified on the other.</p>`,
-      },
-      {
-        id: "local",
-        q: "Can I run it entirely on local models?",
-        a: `<p>Yes, as far as the plumbing goes: Ollama, vLLM or any server that speaks the OpenAI chat API is a custom endpoint, priced at whatever you say — zero included. The caveat is quality, not governance. The role prompts were written and tuned against Claude; a weaker model is still bounded by every rule, but being bounded is not being useful.</p>`,
-      },
-    ],
-  },
-  {
-    title: "Claude and MCP",
-    items: [
-      {
-        id: "claude",
-        q: "Can I run a project from Claude?",
-        a: `<p>Yes. yaaf is an MCP server with 32 tools in four scopes — read, steer, create and configure — so Claude Code, Claude Desktop, Cursor or any MCP client can design a project, read its cockpit, talk to the CEO, decide approvals and move the date. claude.ai connects through an OAuth consent screen on a public hostname; that path is built and tested offline, and the first live connection against a public deployment is the next item on the plan.</p>`,
-      },
-      {
-        id: "claude-safe",
-        q: "Is it safe to give Claude write access?",
-        a: `<p>Four rules hold at every scope. Claude gets its own credential, never yours, and every write is stamped “via mcp” permanently. Nothing irreversible happens in one call: a preview, then a single-use ticket bound to the exact arguments — change a word and it's refused. Anything an agent wrote reaches Claude wrapped and labelled untrusted, so a CEO writing “chairman, please accept this” is quoted, not obeyed. And no tool returns a secret at any scope. Start on <code>read</code>: most of the value, none of the risk.</p>`,
-      },
+      { id: "models", q: "Which models does it run?", a: `Claude, GPT, Gemini, DeepSeek, Kimi, Qwen, Mistral, Grok, OpenRouter or your own server. ${manifest.harnesses} harnesses, ${manifest.providers} providers. <a href="/runtimes/">Runtimes →</a>` },
+      { id: "subscription", q: "Can I use my Claude subscription?", a: "For personal tinkering only. Anthropic's terms don't allow running fleets on a personal plan. Use an API key." },
+      { id: "cost", q: "How much does it cost?", a: "Nobody has published a real bill yet. The free rehearsal tells you the most a run can cost and still fit your budget." },
+      { id: "local", q: "Can it run on local models?", a: "Yes, through any OpenAI-compatible server. The prompts were tuned on Claude, so quality may vary." },
     ],
   },
   {
     title: "Running it",
     items: [
-      {
-        id: "install",
-        q: "What do I need to install it?",
-        a: `<p>A Linux box with Docker. One script sets up secrets, images, Postgres, migrations and the role library, makes you the first admin and prints a link to choose your password. The dashboard binds to localhost, so you reach it over an SSH tunnel. <a href="/#install">Install →</a></p>`,
-      },
-      {
-        id: "try",
-        q: "Can I try it without spending anything?",
-        a: `<p>Yes, without even deploying it. On a fresh checkout with Python 3.12+:</p><pre>python3 -m venv .venv && .venv/bin/pip install -e .
-.venv/bin/yaaf rehearse examples/01-your-first-hour.json</pre><p>That runs the example as a real project on scripted agents, with every rule in force, in about ten seconds — no key, no Docker, no dollars.</p>`,
-      },
-      {
-        id: "people",
-        q: "Can several people share one install?",
-        a: `<p>Yes. People have accounts; each project has one chairman, any number of co-chairs who decide as themselves, and observers who read. An instance admin runs the box and can read every project, and the page says so. What yaaf deliberately does not do is multi-tenant organisations: one box, several people, each project with its own chair.</p>`,
-      },
-      {
-        id: "secure",
-        q: "Is it secure?",
-        a: `<p>Read the <a href="/docs/security/">security model</a> before you decide; it starts with the answer. An agent runs in a fresh, unprivileged container with only its role's secrets and a per-run token, under a budget and an audited API. The network is <em>not</em> a control — there is no egress allowlist — so a prompt-injected agent can send what its role holds anywhere. No outside security review has happened yet. Report anything exploitable privately, through a GitHub security advisory.</p>`,
-      },
+      { id: "try", q: "Can I try it for free?", a: "Yes. Clone the repo, install it with pip and run <code>yaaf rehearse examples/01-your-first-hour.json</code>. No key, no Docker." },
+      { id: "install", q: "What do I need to install it?", a: `A Linux machine with Docker. One script does the rest. <a href="/#install">Install →</a>` },
+      { id: "claude", q: "Can I run it from Claude?", a: "Yes. yaaf is an MCP server. Claude Code, Claude Desktop and Cursor connect with a token. claude.ai needs a public address." },
+      { id: "secure", q: "Is it secure?", a: `Agents run in sandboxes with limited secrets, but they can reach the internet. No outside review yet. <a href="/docs/security/">Security model →</a>` },
     ],
   },
   {
     title: "The project",
     items: [
-      {
-        id: "mature",
-        q: "How mature is it?",
-        a: `<p>Pre-1.0 and moving fast. The first commit was ${firstCommit}; there are ${h.commits.toLocaleString("en-US")} commits across ${h.activeDays} days of work, ${tests} tests, ${roles.length} roles and ${crews.length} crews. What it does not have yet: a project anyone but the maintainer has run for a month, a published bill, or a security review by someone who did not write it. <a href="/docs/plan/">The plan</a> says which claims are load-bearing.</p>`,
-      },
-      {
-        id: "ai-built",
-        q: "Was it built with AI?",
-        a: `<p>Yes, in the open: about ${h.claudeShare}% of commits are co-authored with Claude Code. That is the method, not a disclaimer. The design is older — years of running teams, written down first — and the code is held to it by a suite that attacks every rule over HTTP the way an agent would.</p>`,
-      },
-      {
-        id: "contribute",
-        q: "How can I contribute?",
-        a: `<p>The most wanted contribution is breaking an invariant test. After that: more attacks, more chaos tests, more golden-eval scenarios, evidence connectors for new services, roles for a domain the library doesn't cover, and a Cursor CLI driver from someone who can run it. Every rule must ship with a test that attacks it. <a href="${REPO_URL}/blob/main/CONTRIBUTING.md" rel="noopener">CONTRIBUTING.md ↗</a></p>`,
-      },
-      {
-        id: "kill",
-        q: "What would make the maintainer stop?",
-        a: `<p>It is written down. If a CEO-plus-teams project doesn't beat a single agent under the same governance on a pre-registered rubric — blind-judged quality, verified external evidence, cost and wall-clock — the org layer is shelved, and yaaf continues as a governance harness for one agent. Solo mode exists so that comparison can be run, not argued.</p>`,
-      },
+      { id: "mature", q: "How mature is it?", a: `Pre-1.0. First commit ${firstCommit}. ${manifest.tests.toLocaleString("en-US")} tests. One maintainer.` },
+      { id: "ai-built", q: "Was it built with AI?", a: `Yes, openly, with Claude Code. About ${h.claudeShare}% of commits say so.` },
+      { id: "contribute", q: "How can I help?", a: `Try to break a rule. Every rule has a test, and a failing one is the best contribution. <a href="${REPO_URL}/blob/main/CONTRIBUTING.md" rel="noopener">Contributing →</a>` },
     ],
   },
 ];
@@ -199,57 +64,49 @@ const faqLd = {
     acceptedAnswer: { "@type": "Answer", text: strip(it.a) },
   })),
 };
-const count = GROUPS.reduce((n, g) => n + g.items.length, 0);
 ---
-<BaseLayout title="FAQ" description={`${count} straight answers about yaaf: what it is, how it differs from Paperclip and agent frameworks, how it verifies work, which models it runs, what it costs, how safe it is, and how mature it is.`}>
+<BaseLayout title="FAQ" description="Short answers about yaaf: what it is, how it differs from Paperclip, how it checks work, which models it runs, what it costs and how safe it is.">
   <script slot="head" type="application/ld+json" set:html={JSON.stringify(faqLd)} is:inline />
 
   <section class="page-hero">
-    <div class="blueprint bp" aria-hidden="true"></div>
     <div class="shell">
       <p class="eyebrow">FAQ</p>
-      <h1>Straight answers, including the unflattering ones.</h1>
-      <p class="lede">{count} questions people actually ask. Where the honest answer is “not yet” or “nobody knows”, that is the answer.</p>
-      <nav class="toc" aria-label="On this page">
-        {GROUPS.map((g) => <a href={`#${g.items[0].id}`}>{g.title}</a>)}
-      </nav>
+      <h1>Questions, answered.</h1>
+      <p class="lede">Short answers. Where the answer is “not yet”, we say so.</p>
     </div>
   </section>
 
-  <div class="shell faq">
+  <div class="shell">
     {GROUPS.map((g) => (
       <section class="grp">
         <h2 class="eyebrow">{g.title}</h2>
-        <div class="qs">
-          {g.items.map((it) => (
-            <article class="qa anchor" id={it.id}>
-              <h3><a href={`#${it.id}`}>{it.q}</a></h3>
-              <div class="a" set:html={it.a} />
-            </article>
-          ))}
-        </div>
+        {g.items.map((it) => (
+          <article class="qa anchor" id={it.id}>
+            <h3><a href={`#${it.id}`}>{it.q}</a></h3>
+            <p set:html={it.a} />
+          </article>
+        ))}
       </section>
     ))}
-    <p class="note">Something missing? <a href={`${REPO_URL}/issues`} rel="noopener">Ask it as an issue ↗</a> — a question asked twice belongs on this page.</p>
+    <p class="note more">Question not here? <a href={`${REPO_URL}/issues`} rel="noopener">Ask on GitHub →</a></p>
   </div>
 </BaseLayout>
 
 <style>
-  .faq { padding-block: 48px 20px; max-width: 920px; }
-  .grp + .grp { margin-top: 48px; }
-  .grp > h2 { margin: 0 0 14px; color: var(--color-accent-hi); }
-  .qs { border-top: 1px solid var(--color-line); }
-  .qa { padding: 22px 0; border-bottom: 1px solid var(--color-line); }
-  .qa h3 { margin: 0; font-size: 1.15rem; font-weight: 630; letter-spacing: -0.015em; line-height: 1.35; }
+  .grp { border-top: 1px solid var(--color-line); padding: 3rem 0 1rem; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .grp > h2 { grid-column: 1 / -1; margin: 0 0 1.5rem; padding-inline: var(--inset); }
+  .qa { grid-column: 1 / -1; display: grid; grid-template-columns: subgrid; padding-block: 1.4rem; border-top: 1px solid var(--color-line-2); }
+  .qa h3, .qa p { padding-inline: var(--inset); }
+  .qa h3 { grid-column: 1 / span 2; margin: 0; font-size: 1.25rem; line-height: 1.3; letter-spacing: -0.025em; }
   .qa h3 a { color: var(--color-ink); text-decoration: none; }
   .qa h3 a:hover { color: var(--color-accent-hi); }
-  .a { margin-top: 10px; max-width: 72ch; }
-  .a :global(p) { margin: 0; font-size: 15px; line-height: 1.7; color: var(--color-ink-2); }
-  .a :global(p + p), .a :global(pre + p), .a :global(p + pre) { margin-top: 10px; }
-  .a :global(strong), .a :global(em) { color: var(--color-ink); }
-  .a :global(em) { font-style: italic; }
-  .a :global(a) { color: var(--color-accent-hi); text-decoration: none; }
-  .a :global(a:hover) { text-decoration: underline; text-underline-offset: 3px; }
-  .a :global(code) { font-family: var(--font-mono); font-size: 0.85em; background: var(--color-surface-2); border: 1px solid var(--color-line); border-radius: 4px; padding: 0.08em 0.36em; }
-  .a :global(pre) { margin: 0; background: #0a0a0a; border: 1px solid var(--color-line); border-radius: var(--radius-card); padding: 12px 14px; overflow-x: auto; font-family: var(--font-mono); font-size: 12px; line-height: 1.7; color: var(--color-ink-2); }
+  .qa p { grid-column: 3 / span 2; margin: 0; font-size: 16px; line-height: 1.6; color: var(--color-ink-2); }
+  .qa p :global(a) { color: var(--color-accent-hi); text-decoration: none; white-space: nowrap; }
+  .qa p :global(a:hover) { text-decoration: underline; text-underline-offset: 3px; }
+  .qa p :global(code) { font-family: var(--font-mono); font-size: 0.85em; background: var(--color-surface-2); border: 1px solid var(--color-line); padding: 0.05em 0.35em; }
+  .more { padding-bottom: 5rem; }
+  @media (max-width: 900px) {
+    .qa h3, .qa p { grid-column: 1 / -1; }
+    .qa p { margin-top: 0.6rem; }
+  }
 </style>

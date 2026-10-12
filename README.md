@@ -66,15 +66,19 @@ Everything that is a decision rather than content is in **`src/site.config.mjs`*
 
 ## Design
 
-The palette, the 8px radius, the hairline borders and the mono uppercase
-eyebrows are lifted from the product's own cockpit CSS (`yaaf/web/src/styles.css`)
-so the site and the app read as one thing. Tokens live in an `@theme` block in
-`src/styles/global.css` — Tailwind 4 is CSS-first, there is no
-`tailwind.config.js`, and the Tailwind plugin is wired through Vite rather than
-the deprecated `@astrojs/tailwind` integration.
+Black, white and greys, with yaaf's blue and orange used sparingly. Sharp
+corners, hairlines instead of boxes, medium-weight type set tight. Five
+full-height lines split the page into quarters (`.page-lines` in `BaseLayout`), and
+content laid out with `.cells` lands on them.
 
-Fonts are self-hosted through `@fontsource-variable` — the site makes **no
-external requests at all**.
+The pieces worth knowing: `Section` (a hairline, an eyebrow, a big title, one
+short sentence), `.cells` (boxes that share borders), `Button` (a sharp
+rectangle whose fill rises on hover), `Cmd` (a command with a copy button) and
+`Drill` (real `yaaf rehearse` output). Tokens live in an `@theme` block in
+`src/styles/global.css`; Tailwind 4 is CSS-first and wired through Vite.
+
+Type is Geist and Geist Mono (OFL), self-hosted through `@fontsource-variable`.
+The site makes **no external requests at all**.
 
 ### Regenerating the social card
 
@@ -149,6 +153,9 @@ asset that is already gone.
 ---
 
 ## Writing for this site
+
+Short, plain English. One idea per sentence. If a sentence can lose words, it
+should. Long explanations belong in the docs, not on the marketing pages.
 
 Four rules, because they are why it doesn't read like every other landing page:
 

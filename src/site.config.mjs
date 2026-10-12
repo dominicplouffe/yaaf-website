@@ -24,8 +24,8 @@ export const SITE = {
   /** Used in <title> and og:site_name. */
   tagline: "Stop prompting. Start delegating.",
   description:
-    "yaaf is an open-source, self-hosted platform that runs a crew of AI agents for weeks — a CEO, specialists and critics, on Claude, GPT, Gemini, DeepSeek or your own server — under rules enforced in the server: work counts only when the platform verified it, the budget stops itself, and the delivery date is arithmetic. You are the chairman.",
-  themeColor: "#0d0d0d",
+    "yaaf is open-source, self-hosted software that runs a team of AI agents on one goal for weeks. The server checks their work, caps their spend and keeps the deadline honest.",
+  themeColor: "#000000",
 };
 
 export const NAV = [

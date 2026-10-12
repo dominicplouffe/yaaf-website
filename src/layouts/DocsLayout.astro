@@ -22,7 +22,7 @@ const listed = new Set(DOCS_GROUPS.flatMap((g) => g.slugs));
 const rest = all.filter((d) => !listed.has(d.data.slug));
 if (rest.length) grouped.push({ title: "More", items: rest });
 ---
-<BaseLayout title={title} description={description ?? subtitle}>
+<BaseLayout title={title} description={description ?? subtitle} cta={false}>
   <div class="shell wrap">
     <aside class="side" aria-label="Documentation">
       <a href="/docs/" class:list={["home", { on: !slug }]}>All documentation</a>
@@ -41,7 +41,7 @@ if (rest.length) grouped.push({ title: "More", items: rest });
     </aside>
 
     <article class="body">
-      <header class="head">
+      <header class="doc-head">
         <p class="eyebrow">Documentation</p>
         <h1>{title}</h1>
         {subtitle && <p class="sub">{subtitle}</p>}
@@ -62,9 +62,9 @@ if (rest.length) grouped.push({ title: "More", items: rest });
   .wrap {
     display: grid;
     grid-template-columns: 220px minmax(0, 1fr);
-    gap: 48px;
+    gap: 56px;
     align-items: start;
-    padding-block: 40px 20px;
+    padding: 56px calc(var(--gutter) + var(--inset)) 64px;
   }
   .side { position: sticky; top: 74px; max-height: calc(100vh - 90px); overflow-y: auto; padding-right: 4px; }
   .home {
@@ -90,19 +90,20 @@ if (rest.length) grouped.push({ title: "More", items: rest });
   }
   .side li a.on {
     color: var(--color-ink);
-    background: color-mix(in srgb, var(--color-accent) 12%, transparent);
-    border-left-color: var(--color-accent);
+    background: var(--color-surface-2);
+    border-left-color: var(--color-ink);
   }
-  .head { margin-bottom: 32px; }
-  .head h1 {
+  .doc-head { margin-bottom: 32px; }
+  .doc-head h1 {
     font-size: var(--text-h1);
     line-height: 1.1;
-    letter-spacing: -0.025em;
-    margin: 10px 0 0;
+    letter-spacing: -0.045em;
+    font-weight: 500;
+    margin: 14px 0 0;
     text-wrap: balance;
   }
   .sub { color: var(--color-ink-2); font-size: 1.05rem; margin: 10px 0 0; max-width: 60ch; }
-  .src { margin: 14px 0 0; font-family: var(--font-mono); font-size: 11.5px; }
+  .src { margin: 14px 0 0; font-family: var(--font-mono); font-size: 11.5px; overflow-wrap: anywhere; }
   .src a { color: var(--color-muted); text-decoration: none; }
   .src a:hover { color: var(--color-accent-hi); }
 

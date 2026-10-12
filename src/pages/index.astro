@@ -2,682 +2,322 @@
 import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Section from "../components/Section.astro";
-import OrgChart from "../components/OrgChart.astro";
+import Button from "../components/Button.astro";
+import Cmd from "../components/Cmd.astro";
 import Term from "../components/Term.astro";
 import Shot from "../components/Shot.astro";
 import Drill from "../components/Drill.astro";
-import { SITE, REPO_URL, SOURCE_IS_PUBLIC } from "../site.config.mjs";
+import { SITE, SOURCE_IS_PUBLIC } from "../site.config.mjs";
 import manifest from "../content/manifest.json";
-import runtimes from "../content/runtimes.json";
 import autonomous from "../content/drills/autonomous.txt?raw";
 
 import review from "../assets/screenshots/review.png";
-import cockpit from "../assets/screenshots/cockpit-overview.png";
 import boardroom from "../assets/screenshots/boardroom.png";
 import work from "../assets/screenshots/work-and-proof.png";
 
 const roles = await getCollection("roles");
 const crews = await getCollection("crews");
-const challengers = roles.filter((r) => r.data.category === "challenge");
+const critics = roles.filter((r) => r.data.category === "challenge");
 const tests = manifest.tests.toLocaleString("en-US");
-const h = manifest.history;
-const firstCommit = new Date(h.firstCommit).toLocaleDateString("en-US", { month: "long", day: "numeric", timeZone: "UTC" });
-
-const REHEARSE = `<i># try the whole project before you pay for any of it</i>
-<b>$</b> yaaf rehearse examples/01-your-first-hour.json`;
-
-const DEPLOY = `<i># secrets, images, Postgres, migrations, the role library —</i>
-<i># and a one-time link to choose your password. Safe to re-run.</i>
-<b>$</b> git clone ${SOURCE_IS_PUBLIC ? "https://github.com/dominicplouffe/yaaf.git" : "&lt;your-yaaf-remote&gt;"} yaaf &amp;&amp; cd yaaf
-<b>$</b> ./deploy_single_server.sh --admin-email you@example.com`;
-
-const CONNECT = `<i># the dashboard binds to localhost; tunnel to it</i>
-<b>$</b> ssh -N -L 8080:localhost:8080 you@your-server
-
-<b>$</b> yaaf login
-<b>$</b> yaaf mcp-token mint my-laptop --scopes read
-<i>→ ymt_…</i>
-<b>$</b> claude mcp add --transport http yaaf http://localhost:8080/mcp \\
-    --header <u>"Authorization: Bearer ymt_…"</u>`;
-
-/** The hero org. Illustrative, but every seat is a legal hire under R1–R7. */
-const HERO_TEAMS = [
-  { name: "Research", role: "Equity Analyst", employees: ["Maya", "Tobias"], lead: "Maya", runsOn: "Claude · SDK" },
-  { name: "Macro", role: "Macro Analyst", employees: ["Ines"], lead: null, runsOn: "Gemini CLI" },
-  { name: "Risk", role: "Risk Manager", employees: ["Owen"], lead: null, challenge: true, runsOn: "GPT · Codex" },
-  { name: "Editorial", role: "Market Writer", employees: ["Ada"], lead: null, runsOn: "Claude · CLI" },
-];
 
 const RULES = [
-  { k: "“Done” means verified", v: "Tests run in a sandbox, by the platform, not by the agent that wants them to pass. There is no agent verb that writes “met.”" },
-  { k: "Work that makes nothing true is refused", v: "Every task has to serve a requirement — something that must be true at the end, carrying its own test." },
-  { k: "The date can't quietly slip", v: "The platform stamps the date from measured pace and re-projects it every tick. Past the promise, new scope freezes." },
-  { k: "Money that can't run away", v: "Every run metered, killed ones included. A budget the CEO must account for, and a wall where the project pauses itself." },
-  { k: "Loops that can't burn a night", v: "Wake ceilings, run ceilings and a pair breaker. Two agents talking in circles freeze; they don't bill." },
-  { k: "Everything on the record", v: "Every message, run, dollar, decision and refusal — plus random samples of “completed” work dealt to you to spot-check." },
+  { k: "Done means verified", v: "Only the platform can mark work done. It runs the tests itself." },
+  { k: "No busywork", v: "Every task must serve a goal and carry a test that can fail." },
+  { k: "Budgets that stop", v: "Every run is metered. At the limit, the project pauses." },
+  { k: "Honest deadlines", v: "Dates come from real pace. If one slips, new work stops." },
 ];
 
 const STEPS = [
-  { n: "01", k: "Describe it", v: "A paragraph. The Founder drafts the goal, the roster, the budget and the rules, and tells you what it assumed." },
-  { n: "02", k: "Get argued with", v: "The goal is graded against the ten things it has to contain to work. Free, before anything exists." },
-  { n: "03", k: "Rehearse it for $0", v: "Scripted agents, the real policy engine: where it stalls, what paces it, how often it will wait for you." },
-  { n: "04", k: "Hire it for real", v: "A CEO, the desks, a budget, a delivery date and a channel each. Then it runs without you, and tells you what happened." },
+  { n: "01", k: "Describe", v: "Write what you want in a paragraph. yaaf drafts the goal, team and budget." },
+  { n: "02", k: "Review", v: "The draft is graded against ten things a good goal needs." },
+  { n: "03", k: "Rehearse", v: "Run it free on scripted agents. Fix what breaks." },
+  { n: "04", k: "Run", v: "Hire the team for real. It works for weeks and reports back." },
 ];
 
-const BEATS = [
-  { k: "Roles, not one generalist", v: "A risk seat that can veto a research seat is two agents with different charters, context and instructions — and now, if you like, different vendors' models — not one model asked to “also consider the risks.”" },
-  { k: "A CEO takes you out of the queue", v: "In a chat session you are the loop: nothing happens until you type. With a CEO, the next piece of work is chosen, priced, assigned and finished while you sleep." },
-  { k: "A budget makes it safe to walk away", v: "You are not trusting an agent to be sensible about money. Every run is metered, and the wall is a number the CEO cannot write." },
+const CLAUDE = [
+  { k: "Its own key", v: "Claude never uses your login, and every action is marked as Claude's." },
+  { k: "Two steps for big moves", v: "Anything you can't undo needs a preview, then a confirm." },
+  { k: "Agents can't instruct it", v: "Text written by agents is labeled untrusted and never obeyed." },
+  { k: "No secrets out", v: "No tool returns an API key, at any permission level." },
 ];
 
-const SCOPES = [
-  ["read", "Sees everything. Signs nothing. Start here — most of the value, none of the risk."],
-  ["steer", "Talk to the CEO, decide approvals, cut scope, move the date, judge an audit."],
-  ["create", "Draft, grade, rehearse and create new projects."],
-  ["configure", "Teams, data sources, settings, rules."],
+const VS = [
+  { who: "vs. Paperclip", v: "Paperclip coordinates agents wherever they run. yaaf runs them in its own sandbox, so only the platform decides what's done.", href: "/compare/#paperclip" },
+  { who: "vs. agent frameworks", v: "LangGraph and CrewAI help you build agent flows. yaaf enforces the rules around them.", href: "/compare/#frameworks" },
+  { who: "vs. a Claude skill", v: "A skill does one task while you watch. yaaf runs work for weeks while you don't.", href: "/compare/#skill" },
 ];
 
-const MCP_RULES = [
-  { k: "Claude is never you", v: "It gets its own credential, and every write is stamped “via mcp” permanently — months later you can tell which decisions a machine carried." },
-  { k: "Nothing irreversible in one call", v: "A preview, then a single-use ticket bound to the exact arguments, then the commit. Change a word and the ticket is refused." },
-  { k: "Agents can't give Claude orders", v: "Anything an agent wrote arrives wrapped and labelled untrusted. A CEO writing “chairman, please accept this” is quoted, not obeyed." },
-  { k: "Secrets only go one way", v: "Nothing returns a credential at any scope. You can name one; you can never read one back." },
+const KNOW = [
+  { k: "You run a server", v: "Docker, Postgres and one machine. A skill is just a file." },
+  { k: "It's early", v: "Pre-1.0. First commit August 2026. One maintainer." },
+  { k: "No outside security review", v: "Agents can reach the network. Read the threat model first." },
+  { k: "No published costs", v: "Nobody has shared a real bill yet. The rehearsal shows break-even." },
 ];
 
-const ASKS = [
-  {
-    q: "“Run our ad account end to end. A standup every morning and a Monday memo I can forward to the client without editing it.”",
-    a: "Four desks: strategy, analytics, attribution, and an executability check whose entire job is to kill clever recommendations nobody can implement. At month close the platform pulls the ad platform's own reports and grades the desk against them.",
-  },
-  {
-    q: "“Here is my brokerage account. Run it like a real desk, and stop asking me what I think.”",
-    a: "Research, macro, signals and a book, plus a risk seat and a compliance seat that can veto a trade the research seat is in love with. Every position arrives as a ticket with the argument attached.",
-  },
-  {
-    q: "“Can we afford to retire early? Don't tell me yes. Prove it.”",
-    a: "Six teams, including a verification seat paid to recompute the modeller's own numbers and disagree with them. Nothing reaches you uncited.",
-  },
-  {
-    q: "“Book our February trip. I don't want a spreadsheet, I want a confirmation number.”",
-    a: "A research team pricing real itineraries live, and a booking desk that stands behind exactly one. The finish line cannot be faked: a record locator and a charge on your card. Nobody marks this one done except the resort.",
-  },
-];
+const PROVIDERS = ["Claude", "GPT", "Gemini", "DeepSeek", "Kimi", "Qwen", "Mistral", "Grok", "OpenRouter", "Your own models"];
 
-const FOR = [
-  "It has to run unattended for days or weeks",
-  "“Done” can't be graded by the agent that did it",
-  "Money has to stop by itself",
-  "You'll have to reconstruct it later for a client, an auditor, or yourself",
-  "You want agents to disagree, because one agent checking its own work has the same blind spots in both seats",
-];
-const NOT_FOR = [
-  "It finishes in one sitting while you watch — use a skill",
-  "You want a chat assistant in your messaging apps — use OpenClaw or Hermes",
-  "You're building the agent flow itself, in code — use a framework",
-  "You need a hosted service, SSO or multi-tenant orgs — yaaf has none",
-  "You won't run a box with Docker and Postgres on it",
-];
+const DEPLOY = `<b>$</b> git clone ${SOURCE_IS_PUBLIC ? "https://github.com/dominicplouffe/yaaf.git" : "&lt;your-yaaf-remote&gt;"} yaaf &amp;&amp; cd yaaf
+<b>$</b> ./deploy_single_server.sh --admin-email you@example.com`;
 
-const VERSUS = [
-  { who: "vs. Paperclip", v: "Both put an org chart around agents. Paperclip coordinates the agents you already run, wherever they run, and is far bigger. yaaf runs every agent in its own sandbox and meter, so “met”, the bill and the date are written by the platform, never reported by the agent.", href: "/compare/#paperclip" },
-  { who: "vs. agent frameworks", v: "LangGraph, CrewAI and friends give you coordination as code and rules as prompts. yaaf is the layer underneath — the one that refuses, meters and verifies.", href: "/compare/#frameworks" },
-  { who: "vs. OpenClaw & Hermes", v: "They make one agent more present and more capable. yaaf makes many agents accountable over weeks — and it's an MCP server, so any of them can be its front end.", href: "/compare/#assistants" },
-  { who: "vs. a good skill", v: "yaaf runs your skills. It decides which to point at what, checks it got done, pays from a capped budget and keeps the receipt. The difference is governance and duration.", href: "/compare/#skill" },
-];
-
-const FAQ = [
-  { q: "Is there a hosted version, or a paid plan?", a: "No. It's open source and only that: self-hosted, Apache-2.0, no account and no telemetry. You pay your model provider directly.", href: "/faq/#hosted" },
-  { q: "Which models does it run?", a: `Claude, GPT through Codex, Gemini, DeepSeek, Kimi, Qwen, Mistral, Grok, OpenRouter, or your own server — ${manifest.harnesses} harnesses, ${manifest.providers} providers, one cap.`, href: "/faq/#models" },
-  { q: "What does a project cost?", a: "Nobody has published a bill yet, and this site won't invent one. The drill gives you the break-even per run before you spend anything.", href: "/faq/#cost" },
-  { q: "Is it safe?", a: "Read the threat model first. The container, scoped secrets, the budget and the audit contain an agent; the network does not.", href: "/faq/#secure" },
-];
-
-const harnessNames = runtimes.harnesses.map((x) => x.label.replace(/ \(.*\)$/, ""));
-const providerNames = runtimes.providers.map((x) => x.label.replace(/ \(([^)]*)\)$/, (_m, p) => (p.length < 8 ? ` (${p})` : "")).replace("Custom endpoint", "Your own server"));
+const CONNECT = `<b>$</b> yaaf login
+<b>$</b> yaaf mcp-token mint my-laptop --scopes read
+<b>$</b> claude mcp add --transport http yaaf http://localhost:8080/mcp \\
+    --header <u>"Authorization: Bearer ymt_…"</u>`;
 ---
 <BaseLayout title={`yaaf — ${SITE.tagline}`} bare={true} description={SITE.description}>
-  <!-- ================= HERO ================= -->
+  <!-- ============ HERO ============ -->
   <section class="hero">
-    <div class="blueprint bp" aria-hidden="true"></div>
-    <div class="shell inner">
-      <div class="copy">
-        <p class="tags">
-          <span>Open source · {`Apache-2.0`}</span>
-          <span>Self-hosted · no telemetry</span>
-          <span class="wip"><i aria-hidden="true"></i>Pre-1.0 · actively developed</span>
+    <div class="glow" aria-hidden="true"></div>
+    <div class="shell">
+      <p class="tags"><span>Open source</span><span>Self-hosted</span><span>Pre-1.0</span></p>
+      <h1>Rules your AI agents can't argue&nbsp;with.</h1>
+      <div class="hero-row">
+        <p class="sub">
+          yaaf runs a team of AI agents on one goal for weeks. The server checks their work,
+          caps their spend and keeps the deadline honest. You stay in charge.
         </p>
-        <h1 class="balance">Agents don't need a better&nbsp;prompt. They need rules they can't argue&nbsp;with.</h1>
-        <p class="lede pretty">
-          yaaf runs a crew of agents on one goal for weeks — a CEO that picks the next piece of
-          work, specialists, and critics paid to disagree — on Claude, GPT, Gemini, DeepSeek or your
-          own server. The rules live in the server, where no agent's token can reach them: work counts
-          only when the platform has verified it, the budget stops itself, and the delivery date is
-          arithmetic. <strong>You're the chairman.</strong>
-        </p>
-        <p class="ctas">
-          <a class="btn primary" href="/how-it-works/">How it works</a>
-          <a class="btn" href="/compare/">Compare</a>
-          {SOURCE_IS_PUBLIC && <a class="btn ghost" href={REPO_URL}>GitHub ↗</a>}
-        </p>
-        <Term class="cmd" code={REHEARSE} note="Runs your spec as a real project on the real platform — every rule, every refusal — with scripted agents standing in for models. No API key. No dollars. About ten seconds." />
+        <div class="hero-act">
+          <div class="btns">
+            <Button href="/docs/creating-a-project/" primary>Get started</Button>
+            <Button href="/how-it-works/">How it works</Button>
+          </div>
+          <Cmd cmd="yaaf rehearse examples/01-your-first-hour.json" />
+          <p class="hint">Try a full project for $0. No API key needed.</p>
+        </div>
       </div>
+    </div>
+    <div class="shell shotwrap">
+      <Shot src={review} crop={640} priority={true}
+        alt="The Review screen: pace, requirements met, the delivery date at risk with its promised and projected dates, budget and audit coverage, with the CEO's notes and the chairman's six levers below"
+        caption="The weekly review. Cost against estimate, a date that re-projected itself, and six levers you can pull." />
+    </div>
+  </section>
 
-      <div class="chartwrap">
-        <p class="eyebrow ct">One project, as the platform sees it</p>
-        <OrgChart ceo="CEO" ceoRole="picks, prices and assigns the next piece of work" ceoRunsOn="Opus 5.5 · Agent SDK" teams={HERO_TEAMS} />
-        <p class="legend">
-          <span class="k chair"></span> you <span class="k ceo"></span> executive
-          <span class="k chal"></span> hired to disagree
-        </p>
-        <p class="chartnote">
-          Illustrative, and every seat a legal hire: the writer stays on Claude because its role grants
-          web search, and a seat on a provider with none is refused at the door.
-        </p>
+  <!-- ============ RUNS ON ============ -->
+  <section class="runs">
+    <div class="shell">
+      <div class="runs-in">
+        <p class="eyebrow">Runs on</p>
+        <ul>{PROVIDERS.map((p) => <li>{p}</li>)}</ul>
       </div>
     </div>
   </section>
 
-  <!-- ================= RUNS ON ================= -->
-  <section class="runson" aria-label="What a seat can run on">
-    <div class="shell ro">
-      <div class="ro-k">
-        <p class="eyebrow">Any seat, any of</p>
-        <p class="ro-big"><strong>{manifest.harnesses}</strong> harnesses · <strong>{manifest.providers}</strong> providers · <strong>1</strong> cap</p>
-        <a href="/runtimes/">Runtimes →</a>
-      </div>
-      <div class="ro-lists">
-        <p class="pills">{providerNames.map((n) => <span class="pill">{n}</span>)}</p>
-        <p class="pills">{harnessNames.map((n) => <span class="pill blue">{n}</span>)}</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ================= RULES ================= -->
-  <Section eyebrow="Layer one · the part that isn't a bet" title="A prompt is a suggestion. A 403 is not.">
-    <p class="big pretty">
-      Leave an agent running for an afternoon and you meet the failure modes. It marks its own work
-      done. It invents busywork and calls it progress. It loops with another agent at full price. The
-      usual fix is a better prompt, but a clever model talks itself around one.{" "}
-      <strong>So in yaaf the rules live in the server.</strong> Agents act only through an authenticated
-      API on per-run tokens, and every rule is a refusal or an automatic state change. An agent can't be
-      argued out of a rule it never held.
-    </p>
-    <div class="tiles">
-      {RULES.map((r) => (
-        <div class="tile rule">
+  <!-- ============ RULES ============ -->
+  <Section eyebrow="Why yaaf" title="Prompts are suggestions. yaaf makes them rules."
+    lede="Left alone, agents mark their own work done, invent busywork and burn money. A better prompt won't fix that. A server that says no will.">
+    <div class="cells">
+      {RULES.map((r, i) => (
+        <div class="cell">
+          <span class="eyebrow">0{i + 1}</span>
           <h3>{r.k}</h3>
           <p>{r.v}</p>
         </div>
       ))}
     </div>
-    <p class="note">
-      Each of those is a test, not a paragraph. <strong>{tests} of them</strong>, offline and free, and the
-      invariant suite drives the real app over HTTP the way an agent would: forged tokens, wrong roles,
-      rephrased requests. They test <strong>the rules, not the models</strong> — the rules are the part an agent
-      argues with.{" "}
-      <a href="/features/">Every feature →</a>{" · "}
-      <a href="/docs/security/">What contains an agent, and what doesn't →</a>
-    </p>
-    <div class="callout layers">
-      <p>
-        <strong>This layer does not depend on the next one.</strong> Solo mode runs a single agent under
-        byte-identical governance: same queues, same requirements, same verification, same budget, same audit.
-        If you think one good agent beats a team, take this floor and skip the org chart. It was built to stand
-        on its own, because it might have to.
-      </p>
-    </div>
+    <p class="note">Every rule is enforced by the server and attacked by a test. {tests} tests, free to run. <a href="/features/">All features →</a></p>
   </Section>
 
-  <!-- ================= DRILL ================= -->
-  <Section grid={true} eyebrow="Before you spend a cent" title="Rehearse the whole project before it exists."
-    lede="The riskiest moment is the one before the first real run. So yaaf runs your exact configuration as a real project — the real dispatcher, janitor and policy engine, every refusal in force — with scripted agents standing in for models. It costs nothing and needs no key.">
-    <div class="drillgrid">
-      <Drill report={autonomous} only={["This project", "The walk", "It never", "It stopped", "Walls it hit", "What it will cost", "What it still needs"]}
-        label={`yaaf rehearse · printed on ${manifest.syncedAt}`}
-        note="Real output, uncut within each section: example 06, a build team and a red team that can block. Look at the last section — it names the one thing this configuration still needs before it can run." />
-      <div class="drillside">
-        <div class="tile">
-          <h3>Where it stopped, in the platform's own words</h3>
-          <p>A role your library can't resolve, a schedule attached to nobody, a plan that won't fit the money — each named, with what to do about it.</p>
-        </div>
-        <div class="tile">
-          <h3>How often it will wait for you</h3>
-          <p>The drill plays the chairman and counts every time it had to. This crew as shipped: never. The same crew with the five authority switches handed back: seven times. <a href="/how-it-works/#dial">Both reports →</a></p>
-        </div>
-        <div class="tile">
-          <h3>What it can't tell you</h3>
-          <p>Whether a real model does the job well. The crew is competent and dull by construction, so a clean drill is evidence about your configuration and none at all about your project — and the report says so.</p>
-        </div>
+  <!-- ============ DRILL ============ -->
+  <Section eyebrow="Try before you spend" title="Rehearse the whole project for $0."
+    lede="yaaf runs your exact setup on scripted agents with every rule switched on. You see where it stalls, what it costs and how often it needs you.">
+    <div class="rehearse">
+      <div class="cells c2 drill-l">
+        <div class="cell"><h3>Where it breaks</h3><p>A missing role, an empty schedule, a plan over budget. Each one named, with the fix.</p></div>
+        <div class="cell"><h3>How often it waits</h3><p>This example never waits for you. With approvals turned on, it stops 7 times.</p></div>
+        <div class="cell"><h3>What it costs</h3><p>The most a run can cost before the plan stops fitting your budget.</p></div>
+        <div class="cell"><h3>What it can't tell you</h3><p>Whether a real model does good work. The rehearsal tests your setup, not the AI.</p></div>
       </div>
+      <Drill report={autonomous} only={["The walk", "It never", "What it still needs"]} label="yaaf rehearse · real output" />
     </div>
   </Section>
 
-  <!-- ================= LIFECYCLE ================= -->
-  <Section eyebrow="From a paragraph to a payroll" title="One sitting, four steps. The first three are free.">
-    <ol class="steps">
-      {STEPS.map((s) => (
-        <li>
-          <span class="sn">{s.n}</span>
+  <!-- ============ STEPS ============ -->
+  <Section eyebrow="How it works" title="From one paragraph to a working team.">
+    <div class="cells">
+      {STEPS.map((s, i) => (
+        <div class:list={["cell", { free: i < 3 }]}>
+          <span class="eyebrow">{s.n}{i < 3 && " · free"}</span>
           <h3>{s.k}</h3>
           <p>{s.v}</p>
-        </li>
-      ))}
-    </ol>
-    <p class="note"><a href="/how-it-works/#lifecycle">All eight steps, from the paragraph to the standing review →</a></p>
-  </Section>
-
-  <!-- ================= COCKPIT ================= -->
-  <Section eyebrow="The standing meeting" title="The CEO brings the numbers. You decide." grid={true}
-    lede="This is the screen the whole thing is for: what it cost against what it estimated, a date that re-projected itself, and the levers a human can pull — each one recorded with your reason and shown at the next review beside what it bought.">
-    <div class="shots">
-      <Shot src={review} crop={600} priority={true}
-        alt="The Review tab: pace, requirements met since last review, the commitment at risk with its promised and projected dates, budget, audit coverage and worst offender; below them the CEO's variance narrative and the chairman's six levers"
-        caption="The CEO closes a stage 28 runs against 23 estimated, moves its own bias multiplier to 1.21, and applies it to the rest of the plan. Then it tells you the one thing it will not do without you: buy a licensed data feed. It proposes the free route instead." />
-      <Shot src={work} crop={620}
-        alt="The Work tab: the platform's sampled close waiting on the chairman, the read-only board, and every piece of evidence with its verification status including a failed check"
-        caption="The platform picked a finished claim at random and dealt it to you, because AI reviewers approve nearly everything and you don't. One task sits blocked on a licence nobody will buy without asking." />
-      <Shot src={boardroom} crop={500}
-        alt="The Boardroom tab: the chairman asks the CEO how confident it is in the 30th; the CEO answers with the estimate-to-actual ratio, its re-projection, and what would move it"
-        caption="Boardroom. Ask the CEO how confident it is in the 30th. It answers with the estimate-to-actual ratio, its re-projection, and what would move it." />
-    </div>
-    <p class="note">
-      Real screens from a real desk — $16.39 of real spend, model-written reasoning — captured on a build from 22 August,
-      before the September redesign. <a href="/docs/dashboard/">Every screen, and what you do there →</a>
-    </p>
-  </Section>
-
-  <!-- ================= MCP ================= -->
-  <Section eyebrow="Chair it from Claude" title="The Claude window you already have open is the front end."
-    lede="yaaf is an MCP server, so Claude Code, Claude Desktop, Cursor or any MCP client can design a project, read its cockpit, talk to the CEO, decide approvals and move the date — with your files, repos and email open beside it. Thirty-two tools, four scopes, chosen when you connect.">
-    <div class="mcp">
-      <div class="kit-table">
-        <table>
-          <thead><tr><th>Scope</th><th>What it holds</th></tr></thead>
-          <tbody>
-            {SCOPES.map(([k, v]) => <tr><th scope="row"><code>{k}</code></th><td>{v}</td></tr>)}
-          </tbody>
-        </table>
-      </div>
-      <div class="tiles c2">
-        {MCP_RULES.map((r) => (
-          <div class="tile">
-            <h3>{r.k}</h3>
-            <p>{r.v}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-    <p class="note">
-      A six-team research project has been designed and launched from a Claude window, and every write in its
-      audit trail is signed <code>user:… via mcp:Claude</code>. <a href="/docs/mcp-server/">Every tool and every scope →</a>
-    </p>
-  </Section>
-
-  <!-- ================= THE BET ================= -->
-  <Section eyebrow="Layer two · the bet" title="You build agents the way you build a company." grid={true}
-    lede="Multiple roles doing one thing each beat one role doing many. That is a hypothesis, not a finding. It is the same one that makes a company work, and the argument against it is good: every boundary between agents is a place context gets summarised and lost.">
-    <div class="tiles">
-      {BEATS.map((b) => (
-        <div class="tile">
-          <h3>{b.k}</h3>
-          <p>{b.v}</p>
         </div>
       ))}
     </div>
+    <p class="note"><a href="/how-it-works/">See every step →</a></p>
   </Section>
 
-  <!-- ================= THE ORG ================= -->
-  <Section eyebrow="The library" title="Hired, not invented."
-    lede="A project doesn't start from a blank prompt. It hires from a library: each role a system prompt, a model, an effort level and tool permissions somebody already argued about.">
-    <div class="counts">
-      <a class="n" href="/org/#roles"><strong>{roles.length}</strong><span>job descriptions</span></a>
-      <a class="n" href="/org/#crews"><strong>{crews.length}</strong><span>pre-built crews</span></a>
-      <a class="n hi" href="/org/#challenge"><strong>{challengers.length}</strong><span>hired to disagree</span></a>
-      <a class="n" href="/examples/"><strong>{manifest.examples}</strong><span>importable examples</span></a>
+  <!-- ============ COCKPIT ============ -->
+  <Section eyebrow="The cockpit" title="See everything. Decide what matters.">
+    <div class="shots">
+      <Shot src={work} crop={460}
+        alt="The Work screen: a randomly sampled finished task waiting for the chairman to check, the board, and every piece of evidence with its verification status"
+        caption="A random sample of finished work, dealt to you to check. AI reviewers approve almost everything. You won't." />
+      <Shot src={boardroom} crop={460}
+        alt="The Boardroom: the chairman asks the CEO how confident it is in the deadline, and the CEO answers with its estimate-to-actual ratio and re-projection"
+        caption="Ask the CEO anything. It answers with numbers, not reassurance." />
     </div>
-    <p class="note">
-      That third number is the one that matters. A large share of the library exists to attack the rest of
-      its work: a red team, a plan adversary, an executability checker, a data skeptic, a risk seat that can veto.{" "}
-      <strong>One agent checking its own work has the same blind spots in both seats</strong> — and the CEO cannot
-      fire its own last critic. <a href="/org/">Read the staff directory →</a>
-    </p>
   </Section>
 
-  <!-- ================= ASKS ================= -->
-  <Section eyebrow="What it is built to be handed" title="None of these is a prompt you re-run." grid={true}
-    lede="These are the shapes the crews and examples are designed around. Each one has to survive weeks, wake up without you, and be graded by something that isn't itself.">
-    <div class="tiles c2">
-      {ASKS.map((a) => (
-        <article class="tile ask">
-          <p class="q">{a.q}</p>
-          <p>{a.a}</p>
-        </article>
+  <!-- ============ TEAM ============ -->
+  <Section eyebrow="The team" title="Hire from a library, not a blank prompt."
+    lede="A CEO plans and assigns the work. Specialists do it. Critics, like a red team or a risk manager, can block it.">
+    <div class="cells">
+      <a class="cell" href="/org/#roles"><p class="num">{roles.length}</p><p>Roles, each with its own prompt, model and tools</p></a>
+      <a class="cell" href="/org/#crews"><p class="num">{crews.length}</p><p>Ready-made teams you can hire whole</p></a>
+      <a class="cell warm" href="/org/#challenge"><p class="num">{critics.length}</p><p>Roles paid to disagree. The CEO can't fire the last one.</p></a>
+      <a class="cell" href="/runtimes/"><p class="num">{manifest.providers}</p><p>Model providers, mixed freely under one budget</p></a>
+    </div>
+  </Section>
+
+  <!-- ============ CLAUDE ============ -->
+  <Section eyebrow="Chair it from Claude" title="Run your projects from the Claude window you already use."
+    lede="yaaf is an MCP server. Claude can check status, talk to the CEO and approve decisions, with guardrails.">
+    <div class="cells">
+      {CLAUDE.map((c) => (
+        <div class="cell">
+          <h3>{c.k}</h3>
+          <p>{c.v}</p>
+        </div>
       ))}
     </div>
-    <p class="note"><a href="/examples/">Twelve projects you can import and rehearse →</a></p>
+    <p class="note">32 tools in four scopes: read, steer, create and configure. Start with read. <a href="/docs/mcp-server/">MCP docs →</a></p>
   </Section>
 
-  <!-- ================= FOR YOU ================= -->
-  <Section eyebrow="Is it for you?" title="Believe yourself if the answer is no.">
-    <div class="tiles c2">
-      <div class="tile hi">
-        <h3>Reach for yaaf when</h3>
-        <ul>{FOR.map((f) => <li>{f}</li>)}</ul>
-      </div>
-      <div class="tile">
-        <h3>Use something else when</h3>
-        <ul>{NOT_FOR.map((f) => <li>{f}</li>)}</ul>
-      </div>
-    </div>
-  </Section>
-
-  <!-- ================= COMPARE ================= -->
-  <Section eyebrow="Different how?" title="Others coordinate agents. yaaf governs them." grid={true}>
-    <div class="tiles c4 vs">
-      {VERSUS.map((x) => (
-        <a class="tile vsc" href={x.href}>
+  <!-- ============ COMPARE ============ -->
+  <Section eyebrow="Compared" title="How yaaf is different.">
+    <div class="cells c3">
+      {VS.map((x) => (
+        <a class="cell" href={x.href}>
           <span class="eyebrow">{x.who}</span>
-          <p>{x.v}</p>
-          <span class="go">Read →</span>
+          <p class="vs">{x.v}</p>
+          <span class="go">Read more →</span>
         </a>
       ))}
     </div>
-    <p class="note"><a href="/compare/">The full comparison, with the tables — including where the others are ahead →</a></p>
   </Section>
 
-  <!-- ================= HONEST ================= -->
-  <Section eyebrow="What you give up" title="Read this before you install anything.">
-    <div class="honest">
-      <ul>
-        <li><strong>You deploy and run a thing.</strong> Postgres, two containers, a box. A skill is a file.</li>
-        <li><strong>Setup is minutes, not seconds.</strong> A goal worth planning from takes longer to write than a prompt, on purpose.</li>
-        <li><strong>The floor is higher than the ceiling is high.</strong> Planning, review and verification cost tokens. On a one-sitting task that buys you nothing.</li>
-        <li><strong>Nobody has published what it costs.</strong> Not even the maintainer. The caps in the examples are budgets you set, not bills anyone paid, and the drill refuses to invent a price rather than print a plausible one. <code>yaaf receipt</code> will make the number a receipt rather than a claim.</li>
-        <li><strong>Other vendors' seats are proven offline, not yet live.</strong> Every harness passes its contract suite at $0; a live seat on each is the line only a deployment can tick.</li>
-        <li><strong>It is pre-1.0.</strong> APIs move, and there are sharp edges.</li>
-      </ul>
-      <div class="kill">
-        <p class="eyebrow">The bet, and what would kill it</p>
-        <p>Nobody has shown that a CEO plus a team beats one good agent on the same budget and rules, and yaaf doesn't claim to have. <strong>Solo mode</strong> runs a single agent under byte-identical governance, so the same goal can go to a hierarchy and to one brain and the bills compared.</p>
-        <p>The repository publishes its own kill condition: if the org arm doesn't win on the pre-registered rubric — blind-judged quality, verified external evidence, cost, wall-clock — yaaf-as-an-org-framework is shelved and layer one stands on its own.</p>
-        <p class="lk"><a href="/docs/plan/">The plan, the kill conditions, and what is deliberately not built →</a></p>
-      </div>
-    </div>
-
-    <div class="failshot">
-      <Shot src={cockpit} crop={498}
-        alt="The cockpit of a project that is not working: nothing working now, one run in five ended early, no deliverable published, and CEO judgment at 20 per cent"
-        caption="And this is one that is not working. Nothing published, one run in five dead, the CEO's judgement running at 20% — one of its five bets ever produced real-world proof. The dashboard's first job is to tell you that on the way past, in red, rather than after the invoice. A screen that only looks good is a screen that is lying to you." />
-    </div>
-  </Section>
-
-  <!-- ================= PROVENANCE ================= -->
-  <Section eyebrow="Before you go looking" title="Two months old, built in the open with Claude Code." grid={true}
-    lede="You would find all of this in one click, so here it is up front, with what follows from each half.">
-    <div class="prov">
-      <div class="prov-nums">
-        <div><strong>{firstCommit}</strong><span>first commit, {h.firstCommit.slice(0, 4)}</span></div>
-        <div><strong>{h.commits}</strong><span>commits over {h.activeDays} days</span></div>
-        <div><strong>{h.claudeShare}%</strong><span>co-authored with Claude Code</span></div>
-        <div><strong>0</strong><span>outside security reviews</span></div>
-      </div>
-      <div class="prov-txt">
-        <p>
-          It was built fast and in the open with Claude Code, and nearly every commit says so in its
-          trailer. That is the method, not a disclaimer. The design is much older than the code: years of
-          running teams, written down first and then built quickly, and held to by a suite that attacks
-          every rule.
-        </p>
-        <p>
-          <strong>What that bought:</strong> a policy engine with {tests} offline tests, a role library that is
-          data rather than prose, runtimes on {manifest.providers} providers, and a suite that runs for $0.
-          <strong> What it has not bought:</strong> a project anyone but the maintainer has run for a month, a
-          published bill, or a security review by someone who did not write it. Both halves are true at the same
-          time, and the second half is the one that matters.
-        </p>
-      </div>
-    </div>
-
-    <div class="asks-q">
-      <p class="eyebrow qh">Three things the maintainer would rather have torn apart than praised</p>
-      <ol>
-        <li>
-          <strong>Does the org layer earn its tokens?</strong> Every boundary between agents is a place context
-          gets summarised and lost, and the case that one well-contexted agent beats a hierarchy is a good one.
-          Solo mode exists so this is measurable rather than arguable. <em>What would you put in the rubric?</em>
-        </li>
-        <li>
-          <strong>Is a server-side refusal actually enough?</strong> An agent holds the credentials its role was
-          granted, has a shell and a network, and there is no egress control — that allowlist was removed on
-          purpose, and the reasoning is published. A prompt-injected agent can send what it holds anywhere.{" "}
-          <em>Is the container boundary plus a scoped grant plus an audit trail a defensible place to stop?</em>{" "}
-          <a href="/docs/security/">The threat model →</a>
-        </li>
-        <li>
-          <strong>Is the requirement the right root object?</strong> Every task must serve something that has to
-          be true at the end and carries its own test. It works beautifully for artifacts and badly for objectives:
-          a rank, a revenue number, a deficit resist being a test, and the honest failure mode is that every
-          requirement quietly becomes a grep over the workspace. <em>What is the better shape?</em>
-        </li>
-      </ol>
-      <p class="note">
-        Issues and pull requests are the fastest way in. If you break one of the invariant tests, that is the
-        contribution this project wants most.
-      </p>
-    </div>
-  </Section>
-
-  <!-- ================= INSTALL ================= -->
-  <Section id="install" eyebrow="Install" title="One script, one box.">
-    <div class="install">
-      <Term label="Deploy" code={DEPLOY} />
-      <Term label="Then connect Claude" code={CONNECT} />
+  <!-- ============ KNOW ============ -->
+  <Section eyebrow="Before you install" title="What you should know.">
+    <div class="cells">
+      {KNOW.map((k) => (
+        <div class="cell">
+          <h3>{k.k}</h3>
+          <p>{k.v}</p>
+        </div>
+      ))}
     </div>
     <p class="note">
-      A Linux box with Docker. Start on the <code>read</code> scope: sees everything, signs nothing. claude.ai
-      connects through an OAuth consent screen on a public hostname instead of a pasted token.{" "}
-      <a href="/docs/deployment/">Deployment →</a>{" · "}
-      <a href="/docs/creating-a-project/">Your first project →</a>
+      The open question: does a team of agents beat one good agent? Nobody knows yet. Solo mode runs one
+      agent under the same rules so you can compare. <a href="/docs/plan/">Read the plan →</a>
     </p>
   </Section>
 
-  <!-- ================= FAQ ================= -->
-  <Section eyebrow="Asked often" title="Four quick answers." grid={true}>
-    <div class="tiles c4 faq">
-      {FAQ.map((f) => (
-        <a class="tile vsc" href={f.href}>
-          <h3>{f.q}</h3>
-          <p>{f.a}</p>
-          <span class="go">More →</span>
-        </a>
-      ))}
+  <!-- ============ INSTALL ============ -->
+  <Section id="install" eyebrow="Install" title="One script. One machine.">
+    <div class="install">
+      <Term label="1 · Deploy" code={DEPLOY} />
+      <Term label="2 · Connect Claude" code={CONNECT} />
     </div>
-    <p class="note"><a href="/faq/">All the questions →</a>{" · "}<a href="/changelog/">What's new →</a></p>
+    <p class="note">Needs Linux and Docker. The dashboard stays on localhost; reach it over SSH. <a href="/docs/deployment/">Deployment guide →</a></p>
   </Section>
 </BaseLayout>
 
 <style>
   /* ---------- hero ---------- */
-  .hero { position: relative; padding-block: 64px 80px; border-bottom: 1px solid var(--color-line); overflow: hidden; }
-  .bp { position: absolute; inset: 0; opacity: 0.6; pointer-events: none; }
-  .hero .inner { position: relative; display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr); gap: 48px; align-items: center; }
-  /* Grid items default to min-width:auto, so the terminal block's longest
-     line would set the column width and push the copy out of the shell. */
-  .copy, .chartwrap { min-width: 0; }
-
-  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 22px; }
+  .hero { position: relative; overflow: hidden; padding-top: 7.5rem; }
+  .glow {
+    position: absolute;
+    inset: -10% 0 auto 0;
+    height: 120%;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 45% 38% at 78% 18%, color-mix(in srgb, var(--color-accent) 55%, transparent), transparent 70%),
+      radial-gradient(ellipse 30% 26% at 92% 40%, color-mix(in srgb, var(--color-accent-2) 30%, transparent), transparent 70%),
+      radial-gradient(ellipse 40% 30% at 60% 45%, rgba(120, 90, 255, 0.18), transparent 70%);
+    filter: blur(10px);
+    opacity: 0.9;
+  }
+  /* Scanlines over the glow, and a fade to black under it. */
+  .glow::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0.45) 0 1px, transparent 1px 3px);
+  }
+  .glow::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent 30%, #000 72%);
+  }
+  .hero .shell { position: relative; }
+  .tags { display: flex; gap: 0; margin: 0 0 2.2rem var(--inset); }
   .tags span {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
     font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 1.1px;
+    font-size: 11.5px;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: var(--color-muted);
+    color: var(--color-ink-2);
     border: 1px solid var(--color-line);
-    border-radius: 999px;
-    padding: 4px 10px;
+    padding: 6px 12px;
+    background: rgba(0, 0, 0, 0.4);
   }
-  .tags .wip { color: var(--color-ink-2); }
-  .tags .wip i { width: 6px; height: 6px; border-radius: 50%; background: var(--color-warning); display: block; }
-
+  .tags span + span { border-left: 0; }
   h1 {
-    font-size: clamp(2.2rem, 1.3rem + 3vw, 3.6rem);
-    line-height: 1.02;
-    letter-spacing: -0.04em;
-    font-weight: 650;
     margin: 0;
+    font-size: var(--text-hero);
+    line-height: 0.95;
+    letter-spacing: -0.055em;
+    font-weight: 500;
+    max-width: 12ch;
+    padding-left: var(--inset);
   }
-  .lede { color: var(--color-ink-2); font-size: 1.125rem; line-height: 1.6; margin: 22px 0 0; max-width: 56ch; }
-  .lede strong { color: var(--color-ink); font-weight: 620; }
-  .ctas { display: flex; flex-wrap: wrap; gap: 8px; margin: 28px 0 26px; }
-  .cmd { max-width: 580px; }
-
-  .chartwrap {
-    background: color-mix(in srgb, var(--color-surface) 55%, transparent);
-    border: 1px solid var(--color-line);
-    border-radius: var(--radius-card);
-    padding: 22px 18px 16px;
+  .hero-row {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px 0;
+    margin-top: 3rem;
+    align-items: start;
   }
-  .ct { text-align: center; margin: 0 0 20px; }
-  .legend {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    gap: 6px;
-    margin: 18px 0 0;
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.9px;
-    text-transform: uppercase;
-    color: var(--color-muted);
-  }
-  .legend .k { width: 8px; height: 8px; border-radius: 2px; display: inline-block; margin-left: 10px; }
-  .legend .k:first-child { margin-left: 0; }
-  .legend .chair { background: var(--color-accent-2); }
-  .legend .ceo { background: var(--color-accent); }
-  .legend .chal { background: transparent; border: 1px solid var(--color-accent-2); }
-  .chartnote { margin: 12px auto 0; max-width: 46ch; text-align: center; font-size: 12px; line-height: 1.55; color: var(--color-muted); }
+  .hero-row > * { padding-inline: var(--inset); }
+  .sub { grid-column: 1 / span 2; margin: 0; font-size: 1.3rem; line-height: 1.45; color: var(--color-ink-2); max-width: 34ch; }
+  .hero-act { grid-column: 3 / span 2; display: grid; gap: 14px; }
+  .hint { margin: 0; font-size: 13.5px; color: var(--color-muted); }
+  .shotwrap { margin-top: 5rem; padding-bottom: 6rem; }
 
   /* ---------- runs on ---------- */
-  .runson { border-bottom: 1px solid var(--color-line); background: color-mix(in srgb, var(--color-surface) 40%, transparent); }
-  .ro { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 28px; align-items: center; padding-block: 26px; }
-  .ro-big { margin: 6px 0 4px; font-size: 1.05rem; color: var(--color-ink-2); }
-  .ro-big strong { color: var(--color-ink); font-size: 1.25rem; letter-spacing: -0.02em; }
-  .ro-k a { font-size: 13px; color: var(--color-accent-hi); text-decoration: none; }
-  .ro-k a:hover { text-decoration: underline; text-underline-offset: 3px; }
-  .ro-lists { display: grid; gap: 8px; }
-  .ro-lists .pills { margin: 0; }
-
-  /* ---------- rules ---------- */
-  .big { font-size: 1.1875rem; line-height: 1.65; color: var(--color-ink-2); max-width: 68ch; margin: 0 0 36px; }
-  .big strong { color: var(--color-ink); font-weight: 620; }
-  .layers { margin-top: 22px; }
+  .runs-in { border-top: 1px solid var(--color-line); padding-block: 2.2rem; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px 0; align-items: center; }
+  .runs-in > * { padding-inline: var(--inset); }
+  .runs-in .eyebrow { margin: 0; }
+  .runs-in ul { grid-column: 2 / span 3; list-style: none; margin: 0; padding-block: 0; display: flex; flex-wrap: wrap; gap: 10px 28px; }
+  .runs-in li { font-size: 1.15rem; letter-spacing: -0.02em; color: var(--color-ink-2); }
 
   /* ---------- drill ---------- */
-  .drillgrid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.65fr); gap: 14px; align-items: start; }
-  .drillside { display: grid; gap: 12px; }
-  .drillside a { color: var(--color-accent-hi); text-decoration: none; white-space: nowrap; }
+  .rehearse { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .drill-l { grid-column: 1 / span 2; grid-template-columns: 1fr; }
+  .rehearse :global(.drill) { grid-column: 3 / span 2; border-left: 0; }
 
   /* ---------- steps ---------- */
-  .steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
-  .steps li { background: var(--color-surface); border: 1px solid var(--color-line); border-radius: var(--radius-card); padding: 18px; }
-  .steps li:nth-child(-n+3) { border-color: color-mix(in srgb, var(--color-good) 38%, transparent); }
-  .sn { font-family: var(--font-mono); font-size: 11px; letter-spacing: 1.1px; color: var(--color-accent-hi); }
-  .steps li:nth-child(-n+3) .sn { color: var(--color-good); }
-  .steps h3 { margin: 10px 0 0; font-size: 15px; font-weight: 640; }
-  .steps p { margin: 8px 0 0; font-size: 13.5px; line-height: 1.6; color: var(--color-ink-2); }
+  .free .eyebrow { color: var(--color-good); }
 
   /* ---------- shots ---------- */
-  .shots { display: grid; gap: 18px; }
+  .shots { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
 
-  /* ---------- mcp ---------- */
-  .mcp { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: 14px; align-items: start; }
-  .mcp code, .note code { font-family: var(--font-mono); font-size: 12px; }
-  .mcp tbody th { width: 96px; }
-
-  /* ---------- counts ---------- */
-  .counts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
-  .n {
-    display: block;
-    background: var(--color-surface);
-    border: 1px solid var(--color-line);
-    border-radius: var(--radius-card);
-    padding: 20px;
-    text-decoration: none;
-    transition: border-color 0.15s, background 0.15s;
-  }
-  .n:hover { border-color: color-mix(in srgb, var(--color-accent) 55%, transparent); background: var(--color-surface-2); }
-  .n strong { display: block; font-size: 2.6rem; line-height: 1; letter-spacing: -0.045em; font-weight: 640; color: var(--color-ink); }
-  .n span { display: block; margin-top: 9px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 1.1px; text-transform: uppercase; color: var(--color-muted); }
-  .n.hi { border-color: color-mix(in srgb, var(--color-accent-2) 50%, transparent); background: color-mix(in srgb, var(--color-accent-2) 9%, var(--color-surface)); }
-  .n.hi strong { color: var(--color-accent-2); }
-
-  /* ---------- asks ---------- */
-  .ask .q { margin: 0; font-size: 15.5px; line-height: 1.5; color: var(--color-ink); font-weight: 560; letter-spacing: -0.01em; }
-
-  /* ---------- versus / faq cards ---------- */
-  .vsc { display: flex; flex-direction: column; text-decoration: none; transition: border-color 0.15s, background 0.15s; }
-  .vsc:hover { border-color: color-mix(in srgb, var(--color-accent) 55%, transparent); background: var(--color-surface-2); }
-  .vsc .eyebrow { color: var(--color-accent-hi); }
-  .vsc .go { margin-top: auto; padding-top: 12px; font-size: 13px; color: var(--color-accent-hi); }
-  .vsc p { margin-top: 8px; }
-
-  /* ---------- honest ---------- */
-  .honest { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; align-items: start; }
-  .honest ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
-  .honest li { font-size: 14.5px; line-height: 1.65; color: var(--color-ink-2); padding-left: 20px; position: relative; }
-  .honest li::before { content: "—"; position: absolute; left: 0; color: var(--color-muted); }
-  .honest strong { color: var(--color-ink); }
-  .honest code { font-family: var(--font-mono); font-size: 12px; background: var(--color-surface-2); border: 1px solid var(--color-line); border-radius: 4px; padding: 1px 5px; }
-  .kill { border: 1px solid color-mix(in srgb, var(--color-accent-2) 40%, transparent); background: color-mix(in srgb, var(--color-accent-2) 8%, transparent); border-radius: var(--radius-card); padding: 18px 20px; }
-  .kill p { margin: 10px 0 0; font-size: 14px; line-height: 1.65; color: var(--color-ink-2); }
-  .kill strong { color: var(--color-ink); }
-  .kill .lk { margin-top: 14px; }
-  .kill a { color: var(--color-accent-hi); text-decoration: none; font-size: 13.5px; }
-  .kill a:hover { text-decoration: underline; text-underline-offset: 3px; }
-  .failshot { margin-top: 34px; padding-top: 28px; border-top: 1px solid var(--color-line); }
-
-  /* ---------- provenance + open questions ---------- */
-  .prov { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 32px; align-items: start; }
-  .prov-nums { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .prov-nums div { background: var(--color-surface); border: 1px solid var(--color-line); border-radius: var(--radius-card); padding: 14px; }
-  .prov-nums strong { display: block; font-size: 1.6rem; line-height: 1.05; letter-spacing: -0.04em; font-weight: 640; }
-  .prov-nums span { display: block; margin-top: 7px; font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.9px; text-transform: uppercase; color: var(--color-muted); line-height: 1.4; }
-  .prov-txt { display: grid; gap: 14px; }
-  .prov-txt p { margin: 0; font-size: 1rem; line-height: 1.7; color: var(--color-ink-2); }
-  .prov-txt strong { color: var(--color-ink); }
-
-  .asks-q { margin-top: 40px; padding-top: 28px; border-top: 1px solid var(--color-line); }
-  .qh { margin: 0 0 18px; }
-  .asks-q ol { margin: 0; padding-left: 1.3em; display: grid; gap: 16px; max-width: 74ch; list-style: decimal; }
-  .asks-q li { font-size: 15px; line-height: 1.65; color: var(--color-ink-2); }
-  .asks-q li::marker { color: var(--color-accent); font-family: var(--font-mono); font-size: 13px; }
-  .asks-q strong { color: var(--color-ink); }
-  .asks-q em { color: var(--color-ink); font-style: italic; }
-  .asks-q a { color: var(--color-accent-hi); text-decoration: none; white-space: nowrap; }
-  .asks-q a:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .vs { font-size: 1.05rem !important; color: var(--color-ink) !important; line-height: 1.45 !important; }
 
   /* ---------- install ---------- */
-  .install { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; align-items: start; }
+  .install { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
 
-  /* ---------- responsive ---------- */
-  @media (max-width: 1080px) {
-    .hero .inner { grid-template-columns: minmax(0, 1fr); gap: 40px; }
-    .cmd { max-width: none; }
-    .steps { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-    .drillgrid, .mcp { grid-template-columns: minmax(0, 1fr); }
-  }
-  @media (max-width: 820px) {
-    .ro { grid-template-columns: minmax(0, 1fr); gap: 14px; }
-    .counts { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-    .install, .honest, .prov { grid-template-columns: minmax(0, 1fr); }
+  @media (max-width: 1024px) {
+    .hero { padding-top: 5rem; }
+    .sub, .hero-act { grid-column: 1 / -1; }
+    .runs-in .eyebrow, .runs-in ul { grid-column: 1 / -1; }
+    .rehearse { grid-template-columns: 1fr; }
+    .drill-l, .rehearse :global(.drill) { grid-column: 1 / -1; }
+    .rehearse :global(.drill) { border-left: 1px solid var(--color-line); border-top: 0; }
+    .shots, .install { grid-template-columns: 1fr; }
   }
   @media (max-width: 640px) {
-    .hero { padding-block: 44px 60px; }
-    .steps { grid-template-columns: minmax(0, 1fr); }
-    h1 { letter-spacing: -0.03em; }
+    .shotwrap { margin-top: 3.5rem; padding-bottom: 4rem; }
   }
 </style>
