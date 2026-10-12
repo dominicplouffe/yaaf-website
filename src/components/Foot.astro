@@ -1,5 +1,5 @@
 ---
-import { NAV, REPO_URL, LICENSE, LICENSE_URL, SOURCE_IS_PUBLIC } from "../site.config.mjs";
+import { NAV, MORE, REPO_URL, LICENSE, LICENSE_URL, SOURCE_IS_PUBLIC } from "../site.config.mjs";
 import Wordmark from "./Wordmark.astro";
 import manifest from "../content/manifest.json";
 ---
@@ -7,7 +7,7 @@ import manifest from "../content/manifest.json";
   <div class="shell grid">
     <div>
       <Wordmark size="1.1rem" />
-      <p class="tag">Yet another agent framework? No — the org chart, the boardroom and the accounting department around the agents you already have.</p>
+      <p class="tag">Yet another agent framework? No — the org chart, the boardroom and the accounting department around the agents you already have. Open source and self-hosted; there is nothing to buy.</p>
       <p class="meta">
         <span class="chip"><span class="dot" aria-hidden="true"></span>Pre-1.0 · actively developed</span>
       </p>
@@ -21,11 +21,20 @@ import manifest from "../content/manifest.json";
       </ul>
     </nav>
 
+    <nav aria-label="Reference">
+      <p class="eyebrow">Reference</p>
+      <ul>
+        {MORE.map((i) => <li><a href={i.href}>{i.label}</a></li>)}
+      </ul>
+    </nav>
+
     <div>
       <p class="eyebrow">Source</p>
       <ul>
         {SOURCE_IS_PUBLIC && <li><a href={REPO_URL}>Repository ↗</a></li>}
         {SOURCE_IS_PUBLIC && <li><a href={`${REPO_URL}/blob/main/CONTRIBUTING.md`}>Contributing ↗</a></li>}
+        {SOURCE_IS_PUBLIC && <li><a href={`${REPO_URL}/issues`}>Issues ↗</a></li>}
+        {SOURCE_IS_PUBLIC && <li><a href={`${REPO_URL}/security/advisories/new`}>Report a vulnerability ↗</a></li>}
         <li><a href={LICENSE_URL}>{LICENSE} ↗</a></li>
       </ul>
     </div>
@@ -33,7 +42,7 @@ import manifest from "../content/manifest.json";
 
   <div class="shell bottom">
     <span>Content synced from the yaaf repository on {manifest.syncedAt}.</span>
-    <span>{manifest.roles} roles · {manifest.crews} crews · {manifest.examples} examples</span>
+    <span>{manifest.roles} roles · {manifest.crews} crews · {manifest.examples} examples · {manifest.harnesses} harnesses · {manifest.providers} providers · {manifest.tests.toLocaleString("en-US")} tests</span>
   </div>
 </footer>
 
@@ -41,7 +50,7 @@ import manifest from "../content/manifest.json";
   .foot { border-top: 1px solid var(--color-line); margin-top: 96px; padding-block: 48px 28px; }
   .grid {
     display: grid;
-    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr));
     gap: 36px;
     align-items: start;
   }

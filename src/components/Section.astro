@@ -9,7 +9,7 @@ interface Props {
 }
 const { eyebrow, title, lede, id, grid = false, class: cls = "" } = Astro.props;
 ---
-<section id={id} class:list={["sec", cls, { grid }]}>
+<section id={id} class:list={["sec", cls, { banded: grid }]}>
   {grid && <div class="blueprint bp" aria-hidden="true"></div>}
   <div class="shell">
     {(eyebrow || title) && (
@@ -25,7 +25,10 @@ const { eyebrow, title, lede, id, grid = false, class: cls = "" } = Astro.props;
 
 <style>
   .sec { position: relative; padding-block: 88px; }
-  .sec.grid { border-top: 1px solid var(--color-line); border-bottom: 1px solid var(--color-line); }
+  /* Not ".grid": Tailwind owns that class name (display: grid), and a banded
+     section that became a grid container let one wide table or code block
+     size the whole column, and the page with it, on a phone. */
+  .sec.banded { border-top: 1px solid var(--color-line); border-bottom: 1px solid var(--color-line); }
   .bp { position: absolute; inset: 0; opacity: 0.5; pointer-events: none; }
   .shell { position: relative; }
   .hd { max-width: 66ch; margin-bottom: 40px; }

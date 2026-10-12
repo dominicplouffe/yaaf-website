@@ -1,0 +1,448 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Section from "../components/Section.astro";
+import manifest from "../content/manifest.json";
+
+const roles = await getCollection("roles");
+const challengers = roles.filter((r) => r.data.category === "challenge");
+
+interface Feature {
+  k: string;
+  /** The failure this group exists to prevent, in one line. */
+  stops: string;
+  items: string[];
+  href: string;
+}
+interface Group {
+  id: string;
+  title: string;
+  lede: string;
+  features: Feature[];
+}
+
+const F = "/docs/features/#";
+
+const GROUPS: Group[] = [
+  {
+    id: "work",
+    title: "Work that finishes, and proof that it did",
+    lede: "The failure modes of an agent left alone for an afternoon: it marks its own work done, invents busywork, and can't tell you when it will finish. Each of these is a refusal or an automatic state change in the server.",
+    features: [
+      {
+        k: "“Done” means verified",
+        stops: "Agents grading their own work.",
+        items: [
+          "Nothing but the platform writes “met” — there is no agent verb for it.",
+          "Command tests run by the platform, in a sandbox, not by the agent that wants them to pass.",
+          "External evidence fetched server-side, hashed, snapshotted, and checked against domains the project controls.",
+          "Signed webhooks from GitHub, Slack or any connector count without verification, because agents can't forge them.",
+          "A random sample of closes dealt to you to spot-check, and a CEO-judgment metric on the Overview.",
+        ],
+        href: `${F}6-done-means-verified`,
+      },
+      {
+        k: "Work that has a terminus",
+        stops: "A project that stays busy without finishing.",
+        items: [
+          "The root object is the requirement: something that must be true at the end, with its own acceptance test.",
+          "A task that serves no requirement is refused.",
+          "The plan gate: no work until scope exists, is staged, is estimated and fits the money — arithmetic, not judgement.",
+          "Estimates are scored against actuals and future plans read at that ratio. The first estimate is kept forever.",
+          "Ordered stages and an acyclic dependency graph, with the critical path computed server-side.",
+        ],
+        href: `${F}2-work-that-has-a-terminus`,
+      },
+      {
+        k: "Work that can't be invented",
+        stops: "Busywork reported as progress.",
+        items: [
+          "Only the CEO creates top-level tasks; everyone else files a suggestion.",
+          "Every task needs a success test that can fail — a command or a stranger-checkable observable. Prose is refused.",
+          "A queue ceiling, one level of subtasks, one claim at a time.",
+          "An external-evidence floor, and a drought rule: with no verified outside proof for a day, only proof-producing work may be created.",
+          "Bets with kill dates that you, and only you, can extend once.",
+        ],
+        href: `${F}5-work-that-cant-be-invented`,
+      },
+      {
+        k: "A date that can't quietly slip",
+        stops: "“Nearly done” for six weeks.",
+        items: [
+          "The CEO proposes; the platform stamps the date from measured pace. No route writes it from input.",
+          "Re-projected every tick from pace, remaining estimate and the bias multiplier.",
+          "When the projection lands past the promise, new scope freezes, and two honest exits remain: cut, or move the date with a reason.",
+          "Re-validated when the rules move, the scope moves, or enough runs die against the plan.",
+        ],
+        href: `${F}3-a-delivery-date-the-project-cannot-quietly-break`,
+      },
+      {
+        k: "A rhythm and a standing meeting",
+        stops: "A recurring job that never learns from last time.",
+        items: [
+          "Operate projects run in daily, weekly, monthly or quarterly cycles, and read their last three cycles verbatim.",
+          "Two cycles with nothing accepted pause the project: a rhythm nobody dances to is a bill.",
+          "The review is opened by the janitor at zero tokens, on schedule, whatever the budget says.",
+          "Six levers, each recorded with your reason and shown at the next review beside what it bought.",
+        ],
+        href: `${F}4-a-rhythm-and-a-standing-meeting`,
+      },
+    ],
+  },
+  {
+    id: "money",
+    title: "Money and runaway loops",
+    lede: "Every wake is a paid model call. These are the reasons you can start something on Sunday and read its work on Friday without checking the bill in between.",
+    features: [
+      {
+        k: "Money that can't run away",
+        stops: "A bill you discover after the fact.",
+        items: [
+          "Every run metered, killed and timed-out ones included, cache traffic included.",
+          "A monthly plan the CEO is warned at and accounts for when it crosses — and a separate wall where the project pauses itself.",
+          "A per-run cap held across resumes by a governor, not handed whole to every retry.",
+          "LLM credentials managed once, by name, and assigned to projects. A project never stores a billing key.",
+          "Purchases cleared before money moves, booked with a receipt, and never bought twice by a crash-retry.",
+        ],
+        href: `${F}7-money-that-cant-run-away`,
+      },
+      {
+        k: "Loops that can't burn a night",
+        stops: "Two agents talking to each other at full price.",
+        items: [
+          "Wakes per agent per hour — the runaway-loop brake.",
+          "Runs per project per day and per trailing hour, so the day's allowance isn't gone by lunch.",
+          "A pair circuit breaker: ten messages in one thread with nothing landing, and the thread freezes until you unfreeze it.",
+          "Past five refusals in one run, the run's token is revoked. Rephrasing is not a strategy.",
+          "Idle heartbeats on an empty board are suppressed rather than billed.",
+        ],
+        href: `${F}8-loops-that-cant-burn-a-night`,
+      },
+      {
+        k: "Questions with a clock",
+        stops: "A project that stops dead waiting for you.",
+        items: [
+          "Spends over your threshold and anything legally ambiguous wait for you — and decide themselves after a week, default-deny.",
+          "When the CEO wants your read, the question lands on your desk with when it stops waiting and what it will do if you say nothing.",
+          "It never blocks: the project keeps working, and the CEO must say what it did with the answer it got, or didn't.",
+        ],
+        href: `${F}7-money-that-cant-run-away`,
+      },
+    ],
+  },
+  {
+    id: "org",
+    title: "The org, and the people over it",
+    lede: "A project hires from a library rather than a blank prompt, and the humans over it have roles of their own.",
+    features: [
+      {
+        k: "Roles, teams and a CEO",
+        stops: "One generalist asked to “also consider the risks”.",
+        items: [
+          `A versioned library of ${roles.length} roles — prompt, model, effort, tools, secret scopes — and an edit never silently changes a running project.`,
+          `${challengers.length} roles exist to disagree: a red team, a plan adversary, a data skeptic, a risk seat that can veto.`,
+          "The CEO hires and stands roles down itself, inside max_teams, and cannot remove its own last critic.",
+          "A seat's end lives in the plan: stand_down_when fires on the janitor, not on a reminder.",
+          "Solo mode: one agent under byte-identical governance, for when you only want the guardrails.",
+        ],
+        href: `${F}1-the-org`,
+      },
+      {
+        k: "People, co-chairs and observers",
+        stops: "Every write recorded as whoever held the admin token.",
+        items: [
+          "Accounts with passwords, browser sessions and expiring personal tokens. The static admin token is retired.",
+          "Per project: one chairman, any number of co-chairs who decide as themselves, and observers who read.",
+          "Only the chairman decides who decides, and can hand the chair on.",
+          "Every human route declares the authority it needs, and a test walks the live app and fails on any that doesn't.",
+        ],
+        href: "/docs/auth/",
+      },
+      {
+        k: "The autonomy dial",
+        stops: "A project that waits on you every morning — or one that never tells you anything.",
+        items: [
+          "Five authority switches, two presets, changed whenever you like as an amendment with a reason.",
+          "Authority is configuration; integrity is structure. What the platform checks never moves.",
+          "Every decision the CEO takes on your behalf is audited, mailed, listed and reversible.",
+          "The fire drill counts how many times a configuration will stop and wait for you.",
+        ],
+        href: "/docs/autonomy/",
+      },
+      {
+        k: "Directives and the boardroom",
+        stops: "A rule you said once and the agent forgot.",
+        items: [
+          "A resident CEO chat session in every running project: replies in seconds, without consuming the work queue's caps.",
+          "The same session answers from Slack over Socket Mode — no public URL needed.",
+          "A rule you state in chat becomes a rule the platform holds: filed as a directive citing your message, enforced from the next call.",
+          "Reporting cadence is a refusal, not a memory: unprompted status posts outside your window are refused.",
+        ],
+        href: `${F}14-talking-to-your-project`,
+      },
+    ],
+  },
+  {
+    id: "before",
+    title: "Before anything exists",
+    lede: "The riskiest moment is the one before the first real run. These make it survivable.",
+    features: [
+      {
+        k: "The founding conversation",
+        stops: "Hand-authoring a goal, an org chart and fifty rules alone.",
+        items: [
+          "Describe a project in a paragraph; the Founder drafts goal, shape, roster and rules, and says what it assumed.",
+          "The roster is derived from the goal — it will argue for fewer people than you asked for.",
+          "Everything you argued through becomes the new CEO's day-one briefing.",
+        ],
+        href: `${F}18-the-founding-conversation`,
+      },
+      {
+        k: "The goal grammar",
+        stops: "A goal that produces the wrong work, perfectly.",
+        items: [
+          "Ten elements a goal has to contain: a finish line and the record that settles it, who it's for, the standard it's judged against, anti-metrics, and more.",
+          "Five are load-bearing; missing one is “not ready”.",
+          "Graded before a project exists, by the same rubric the drafting agent writes against.",
+        ],
+        href: "/docs/goal-grammar/",
+      },
+      {
+        k: "A fire drill for $0",
+        stops: "Finding out at 3am that the configuration can't run.",
+        items: [
+          "yaaf rehearse runs your spec as a real project on scripted agents, with every rule and refusal in force.",
+          "Reports where it stopped, which walls it hit, what paces it, and the break-even cost per run.",
+          "Counts how often it will stop and wait for you.",
+          "Says what it did not exercise — and that a clean drill says nothing about whether a real model is any good.",
+        ],
+        href: `${F}13-a-fire-drill-before-you-spend-a-cent`,
+      },
+      {
+        k: "Setup that can't silently fail",
+        stops: "A dead credential found by a dead run.",
+        items: [
+          "A health checklist on every Overview, in plain language with a fix link. A healthy project shows nothing.",
+          "A credential of the wrong shape is refused while you are still looking at the form.",
+          "Data sources prove themselves with a live check before the project starts.",
+          "Export a whole project as one file; clone a running twin, optionally aimed at a new goal.",
+        ],
+        href: `${F}16-setup-that-cant-silently-fail`,
+      },
+    ],
+  },
+  {
+    id: "surfaces",
+    title: "Surfaces, and where the work lands",
+    lede: "Where you steer from, what you read when you come back, and what the agents hand you.",
+    features: [
+      {
+        k: "Chair it from Claude",
+        stops: "A dashboard you have to remember to open.",
+        items: [
+          "An MCP server with 32 tools across four scopes: read, steer, create, configure.",
+          "Claude gets its own credential, never yours, and every write is stamped “via mcp” permanently.",
+          "Nothing irreversible in one call: a preview, a single-use ticket bound to the exact arguments, then the commit.",
+          "Agent-written text arrives wrapped and labelled untrusted. Secrets are never readable at any scope.",
+        ],
+        href: "/docs/mcp-server/",
+      },
+      {
+        k: "Any harness, any provider",
+        stops: "A governance layer that only governs one vendor.",
+        items: [
+          `${manifest.harnesses} harnesses and ${manifest.providers} providers: the Claude Agent SDK and CLI, Codex, Gemini CLI, OpenCode, and yaaf's own loop on the Anthropic or any OpenAI-compatible API.`,
+          "Seats on different vendors' models, metered against one cap.",
+          "Seven rules about what a seat can run on, read from registries, checked at every door.",
+        ],
+        href: "/runtimes/",
+      },
+      {
+        k: "Three tenses",
+        stops: "Reconstructing a weekend from four tables.",
+        items: [
+          "The briefing: what happened while you were away, composed at zero tokens — so it arrives even on a paused or broke project.",
+          "The inbox: alarms always, actions up to five a day, and a decision you delegated never mailed at all.",
+          "The agenda: fourteen days of wakes, reviews, kill dates and expiries, with the promised date beside its projection.",
+        ],
+        href: `${F}12-three-tenses-not-one`,
+      },
+      {
+        k: "Deliverables and files",
+        stops: "Output you have to dig out of a container.",
+        items: [
+          "Finished deliverables in an artifact store — local disk or any S3-compatible bucket.",
+          "One file browser for published and working files, foldered by day, filterable, with the filters in the URL.",
+          "Previews that read a file as what it is: a report, a page, a table, a JSON tree, an image, a PDF.",
+          "Fast at tens of thousands of files, and it says what it dropped past the cap.",
+        ],
+        href: `${F}15-deliverables-and-files`,
+      },
+      {
+        k: "Everything on the record",
+        stops: "“How do you know?”, six weeks later.",
+        items: [
+          "Every run with its trace and the exact context it was sent; every message, including channels you can't speak in.",
+          "Every decision — yours, the CEO's, and the ones that decided themselves — and every amendment with your reason.",
+          "An audit log that includes every refusal, so a refusal storm names the wall.",
+          "yaaf receipt: spend on one side, only what the platform verified on the other.",
+        ],
+        href: `${F}11-everything-on-the-record`,
+      },
+      {
+        k: "Memory with a curator",
+        stops: "An agent that silently forgets what mattered.",
+        items: [
+          "Project memory the CEO curates; team memory the lead curates.",
+          "Caps are refusals, never silent eviction, with a warning before the wall.",
+          "supersede, compact and forget — all recorded, and folded entries stay readable.",
+        ],
+        href: `${F}10-memory-with-a-curator`,
+      },
+    ],
+  },
+  {
+    id: "running",
+    title: "Running it, and trusting it",
+    lede: "One box, your own credentials, and a test suite aimed at the rules rather than the models.",
+    features: [
+      {
+        k: "Containment",
+        stops: "An agent with your keys and nowhere to stop it.",
+        items: [
+          "A fresh, unprivileged container per run with CPU and memory caps and a per-run token.",
+          "Secrets envelope-encrypted, scoped to roles, materialised on a tmpfs outside the workspace.",
+          "Chromium in the box for services with no API — and captchas and 2FA always handed to a human.",
+          "Idempotency keys on every external side effect, so a crash-retry never tweets, opens a PR or pays twice.",
+        ],
+        href: `${F}9-containment`,
+      },
+      {
+        k: "Integrations",
+        stops: "Agents that can only talk to themselves.",
+        items: [
+          "Slack: one connection for every project, a boardroom made for you, the rest of the channels on demand.",
+          "GitHub, signed webhooks as unforgeable evidence, email and webhook notifications, S3-compatible storage.",
+          "Any MCP server as a data source — including OAuth servers like Notion, Linear and Atlassian — granted per role.",
+        ],
+        href: "/docs/integrations/",
+      },
+      {
+        k: "Proving it works",
+        stops: "Rules that exist only in a README.",
+        items: [
+          `${manifest.tests.toLocaleString("en-US")} tests, offline and free: on SQLite between edits, on Postgres 16 in CI.`,
+          "An invariant suite that attacks every rule over HTTP, the way an agent would: forged tokens, wrong roles, rephrased requests.",
+          "A chaos suite for crashes, reaps and retries; golden transcripts that gate every prompt change.",
+          "One opt-in paid test that grades whether a CEO's judgement was any good.",
+        ],
+        href: `${F}17-proving-it-works`,
+      },
+      {
+        k: "Open source, and only that",
+        stops: "A tool that phones home or changes its terms.",
+        items: [
+          "Apache-2.0. Self-hosted on one box with Docker Compose and Postgres.",
+          "No account, no hosted tier, no telemetry. The sandbox switches off every harness's own telemetry too.",
+          "The dashboard binds to localhost; claude.ai connects through four published paths and nothing else.",
+        ],
+        href: "/docs/deployment/",
+      },
+    ],
+  },
+];
+
+const NOT_BUILT = [
+  ["Multi-tenant orgs and Kubernetes", "One box is the target. Agent runs are I/O-bound on somebody else's inference, so rate limits arrive long before worker capacity does."],
+  ["A model router", "A seat runs on what it was hired on. No silent fallback to another provider, and no exchange rate between dollars and tokens."],
+  ["An egress allowlist", "It was built and removed: blocked requests became invisible failures. Containment is the container, the scoped grant, the budget and the audit."],
+  ["Defeating security challenges", "Captchas and 2FA go to a human, always."],
+  ["Teardown machinery", "Winding a project down is a decision, not a script. The account registry records what exists so you can settle it yourself."],
+  ["Virtual-card issuance", "Recommended hardening if you bring an issuer, never a requirement — and a seam nothing uses is scaffolding."],
+];
+
+const total = GROUPS.reduce((n, g) => n + g.features.length, 0);
+---
+<BaseLayout
+  title="Features"
+  description="Every yaaf feature, grouped by the failure it prevents: verified completion, plans and dates the platform owns, budgets and loop brakes, a role library, people and co-chairs, a $0 fire drill, an MCP server for Claude, any model provider, and an audit trail of everything."
+>
+  <section class="page-hero">
+    <div class="blueprint bp" aria-hidden="true"></div>
+    <div class="shell">
+      <p class="eyebrow">Features</p>
+      <h1>Every feature is a failure somebody already had.</h1>
+      <p class="lede">
+        {total} features in {GROUPS.length} groups, each named for the thing it stops. Every one is enforced in the server — a refusal or
+        an automatic state change, with a test that attacks it — rather than asked of an agent in a prompt.
+        This page is the map; <a href="/docs/features/">the feature reference</a> is the territory.
+      </p>
+      <nav class="toc" aria-label="On this page">
+        {GROUPS.map((g) => <a href={`#${g.id}`}>{g.title}</a>)}
+        <a href="#not-built">Deliberately not built</a>
+      </nav>
+    </div>
+  </section>
+
+  {GROUPS.map((g, i) => (
+    <Section id={g.id} grid={i % 2 === 1} eyebrow={`${String(i + 1).padStart(2, "0")} · ${g.features.length} features`} title={g.title} lede={g.lede}>
+      <div class="feats">
+        {g.features.map((f) => (
+          <article class="feat">
+            <h3>{f.k}</h3>
+            <p class="stops"><span>Stops</span> {f.stops}</p>
+            <ul>{f.items.map((it) => <li>{it}</li>)}</ul>
+            <a class="more" href={f.href}>Read more →</a>
+          </article>
+        ))}
+      </div>
+    </Section>
+  ))}
+
+  <Section id="not-built" grid={GROUPS.length % 2 === 1} eyebrow="And what it doesn't do" title="Deliberately not built."
+    lede="A list a project keeps on purpose is as informative as its feature list. Each of these was decided, with the reason written down in the plan.">
+    <div class="tiles">
+      {NOT_BUILT.map(([k, v]) => (
+        <div class="tile warm">
+          <h3>{k}</h3>
+          <p>{v}</p>
+        </div>
+      ))}
+    </div>
+    <p class="note"><a href="/docs/plan/#deliberately-not-built">The plan, the kill conditions and what is next →</a></p>
+  </Section>
+</BaseLayout>
+
+<style>
+  .page-hero .lede a { color: var(--color-accent-hi); }
+  .feats { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 12px; align-items: stretch; }
+  .feat {
+    display: flex;
+    flex-direction: column;
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    padding: 18px 20px;
+    min-width: 0;
+  }
+  .feat h3 { margin: 0; font-size: 16px; font-weight: 640; letter-spacing: -0.012em; }
+  .stops { margin: 8px 0 0; font-size: 13.5px; color: var(--color-ink); line-height: 1.5; }
+  .stops span {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--color-accent-2);
+    border: 1px solid color-mix(in srgb, var(--color-accent-2) 45%, transparent);
+    border-radius: 999px;
+    padding: 1px 7px;
+    margin-right: 4px;
+    vertical-align: 1px;
+  }
+  .feat ul { margin: 12px 0 0; padding: 0; list-style: none; display: grid; gap: 7px; }
+  .feat li { position: relative; padding-left: 16px; font-size: 13.5px; line-height: 1.6; color: var(--color-ink-2); }
+  .feat li::before { content: ""; position: absolute; left: 2px; top: 0.62em; width: 5px; height: 5px; border-radius: 1px; background: var(--color-accent); opacity: 0.8; }
+  .more { margin-top: auto; padding-top: 12px; font-size: 13px; color: var(--color-accent-hi); text-decoration: none; }
+  .more:hover { text-decoration: underline; text-underline-offset: 3px; }
+  @media (max-width: 420px) { .feats { grid-template-columns: minmax(0, 1fr); } }
+</style>

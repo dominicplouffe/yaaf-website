@@ -13,7 +13,8 @@
     "preview": "astro preview",
     "check": "astro check",
     "deploy": "./scripts/deploy.sh",
-    "og": "node scripts/make-og.mjs"
+    "og": "node scripts/make-og.mjs",
+    "check:links": "node scripts/check-links.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",

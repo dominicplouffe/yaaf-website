@@ -13,7 +13,10 @@ export default defineConfig({
   // CloudFront Function in infra/ appends index.html for directory requests,
   // because an S3 REST origin will not do it for you.
   build: { format: "directory", inlineStylesheets: "auto" },
-  integrations: [sitemap({ filter: (page) => !page.includes("/404") })],
+  // /why/ became /compare/ when the comparison grew past three questions.
+  // A static redirect page keeps old links and search results working.
+  redirects: { "/why": "/compare/" },
+  integrations: [sitemap({ filter: (page) => !page.includes("/404") && !page.endsWith("/why/") })],
   vite: { plugins: [tailwindcss()] },
   markdown: {
     shikiConfig: {
