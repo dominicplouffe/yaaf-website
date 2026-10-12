@@ -10,6 +10,8 @@ interface Team {
   employees: string[];
   lead?: string | null;
   challenge?: boolean;
+  /** What the seat runs on — model and harness — when the chart is making that point. */
+  runsOn?: string;
 }
 interface Props {
   ceo: string;
@@ -17,8 +19,9 @@ interface Props {
   teams: Team[];
   chairman?: string | false;
   compact?: boolean;
+  ceoRunsOn?: string;
 }
-const { ceo, ceoRole, teams, chairman = "You — the chairman", compact = false } = Astro.props;
+const { ceo, ceoRole, teams, chairman = "You — the chairman", compact = false, ceoRunsOn } = Astro.props;
 ---
 <div class:list={["org", { compact }]}>
   {chairman && (
@@ -38,6 +41,7 @@ const { ceo, ceoRole, teams, chairman = "You — the chairman", compact = false 
       <span class="eyebrow">Executive</span>
       <strong>{ceo}</strong>
       {ceoRole && <span class="sub">{ceoRole}</span>}
+      {ceoRunsOn && <span class="on">{ceoRunsOn}</span>}
     </div>
   </div>
 
@@ -55,6 +59,7 @@ const { ceo, ceoRole, teams, chairman = "You — the chairman", compact = false 
           <div class:list={["node team", { challenge: t.challenge }]}>
             <span class="eyebrow">{t.name}</span>
             <strong>{t.role}</strong>
+            {t.runsOn && <span class="on">{t.runsOn}</span>}
             {t.employees.length > 0 && (
               <span class="people">
                 {t.employees.map((e, i) => (
@@ -89,6 +94,18 @@ const { ceo, ceoRole, teams, chairman = "You — the chairman", compact = false 
   }
   .node strong { font-size: 14px; font-weight: 640; letter-spacing: -0.01em; color: var(--color-ink); }
   .node .sub { font-family: var(--font-mono); font-size: 10.5px; color: var(--color-muted); }
+  .node .on {
+    align-self: center;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.3px;
+    color: var(--color-accent-hi);
+    border: 1px solid color-mix(in srgb, var(--color-accent) 35%, transparent);
+    border-radius: 999px;
+    padding: 1px 7px;
+    margin-top: 2px;
+    max-width: 100%;
+  }
 
   .chair {
     border-color: color-mix(in srgb, var(--color-accent-2) 50%, transparent);

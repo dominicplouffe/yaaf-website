@@ -35,8 +35,9 @@ unit of work, and go back to sleep. Everything is recorded.
 
 ## Before you start, have these ready
 
-1. **The stack running** — `http://localhost:8080/app` loads and you can log
-   in with your admin token.
+1. **The stack running** — `http://localhost:8080/app` loads and you can sign
+   in. You chair whatever you found; add co-chairs or observers afterwards
+   from the project's Settings → People.
 2. **An Anthropic API key** (from console.anthropic.com) — this is how agents
    pay for their model calls.
 3. **Any outside-service credentials the work needs** — a WordPress password,
@@ -78,7 +79,8 @@ create** drops the whole thing into the form below, where you change anything
 you like, run the fire drill for nothing, and create it.
 
 It needs one thing first: the **Founder's own credential**, set once under
-Settings. That is not one of the LLM credentials projects pay with and never
+Settings — Anthropic's, or an API key of any other provider with one of its
+models. That is not one of the LLM credentials projects pay with and never
 becomes one — it pays for product-wide conversations like this, and no
 project's agents ever see it. Every project you create still pays its own way,
 and the Founder knows it: it reads the list of LLM credentials, names the one
@@ -244,6 +246,21 @@ Later, on a running project, **Add a team** opens the same desk — but it opens
 on what your roster is missing rather than on the library: *"Nobody here checks
 the numbers before you see them"*, with the two or three hires that close it.
 
+**You are picking a starting roster, not a permanent one.** Your CEO staffs the
+project itself from here on: it hires roles from the same library and stands
+down ones whose job is finished, up to the `max_teams` rule, without asking
+you. That is deliberate, and it is safe for an unglamorous reason — hiring buys
+no runs. The daily ration and the monthly cap belong to the *project*, so a
+bigger roster spreads the same allowance thinner rather than raising it.
+
+So hire for the front half and let the CEO shrink it. A project is
+front-loaded: requirements, design, build, validation and QA crowd the start,
+and steady execution afterwards needs a fraction of the seats. While it writes
+the plan, the CEO records for each team the requirement or stage after which
+that role is done, and the platform stands the team down when that comes true.
+Every change lands in your boardroom, and the Overview roster carries **stand
+down** and **recall** so you can overrule any of it.
+
 **Constitution.** These are the hard rules the project lives under — spending
 caps, how many tasks can be open at once, how long the CEO can go without
 real evidence before the system pushes back. The defaults are sensible;
@@ -327,11 +344,12 @@ a token outright when a server stops needing one.
 
 ## A note on secrets and who can see them
 
-You are the chairman, and you are the only human on this system. Every stored
-project value — service credentials, a data source's address and token, the
-Slack tokens, the webhook signing secrets — is masked in the UI and one press
-of the **eye** from being readable, with a copy button and an inline edit to
-rotate it. Debugging a connection shouldn't require a database client. The
+You are the chairman. Whoever can change a project's credentials can read them
+back — you and your co-chairs, never an observer — and the box's own
+credentials are the instance admin's. Every stored project value — service
+credentials, a data source's address and token, the Slack tokens, the webhook
+signing secrets — is masked in the UI and one press of the **eye** from being
+readable, with a copy button and an inline edit to rotate it. Debugging a connection shouldn't require a database client. The
 LLM credentials projects pay with live above projects, under app-wide
 Settings, where they can be renamed and rotated but are never shown back.
 
@@ -339,7 +357,7 @@ That is a *display* choice for you, and it changes nothing about the agents.
 A role still receives only the credentials you granted it, still as
 environment variables in its own sandbox, and is still told the variable's
 *name* and never its value. The two are different doors: the eye lives behind
-your admin token, and no agent can reach it.
+your own sign-in, and no agent can reach it.
 
 One credential the eye cannot help with: a **binary** file credential — a
 `.p12`, a DER certificate. It says its size and that it is not text, because a

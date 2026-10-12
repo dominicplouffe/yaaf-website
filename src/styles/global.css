@@ -185,6 +185,9 @@ body {
   font-size: 13px;
   line-height: 1.6;
 }
+/* Inline code in the synced docs holds long identifiers (test names, env
+   vars) that would otherwise push a phone-width page sideways. */
+.prose :not(pre) > code { overflow-wrap: anywhere; }
 .prose pre code {
   background: none;
   border: 0;
@@ -222,3 +225,188 @@ body {
 
 /* Anchor targets clear the sticky header. */
 .prose :is(h2, h3, h4) { scroll-margin-top: 90px; }
+
+/* --- the page kit ----------------------------------------------------------
+   The patterns every marketing page repeats: a button, a tile, a grid of
+   tiles, a note under a section, a data table, a pill. Global so that a new
+   page reads like the old ones without copying their scoped CSS, and so a
+   change to how a tile looks is one edit rather than seven.
+   --------------------------------------------------------------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--color-ink);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-control);
+  padding: 10px 17px;
+  transition: background 0.15s, border-color 0.15s, filter 0.15s;
+}
+.btn:hover { background: rgba(255, 255, 255, 0.05); border-color: rgba(255, 255, 255, 0.2); }
+.btn.primary { background: var(--color-accent); border-color: var(--color-accent); color: #fff; }
+.btn.primary:hover { filter: brightness(1.1); background: var(--color-accent); }
+.btn.ghost { color: var(--color-ink-2); }
+.btns { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.tiles { display: grid; gap: 12px; grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr)); }
+.tiles.c2 { --cols: 2; }
+.tiles.c4 { --cols: 4; }
+/* .tiles.tiles matches every grid at the same specificity as .tiles.c2, so
+   the narrower query, coming later, always wins. */
+@media (max-width: 1080px) { .tiles.tiles { --cols: 2; } }
+@media (max-width: 680px) { .tiles.tiles { --cols: 1; } }
+
+.tile {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  padding: 18px 20px;
+  min-width: 0;
+}
+.tile > h3 { margin: 0; font-size: 15.5px; font-weight: 640; letter-spacing: -0.012em; line-height: 1.35; }
+.tile > p, .tile > ul { margin: 9px 0 0; font-size: 14px; line-height: 1.65; color: var(--color-ink-2); }
+.tile > ul { padding-left: 1.1em; list-style: disc; }
+.tile > ul li + li { margin-top: 5px; }
+.tile > ul li::marker { color: var(--color-muted); }
+.tile strong { color: var(--color-ink); font-weight: 620; }
+.tile code, .note code, .kit-table code, .lede code {
+  font-family: var(--font-mono);
+  font-size: 0.82em;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-line);
+  border-radius: 4px;
+  padding: 0.08em 0.36em;
+}
+.tile > .eyebrow { display: block; margin: 0 0 8px; }
+.tile.rule { border-left: 2px solid var(--color-accent); }
+.tile.warm { border-left: 2px solid var(--color-accent-2); }
+.tile.hi { border-color: color-mix(in srgb, var(--color-accent) 45%, transparent); background: color-mix(in srgb, var(--color-accent) 8%, var(--color-surface)); }
+.tile.hi-warm { border-color: color-mix(in srgb, var(--color-accent-2) 45%, transparent); background: color-mix(in srgb, var(--color-accent-2) 8%, var(--color-surface)); }
+.tile .more { display: inline-block; margin-top: 10px; font-size: 13px; color: var(--color-accent-hi); text-decoration: none; }
+.tile .more:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+.note { margin: 26px 0 0; font-size: 14px; line-height: 1.65; color: var(--color-muted); max-width: 70ch; }
+.note strong { color: var(--color-ink-2); }
+.note a, .inline-links a { color: var(--color-accent-hi); text-decoration: none; }
+.note a:hover, .inline-links a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+.callout {
+  border: 1px solid color-mix(in srgb, var(--color-accent) 42%, transparent);
+  background: color-mix(in srgb, var(--color-accent) 8%, transparent);
+  border-radius: var(--radius-card);
+  padding: 16px 20px;
+}
+.callout.warm {
+  border-color: color-mix(in srgb, var(--color-accent-2) 42%, transparent);
+  background: color-mix(in srgb, var(--color-accent-2) 8%, transparent);
+}
+.callout p { margin: 0; font-size: 15px; line-height: 1.65; color: var(--color-ink-2); max-width: 72ch; }
+.callout p + p { margin-top: 10px; }
+.callout strong { color: var(--color-ink); }
+.callout a { color: var(--color-accent-hi); }
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.9px;
+  text-transform: uppercase;
+  color: var(--color-ink-2);
+  border: 1px solid var(--color-line);
+  border-radius: 999px;
+  padding: 4px 10px;
+  white-space: nowrap;
+}
+.pill.blue { color: var(--color-accent-hi); border-color: color-mix(in srgb, var(--color-accent) 45%, transparent); }
+.pill.warm { color: var(--color-accent-2); border-color: color-mix(in srgb, var(--color-accent-2) 45%, transparent); }
+.pill.good { color: var(--color-good); border-color: color-mix(in srgb, var(--color-good) 45%, transparent); }
+.pill.dim { color: var(--color-muted); }
+.pills { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.kit-table { overflow-x: auto; border: 1px solid var(--color-line); border-radius: var(--radius-card); }
+.kit-table table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.kit-table thead th {
+  text-align: left;
+  padding: 11px 14px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  border-bottom: 1px solid var(--color-line);
+  background: var(--color-surface);
+  white-space: nowrap;
+}
+.kit-table thead th.me { color: var(--color-accent-hi); }
+.kit-table tbody th {
+  text-align: left;
+  font-weight: 500;
+  color: var(--color-ink-2);
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--color-line-2);
+  font-size: 13px;
+  vertical-align: top;
+}
+.kit-table tbody td { padding: 11px 14px; border-bottom: 1px solid var(--color-line-2); color: var(--color-ink-2); vertical-align: top; line-height: 1.55; }
+.kit-table tbody td.me { color: var(--color-ink); background: color-mix(in srgb, var(--color-accent) 7%, transparent); }
+.kit-table tbody tr:last-child > * { border-bottom: 0; }
+.kit-table .mono { font-family: var(--font-mono); font-size: 12px; }
+.kit-table .yes { color: var(--color-good); }
+.kit-table .no { color: var(--color-muted); }
+
+/* A page's own top: smaller than the home hero, bigger than a section. */
+.page-hero { position: relative; padding-block: 64px 56px; border-bottom: 1px solid var(--color-line); overflow: hidden; }
+.page-hero .bp { position: absolute; inset: 0; opacity: 0.55; pointer-events: none; }
+.page-hero .shell { position: relative; }
+.page-hero h1 { font-size: var(--text-h1); line-height: 1.04; letter-spacing: -0.035em; font-weight: 650; margin: 12px 0 0; max-width: 22ch; text-wrap: balance; }
+.page-hero .lede { color: var(--color-ink-2); font-size: 1.1rem; line-height: 1.65; margin: 18px 0 0; max-width: 64ch; text-wrap: pretty; }
+.page-hero .lede strong { color: var(--color-ink); font-weight: 620; }
+.page-hero .btns { margin-top: 26px; }
+
+/* In-page table of contents, for the long pages. */
+.toc { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 26px; }
+.toc a {
+  font-size: 13px;
+  color: var(--color-ink-2);
+  text-decoration: none;
+  border: 1px solid var(--color-line);
+  border-radius: 999px;
+  padding: 5px 12px;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.toc a:hover { color: var(--color-ink); border-color: color-mix(in srgb, var(--color-accent) 55%, transparent); background: color-mix(in srgb, var(--color-accent) 10%, transparent); }
+
+section[id], [id].anchor { scroll-margin-top: 72px; }
+
+/* A wide table on a phone: each row becomes a card, each cell carries its
+   column's name from data-label. Used where the columns are the point (a
+   comparison), so the reader never has to scroll sideways to reach yaaf's. */
+@media (max-width: 720px) {
+  .kit-table.stack { overflow: visible; }
+  .kit-table.stack table { min-width: 0 !important; }
+  .kit-table.stack thead { display: none; }
+  .kit-table.stack tr { display: block; padding: 14px 16px; border-bottom: 1px solid var(--color-line-2); }
+  .kit-table.stack tbody tr:last-child { border-bottom: 0; }
+  .kit-table.stack tbody th,
+  .kit-table.stack tbody td { display: block; padding: 0; border: 0; width: auto !important; white-space: normal !important; }
+  .kit-table.stack tbody th { color: var(--color-ink); font-weight: 620; font-size: 14px; }
+  .kit-table.stack tbody td { margin-top: 10px; }
+  .kit-table.stack tbody td[data-label]::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 3px;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+  .kit-table.stack tbody td.me { background: none; border-left: 2px solid var(--color-accent); padding-left: 10px; }
+  .kit-table.stack tbody td.me::before { color: var(--color-accent-hi); }
+}

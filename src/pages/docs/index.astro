@@ -13,13 +13,15 @@ const BLURB: Record<string, string> = {
   "creating-a-project": "Your first project in plain English: picking a shape, writing a goal a CEO can plan from, accepting the plan.",
   governance: "The constitution — every rule, its default, what it refuses, and how to change one.",
   autonomy: "How much the CEO decides without you. Five authority switches, two presets, and what never moves at any setting.",
-  "goal-grammar": "The ten things a goal has to contain before the platform will let a project be planned from it.",
+  "goal-grammar": "The rubric itself: the ten things a goal has to contain, why each earns its place, and how the grader decides a goal is ready.",
   "mcp-server": "Chairing yaaf from Claude Code, Claude Desktop or anything else that speaks MCP — and the security model that makes writes safe.",
   dashboard: "Every screen and what you do there.",
   cli: "Every `yaaf` command, the project spec shape, and a full provisioning script.",
   "agent-api": "The API your agents act through, and how to write a role that uses it well.",
   deployment: "Install and run it: one script, every environment variable, backups, upgrades.",
   integrations: "Billing, credentials, MCP data sources, Slack, GitHub, webhooks, artifact storage.",
+  runtimes: "Any harness, any provider, the same rules: Claude, Codex, Gemini, OpenCode and yaaf's own loop — the design, the seven rules it adds, and what each CLI taught it.",
+  auth: "People: accounts, sessions and personal tokens; chairman, co-chairs and observers; and the eight rules that decide who may decide.",
 };
 
 const groups = DOCS_GROUPS.map((g) => ({
@@ -30,7 +32,7 @@ const groups = DOCS_GROUPS.map((g) => ({
 <DocsLayout
   title="Documentation"
   subtitle="The whole reference. Rendered from the repository, synced with it."
-  description="yaaf documentation: the plan, the feature reference, the constitution, the autonomy dial, the MCP server, the CLI and the agent API."
+  description="yaaf documentation: the plan, the feature reference, the constitution, the autonomy dial, the MCP server, runtimes and providers, people and roles, the CLI and the agent API."
 >
   <p>
     Everything below is the yaaf repository's own documentation, rendered here so

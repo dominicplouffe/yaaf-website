@@ -43,16 +43,39 @@ employees and a lead. The CEO is the only agent that plans.
 - **Solo mode** places the CEO as the sole member of the only team, so one
   brain plans *and* executes under byte-identical policy — a legitimate way
   to run yaaf if you just want the guardrails.
+- **The CEO staffs the project.** It hires roles from your library and stands
+  down ones whose job is finished, up to `max_teams`, with no approval
+  round-trip — it is spending inside a budget it already has, and hiring buys
+  no runs (the daily ration and the monthly wall are the project's, not the
+  seat's). Every change lands in your boardroom and on the Overview roster,
+  where you can stand a role down or recall one yourself. Two seats are not the
+  CEO's to remove: its last `challenge` role, and its last reader when the
+  constitution asks for an independent read.
+- **A seat's end date lives in the plan.** While planning, the CEO sets
+  `stand_down_when` on each team — the requirement or the stage after which
+  that role is done — and the platform stands the team down itself when the
+  condition comes true. A team still holding open work is skipped and stood
+  down on the next pass, so a condition can neither orphan a task nor be lost.
+  A seat with no declared end that spends runs and closes nothing for
+  `staffing_review_days` trips a flag the CEO has to answer.
 
 **The hierarchy is the message bus.** Employees speak in their team room; leads
 also in leadership; the CEO in leadership and the boardroom. Cross-team needs
 go through leadership. Posting outside your channels is a 403.
 
-**You are the chairman** — the one human. You speak only in the boardroom, and
-your powers are deliberately few: set the goal and the rules, accept and cut
-scope, sign the date, decide approvals, extend a bet once, kill things,
-spot-audit, and start/pause/stop. How many of those you actually exercise is a
-setting — see [AUTONOMY.md](/docs/autonomy/).
+**You are the chairman** — the human the project answers to. You speak only in
+the boardroom, and your powers are deliberately few: set the goal and the
+rules, accept and cut scope, sign the date, decide approvals, extend a bet
+once, kill things, spot-audit, and start/pause/stop. How many of those you
+actually exercise is a setting — see [AUTONOMY.md](/docs/autonomy/).
+
+**Other people, if you want them.** Co-chairs hold every one of those powers as
+your peers and are recorded as themselves; observers read and decide nothing;
+only you decide who decides, and you can hand the chair on. Several people
+share one box, each project with its own chair, and the instance admin who runs
+the box reads everything and decides nothing it does not chair. Every route
+declares which of these it needs, and a test refuses one that does not — see
+[AUTH.md](/docs/auth/).
 
 **Three project shapes**, chosen once at creation because the rules differ by
 shape. **Explore** chases a goal with no fixed end (bets and evidence, no
@@ -225,9 +248,11 @@ Outside Explore mode the root object is not the task, it is the
   otherwise sit at full long after the plan was clear.
   Shown and never enforced: the token cap stays the platform's own rule. API
   keys have no plan meter and say so.
-- **Warn, then stop.** At the warn ratio the CEO is told to cut burn; at 100%
-  the project **pauses itself** and you get an email/webhook. Restarting is
-  your decision, not the project's.
+- **Warn, account, then stop.** At the warn ratio the CEO is told to cut burn.
+  Past the budget it records an overrun it must account for, and nothing stops:
+  the budget is a plan. At the wall — the budget times `hard_stop_multiple`,
+  three by default — the project **pauses itself** and you get an
+  email/webhook. Restarting is your decision, not the project's.
 - **Billing fails loud.** A missing or wrong-shaped credential is caught by a
   preflight and by the health checklist, not at 9am by a dead run.
 - **Approval threshold.** Spends at or above a USD line — and anything legally
@@ -503,9 +528,15 @@ evidence at all about your *project*.
   a page, a dataset as a table, JSON as a tree, an image as a picture, a PDF in
   the browser's viewer, anything else as text with line numbers. The arrow keys
   walk the filtered list without leaving the reader.
-- **The listing says what it dropped.** Past the per-project cap the newest
-  files are kept, not the alphabetically first, and the screen says how many
-  are not shown.
+- **It stays fast at tens of thousands of files.** The server keeps one index
+  per project, rebuilt at most every few seconds however many screens are
+  open, and answers the search, filters, sort and day folders itself; the
+  browser receives the folder headers and only the rows it is showing. A
+  stale index is served at once and refreshed behind the request, with its
+  age in the footer, so a slow disk never stalls the tab.
+- **The listing says what it dropped.** Past the per-project cap (50,000
+  working files) the newest are kept, not the alphabetically first, and the
+  screen says how many are not shown.
 
 ## 16. Setup that can't silently fail
 

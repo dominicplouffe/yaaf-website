@@ -4,7 +4,7 @@ subtitle: "the constitution, rule by rule"
 slug: "governance"
 sourceFile: "docs/GOVERNANCE.md"
 ---
-Each project runs under a **constitution**: 60 numbers and switches the agents
+Each project runs under a **constitution**: 62 numbers and switches the agents
 cannot edit, argue with, or talk their way around. Every one is enforced
 server-side in [`yaaf/server/policy.py`](https://github.com/dominicplouffe/yaaf/blob/main/yaaf/server/policy.py) as an HTTP
 refusal or an automatic state change. The schema itself lives in
@@ -21,7 +21,7 @@ moment it exists, on the tab its group maps to in `GROUP_THEMES`.
 
 ## Changing a rule
 
-**In the dashboard:** Settings → **Rules in force**. All 56 sit behind seven tabs
+**In the dashboard:** Settings → **Rules in force**. All 62 sit behind seven tabs
 — Money, The bar, Pace & brakes, How work is run, Autonomy, Memory, Rhythm &
 reporting —
 one rule per row, with the group as a subhead. Edit anything on any tab; a tray
@@ -34,7 +34,7 @@ only. Deep link with `?s=rules&t=<tab>`.
 
 ```bash
 curl -X POST "$YAAF_API/admin/projects/$PROJECT/amendments" \
-  -H "Authorization: Bearer $YAAF_ADMIN_TOKEN" \
+  -H "Authorization: Bearer $YAAF_TOKEN" \
   -d '{"reason": "First month burned out in nine days", "changes": {"monthly_usd_cap": 400}}'
 ```
 
@@ -62,6 +62,8 @@ that cites your message. Everything else is chairman-only.
 |---|---|---|
 | `queue_ceiling` | 8 | Top-level tasks open at once. At the cap, task creation is **409** — finish or kill something. |
 | `subtask_ceiling` | 10 | Open subtasks under one parent. At the cap, **409**. |
+| `max_teams` | 8 | Teams the project may run at once. Your CEO hires and stands roles down itself, from your role library, inside this number; the hire that would exceed it is **409**, and it is told to argue for a bigger roster with `capacity_request` rather than work around the cap. Hiring buys no runs — the daily ration and the monthly wall are project-level — so a bigger roster splits the same allowance thinner. What it does buy is wake-ups, which is why the ceiling is here at all. |
+| `staffing_review_days` | 14 | Days a seat may spend runs while closing no work before the platform opens a `seat_idle` flag. The CEO must answer it: stand the role down, or say on the record why it stays. |
 | `external_ratio_min` | 0.5 | Minimum share of open tasks that must produce outside evidence. An add that would break it is **409**. |
 | `external_ratio_applies_from` | 3 | Board size before that ratio is checked at all. |
 | `min_success_test_len` | 15 | Characters. A shorter command or observable isn't falsifiable, so the task is refused. |
@@ -137,8 +139,8 @@ still reach you at every setting.
 
 | Rule | Default | What it does |
 |---|---|---|
-| `monthly_usd_cap` | 1000.0 | The unit under `api_key` billing. At 100% the project **pauses itself** and you're emailed. |
-| `monthly_token_cap` | 200,000,000 | The unit under `subscription` billing. Same hard stop. |
+| `monthly_usd_cap` | 1000.0 | The month's plan under `api_key` billing. The CEO is warned at `budget_warn_ratio`; crossing the plan records an overrun the CEO must account for, and stops nothing. The project **pauses itself** at the wall below, and you're emailed. |
+| `monthly_token_cap` | 200,000,000 | The same plan in tokens, under `subscription` billing. Same wall. |
 | `hard_stop_multiple` | 3.0 | The wall, as a multiple of the budget. The budget is the plan you make before the work starts; this is where a runaway is actually stopped. They used to be one number, which is why every CEO lowballed: crossing your own plan was fatal, so the plan became a thing to stay well back from. 1.0 restores the old behaviour. |
 | `budget_warn_ratio` | 0.8 | The CEO is told to cut burn here — before the platform pauses the project for it. Also warns on the external envelope. |
 | `external_monthly_usd_cap` | 500.0 | The month's real-world spend wall (purchases, services) — separate from the model budget and enforced in **every** billing mode. A purchase that would cross it is refused with the arithmetic; no approval overrides it, only an amendment. 0 turns it off. |

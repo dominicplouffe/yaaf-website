@@ -1,0 +1,283 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Section from "../components/Section.astro";
+import { REPO_URL } from "../site.config.mjs";
+import manifest from "../content/manifest.json";
+
+interface Entry {
+  date: string;
+  title: string;
+  body: string;
+  prs?: number[];
+  href?: string;
+  big?: boolean;
+}
+
+/**
+ * Curated from the repository's history, newest first. Dates are commit dates.
+ * PR numbers link to the merged pull request; entries without one landed as
+ * direct commits on main.
+ */
+const ENTRIES: Entry[] = [
+  {
+    date: "2026-10-12",
+    big: true,
+    title: "Any harness, any provider, the same rules",
+    body: "A seat can now run on the Claude Agent SDK, the Claude Code CLI, yaaf's own loop on the Anthropic API, the Codex CLI (an OpenAI key or a ChatGPT plan), the Gemini CLI (a Gemini key or a Google login), OpenCode, or yaaf's loop on any OpenAI-compatible API — DeepSeek, OpenRouter, Kimi, Qwen, Mistral, Grok or your own server. Seven new refusals keep every seat payable, priceable and inside its role's grants, and the boardroom chat, the Founder and the goal grader follow the seat onto whatever provider it uses.",
+    prs: [45],
+    href: "/runtimes/",
+  },
+  {
+    date: "2026-10-12",
+    big: true,
+    title: "People sign in, co-chairs decide, and the admin token is retired",
+    body: "Accounts with passwords, browser sessions and expiring personal tokens replace one static bearer that recorded every write as the chairman. Each project has one chairman, any number of co-chairs who decide as themselves, and observers. Every human route declares the authority it needs, and a test refuses one that does not.",
+    prs: [47],
+    href: "/docs/auth/",
+  },
+  {
+    date: "2026-10-12",
+    title: "The Deliverables list lives on the server",
+    body: "One index per project, rebuilt at most every few seconds however many screens are open, so the file browser stays fast at tens of thousands of files. Every answer now travels gzipped, except a file's own bytes.",
+    prs: [46],
+  },
+  {
+    date: "2026-10-05",
+    title: "Every seat moves to the 5.5 generation",
+    body: "The role library and the defaults move to Opus 5.5 and Sonnet 5.5: Opus is 20% cheaper, Sonnet the same price.",
+  },
+  {
+    date: "2026-09-20",
+    title: "Say only what was measured, and only to whoever's decision it is",
+    body: "The burn-up stops drawing a forecast through a single point, and an autonomous project stops putting its owner's name on decisions the owner had handed to the CEO.",
+    prs: [44],
+  },
+  {
+    date: "2026-09-19",
+    big: true,
+    title: "The project experience, redesigned",
+    body: "Eight tabs that asked one question three times became six you live in and two you open when something looks wrong. Every screen adopts one system, says things the way the person reading them would, and keeps the numbers while dropping the operator's words for them.",
+    prs: [42],
+    href: "/docs/dashboard/",
+  },
+  {
+    date: "2026-09-16",
+    title: "Length is a rule with a number",
+    body: "The biggest writer had no length rule at all, and the deliverable had been exempted from the one place the length was. Now the boardroom has a number; published files are exempt.",
+    prs: [42],
+  },
+  {
+    date: "2026-09-12",
+    big: true,
+    title: "yaaf receipt",
+    body: "A project's whole life in two columns: metered spend on one side, including the runs that died, and on the other only what the platform itself verified. No agent-written text, so it is safe to paste anywhere. The CEO also gets the same attribution: who spent the day's runs, and on what — it had been guessing.",
+    href: "/docs/features/#11-everything-on-the-record",
+  },
+  {
+    date: "2026-09-10",
+    title: "One list of every file; tempo and stakes as cards",
+    body: "Deliverables become a file browser filed by the day each file landed. How much a project matters and how often it thinks become two cards instead of twenty-two rules nobody found. Credentials can be files, written only by the platform.",
+    prs: [36, 38, 39],
+  },
+  {
+    date: "2026-09-08",
+    big: true,
+    title: "Managed LLM credentials, and a plan meter that isn't polled",
+    body: "Credentials are created once, by name, and assigned to projects — a project never stores a billing key. A subscription shows what the provider says is left on its windows, harvested from the runs already spending it rather than polled sixty times an hour from every open tab.",
+    prs: [31, 34],
+  },
+  {
+    date: "2026-09-06",
+    title: "A rule may be a floor",
+    body: "The other half of house rule one: an automatic state change may fire when a project is under-reaching, not only refuse when it over-reaches. The eval gate can now fail a project for doing too little, and the platform can say a project is losing.",
+  },
+  {
+    date: "2026-09-04",
+    title: "Questions with a clock",
+    body: "When the CEO wants your read, the question lands on your desk with when it stops waiting and what it will do if you say nothing. It never blocks, and the CEO must say what it did with the answer it got — or didn't.",
+  },
+  {
+    date: "2026-09-03",
+    title: "Nobody had ever been told to make the deliverable good",
+    body: "A quality bar every seat is held to, an independent read by somebody who did not write the work, and research that must say what it looked for and missed before it can close.",
+    prs: [26],
+  },
+  {
+    date: "2026-08-30",
+    big: true,
+    title: "A budget is a plan, and the wall is a separate number",
+    body: "Crossing the monthly budget used to pause the project, so three CEOs on three projects refused money they were offered. Now the budget is a plan the CEO accounts for when it overruns, and the wall — three times the plan by default — is the only thing that pauses a project.",
+    href: "/how-it-works/#money",
+  },
+  {
+    date: "2026-08-29",
+    title: "A suite you can run between edits",
+    body: "The schema is built once per worker rather than once per test, tests run in parallel, and CI is sharded four ways on Postgres.",
+    prs: [19, 20],
+  },
+  {
+    date: "2026-08-28",
+    big: true,
+    title: "yaaf as an MCP server",
+    body: "Chair a project from Claude: read the cockpit, talk to the CEO, decide approvals, design and create projects. Claude gets its own credential, nothing irreversible lands in one call, and agent text arrives labelled untrusted.",
+    prs: [16],
+    href: "/docs/mcp-server/",
+  },
+  {
+    date: "2026-08-28",
+    title: "The Founder",
+    body: "The founding moment gets an agent: describe a project in a paragraph, and the Founder drafts the goal, the shape, the roster and the rules, then argues with you about them.",
+    href: "/docs/features/#18-the-founding-conversation",
+  },
+  {
+    date: "2026-08-27",
+    big: true,
+    title: "The fire drill, the briefing and the agenda",
+    body: "Run a project for nothing before you fund it. And the cockpit gets a past tense and a future tense: what happened while you were away, and what it will do next.",
+    prs: [10],
+    href: "/docs/features/#13-a-fire-drill-before-you-spend-a-cent",
+  },
+  {
+    date: "2026-08-24",
+    title: "A role library with categories, and crews",
+    body: "Roles are filed by what they are hired for, and pre-built crews can be hired whole.",
+    prs: [7],
+    href: "/org/",
+  },
+  {
+    date: "2026-08-21",
+    big: true,
+    title: "Authority becomes a dial",
+    body: "Five stages in a day: the verbs the chairman never had, five authority switches and two presets, walls with arithmetic for money in the world, credentials as capabilities, and a human for the last mile — captchas and 2FA always go to a person.",
+    href: "/docs/autonomy/",
+  },
+  {
+    date: "2026-08-19",
+    big: true,
+    title: "The rebuild: requirements, commitments and the review",
+    body: "The requirement becomes the root object and work that makes nothing true is refused. The plan gate, a delivery date the CEO cannot write, a standing review the janitor opens at zero tokens, and three project shapes — Explore, Deliver, Operate.",
+    prs: [2],
+  },
+  {
+    date: "2026-08-15",
+    title: "Chaos, goldens, the chat lane and Apache-2.0",
+    body: "A chaos suite proves the invariants survive violence; golden transcripts gate every prompt change. The CEO answers in seconds, in the boardroom and from Slack. Health checklist, project bundles and clones. The license is chosen.",
+  },
+  {
+    date: "2026-08-14",
+    big: true,
+    title: "First commit",
+    body: "“The experiment rig — governance-as-refusals multi-agent platform”, and the chairman's cockpit on the same day.",
+  },
+];
+
+const NEXT = [
+  { k: "Make the CEO's planning better", v: "In the context pack and the eval suite, not the prompt." },
+  { k: "Keep the solo path first-class", v: "A single agent under the same governance is the control the org question is judged against, so it has to stay a real way to run yaaf." },
+  { k: "Prove the MCP server against claude.ai", v: "A real connection through the consent screen against a public deployment — also the first time the security model is tested by someone who did not write it." },
+];
+
+const WAITING = [
+  "One seat of a live project on the Claude CLI beside an SDK seat for a week",
+  "One live seat on yaaf's Anthropic API loop, its priced cost against the console's bill",
+  "One live DeepSeek seat beside a Claude seat, on one cap",
+  "One live seat each on Codex, the Gemini CLI and OpenCode",
+  "A Cursor CLI driver, from someone who can run the binary",
+  "A project run by someone unaffiliated with yaaf — the plan's second kill condition",
+];
+
+const months = [...new Set(ENTRIES.map((e) => e.date.slice(0, 7)))];
+const monthName = (ym: string) =>
+  new Date(`${ym}-01T00:00:00Z`).toLocaleDateString("en-US", { month: "long", year: "numeric", timeZone: "UTC" });
+const dayName = (d: string) =>
+  new Date(`${d}T00:00:00Z`).toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
+---
+<BaseLayout
+  title="What's new"
+  description="What changed in yaaf, newest first: multi-provider runtimes, people and co-chairs, the receipt, the redesign, the MCP server, the fire drill — and what is next."
+>
+  <section class="page-hero">
+    <div class="blueprint bp" aria-hidden="true"></div>
+    <div class="shell">
+      <p class="eyebrow">What's new</p>
+      <h1>Two months, {manifest.history.commits} commits, newest first.</h1>
+      <p class="lede">
+        The milestones from the repository's history since its first commit on 14 August 2026 — what
+        landed, and why it was worth landing. Every pull request is linked; the commits themselves say
+        why in their first line, which is a good way to read a project.
+      </p>
+      <div class="btns">
+        <a class="btn" href={`${REPO_URL}/commits/main`} rel="noopener">Every commit ↗</a>
+        <a class="btn ghost" href="#next">What's next</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="shell log">
+    {months.map((m) => (
+      <section class="month">
+        <h2 class="eyebrow">{monthName(m)}</h2>
+        <ol>
+          {ENTRIES.filter((e) => e.date.startsWith(m)).map((e) => (
+            <li class:list={{ big: e.big }}>
+              <time datetime={e.date}>{dayName(e.date)}</time>
+              <div class="e">
+                <h3>{e.title}</h3>
+                <p>{e.body}</p>
+                {(e.prs || e.href) && (
+                  <p class="links">
+                    {e.prs?.map((n) => <a href={`${REPO_URL}/pull/${n}`} rel="noopener">#{n} ↗</a>)}
+                    {e.href && <a href={e.href}>Read more →</a>}
+                  </p>
+                )}
+              </div>
+            </li>
+          ))}
+        </ol>
+      </section>
+    ))}
+  </div>
+
+  <Section id="next" grid={true} eyebrow="What's next" title="Three things on the plan, and a list that only a deployment can tick."
+    lede="The plan names its next steps and its kill conditions in public. These are its words, shortened.">
+    <div class="tiles">
+      {NEXT.map((n, i) => (
+        <div class="tile rule">
+          <span class="eyebrow">{String(i + 1).padStart(2, "0")}</span>
+          <h3>{n.k}</h3>
+          <p>{n.v}</p>
+        </div>
+      ))}
+    </div>
+    <div class="waiting">
+      <p class="eyebrow">Built, and waiting on a live run</p>
+      <ul>{WAITING.map((w) => <li>{w}</li>)}</ul>
+    </div>
+    <p class="note"><a href="/docs/plan/">The plan, in full →</a></p>
+  </Section>
+</BaseLayout>
+
+<style>
+  .log { padding-block: 48px 8px; max-width: 980px; }
+  .month + .month { margin-top: 44px; }
+  .month > h2 { margin: 0 0 6px; color: var(--color-accent-hi); }
+  .month ol { list-style: none; margin: 0; padding: 0; }
+  .month li { display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 18px; padding: 18px 0; border-bottom: 1px solid var(--color-line-2); }
+  .month li:last-child { border-bottom: 0; }
+  time { font-family: var(--font-mono); font-size: 12px; color: var(--color-muted); padding-top: 3px; }
+  .e h3 { margin: 0; font-size: 1.05rem; font-weight: 620; letter-spacing: -0.012em; }
+  .big .e h3 { font-size: 1.2rem; }
+  .big time { color: var(--color-accent-hi); }
+  .e p { margin: 6px 0 0; font-size: 14.5px; line-height: 1.65; color: var(--color-ink-2); max-width: 72ch; }
+  .e .links { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 8px; }
+  .links a { font-size: 13px; color: var(--color-accent-hi); text-decoration: none; font-family: var(--font-mono); }
+  .links a:last-child:not([rel]) { font-family: var(--font-sans); }
+  .links a:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .waiting { margin-top: 28px; }
+  .waiting ul { margin: 12px 0 0; padding-left: 1.2em; display: grid; gap: 6px; list-style: disc; }
+  .waiting li { font-size: 14.5px; line-height: 1.6; color: var(--color-ink-2); }
+  .waiting li::marker { color: var(--color-warning); }
+  @media (max-width: 560px) {
+    .month li { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+  }
+</style>

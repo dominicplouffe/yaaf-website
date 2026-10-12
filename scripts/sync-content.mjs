@@ -15,6 +15,7 @@
  */
 import { readFile, writeFile, mkdir, rm, readdir, copyFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
+import { execFileSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
@@ -58,9 +59,9 @@ function rewriteLinks(md, kind) {
   const GH = "https://github.com/dominicplouffe/yaaf";
   return (
     md
-      // Order matters: CONTRIBUTING.md and README.md are SHOUTING_CASE too,
-      // and neither is a docs page, so they have to be claimed first.
-      .replace(/\]\((?:\.\.\/)?CONTRIBUTING\.md(#[^)\s]*)?\)/g, `](${GH}/blob/main/CONTRIBUTING.md$1)`)
+      // Order matters: CONTRIBUTING.md, CLAUDE.md and README.md are
+      // SHOUTING_CASE too, and none is a docs page, so they are claimed first.
+      .replace(/\]\((?:\.\.\/)?(CONTRIBUTING|CLAUDE)\.md(#[^)\s]*)?\)/g, `](${GH}/blob/main/$1.md$2)`)
       // README.md means the index of whichever set the file lives in. The
       // fragment is dropped: those hubs are composed here, not copied, so an
       // anchor from the repo's own index would not resolve.
@@ -129,12 +130,23 @@ async function syncJson(kind, fromDir, toDir) {
 /** Root-level markdown that belongs in the docs nav anyway. */
 const ROOT_DOCS = ["SECURITY.md"];
 
+/**
+ * A docs/ file that is only a pointer to the real one elsewhere in the repo.
+ * docs/GOAL_GRAMMAR.md exists because the rubric has to live beside the code
+ * that reads it at runtime; the repo's reader can follow a link into the
+ * package, but a page on this site that says "it's over there" is a page with
+ * nothing on it. Publish the file it points at instead, under the same slug.
+ */
+const POINTER_DOCS = { "GOAL_GRAMMAR.md": "yaaf/founder/GOAL_GRAMMAR.md" };
+
 async function syncDocs() {
   await reset(OUT.docs);
   const dir = path.join(SRC, "docs");
   const files = (await readdir(dir)).filter((f) => f.endsWith(".md") && !SKIP_DOCS.has(f)).sort();
   const sources = [
-    ...files.map((f) => [path.join(dir, f), f, `docs/${f}`]),
+    ...files.map((f) =>
+      POINTER_DOCS[f] ? [path.join(SRC, POINTER_DOCS[f]), f, POINTER_DOCS[f]] : [path.join(dir, f), f, `docs/${f}`],
+    ),
     ...ROOT_DOCS.map((f) => [path.join(SRC, f), f, f]),
   ];
   for (const [abs, f, rel] of sources) {
@@ -232,16 +244,131 @@ async function syncScreenshots() {
  */
 async function auditLinks() {
   const bad = [];
+  // A rewritten link can still name a page that was never synced — CLAUDE.md
+  // once became /docs/claude/ — so a site route has to resolve to a file too.
+  const pages = {
+    docs: new Set((await readdir(OUT.docs)).map((f) => f.replace(/\.md$/, ""))),
+    examples: new Set((await readdir(OUT.examples)).map((f) => f.replace(/\.md$/, ""))),
+  };
   for (const dir of [OUT.docs, OUT.examples]) {
     for (const name of await readdir(dir)) {
       const text = await readFile(path.join(dir, name), "utf8");
       for (const m of text.matchAll(/\]\(([^)\s]+)\)/g)) {
+        const route = m[1].match(/^\/(docs|examples)\/([^/#]+)\//);
+        if (route && !pages[route[1]].has(route[2])) {
+          bad.push(`${path.basename(dir)}/${name} -> ${m[1]} (no such page)`);
+          continue;
+        }
         if (/^(https?:|mailto:|#|\/)/.test(m[1])) continue;
         bad.push(`${path.basename(dir)}/${name} -> ${m[1]}`);
       }
     }
   }
   return bad;
+}
+
+/**
+ * What a seat can run on, read from yaaf's own registries rather than its
+ * prose. The registries import nothing yaaf depends on, so the system python
+ * can load them; see export-runtimes.py.
+ */
+async function syncRuntimes() {
+  const out = execFileSync("python3", ["-I", path.join(HERE, "export-runtimes.py"), SRC], { encoding: "utf8" });
+  const data = JSON.parse(out);
+  await writeFile(path.join(SITE, "src/content/runtimes.json"), JSON.stringify(data, null, 2) + "\n");
+  log(`runtimes: ${data.harnesses.length} harnesses, ${data.providers.length} providers, ${data.models.length} models`);
+  return { harnesses: data.harnesses.length, providers: data.providers.length };
+}
+
+const git = (...args) => execFileSync("git", ["-C", SRC, ...args], { encoding: "utf8" }).trim();
+
+/**
+ * The provenance numbers the home page states about the repository itself.
+ *
+ * Fails closed on a shallow clone. That is not hypothetical: a sync from a
+ * depth-50 checkout once saw 135 commits starting on 30 August, the site said
+ * "this git history is two weeks old, it was restarted", and the history in
+ * fact began on 14 August. A number about the past computed from a truncated
+ * past is the one kind of count this script cannot get approximately right.
+ */
+function syncHistory() {
+  if (git("rev-parse", "--is-shallow-repository") === "true") {
+    console.error(`\n  ${SRC} is a shallow clone, so its history is truncated and every`);
+    console.error("  provenance number would be wrong. Run `git fetch --unshallow` there.\n");
+    process.exit(1);
+  }
+  const dates = git("log", "--format=%ad", "--date=short").split("\n").sort();
+  const nonMerge = git("log", "--no-merges", "--format=%B%x00").split("\0").filter((b) => b.trim());
+  const withClaude = nonMerge.filter((b) => /^(Co-Authored-By: Claude|Claude-Session:)/im.test(b)).length;
+  const history = {
+    firstCommit: dates[0],
+    lastCommit: dates[dates.length - 1],
+    commits: Number(git("rev-list", "--count", "HEAD")),
+    activeDays: new Set(dates).size,
+    claudeShare: Math.round((100 * withClaude) / nonMerge.length),
+  };
+  log(`history: ${history.commits} commits, ${history.firstCommit} → ${history.lastCommit}, ${history.claudeShare}% with Claude Code`);
+  return history;
+}
+
+/**
+ * The test count, collected rather than quoted: yaaf's own prose has said
+ * 1,347 and 1,358 while the suite grew past both. Collection needs yaaf's
+ * dependencies, so it uses the checkout's .venv when there is one and keeps
+ * the last synced number (and says so) when there is not — a count that lags
+ * is a smaller error than a sync nobody without the venv can run.
+ */
+async function syncTests(previous) {
+  const py = path.join(SRC, ".venv/bin/python");
+  if (!existsSync(py)) {
+    log(`tests: kept ${previous?.tests ?? "nothing"} from the last sync (no ${py} to collect with)`);
+    return { tests: previous?.tests ?? null, testsCollectedAt: previous?.testsCollectedAt ?? null };
+  }
+  const out = execFileSync(py, ["-m", "pytest", "--collect-only", "-q", "-p", "no:cacheprovider"], {
+    cwd: SRC,
+    encoding: "utf8",
+    maxBuffer: 64 * 1024 * 1024,
+  });
+  // "1813/1815 tests collected (2 deselected)" — the deselected ones are the
+  // opt-in paid tests, which are not part of the suite anyone runs for free.
+  const m = out.match(/(\d+)(?:\/\d+)? tests? collected/);
+  if (!m) throw new Error("could not read the test count from pytest --collect-only");
+  log(`tests: ${m[1]} collected`);
+  return { tests: Number(m[1]), testsCollectedAt: new Date().toISOString().slice(0, 10) };
+}
+
+/**
+ * Two real fire-drill reports, for the pages that explain the drill and the
+ * autonomy dial: example 06 as it ships, and the same spec with the five
+ * authority switches handed back to the chairman. Printed by the real
+ * `yaaf rehearse` on this sync, so the page shows the drill's words rather
+ * than a paraphrase of them — and the drill costs nothing, which is its point.
+ * Same fallback as the test count when there is no .venv to run it with.
+ */
+const DRILL_SPEC = "examples/06-a-red-team.json";
+const AUTHORITY = ["plan_authority", "scope_authority", "commitment_authority", "verdict_policy", "capability_authority"];
+
+async function syncDrills() {
+  const dir = path.join(SITE, "src/content/drills");
+  const yaaf = path.join(SRC, ".venv/bin/yaaf");
+  if (!existsSync(yaaf)) {
+    log(`drills: kept the last synced reports (no ${yaaf} to run them with)`);
+    return;
+  }
+  await mkdir(dir, { recursive: true });
+  const spec = JSON.parse(await readFile(path.join(SRC, DRILL_SPEC), "utf8"));
+  for (const key of AUTHORITY) spec.project.constitution[key] = "chairman";
+  const supervised = path.join(dir, ".supervised-spec.json");
+  await writeFile(supervised, JSON.stringify(spec));
+  try {
+    const run = (file) =>
+      execFileSync(yaaf, ["rehearse", file], { cwd: SRC, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] });
+    await writeFile(path.join(dir, "autonomous.txt"), run(DRILL_SPEC));
+    await writeFile(path.join(dir, "supervised.txt"), run(supervised));
+  } finally {
+    await rm(supervised, { force: true });
+  }
+  log(`drills: ${DRILL_SPEC}, autonomous and supervised`);
 }
 
 async function main() {
@@ -251,13 +378,19 @@ async function main() {
     process.exit(1);
   }
   console.log(`\nsyncing content from ${SRC}\n`);
+  const manifestPath = path.join(SITE, "src/content/manifest.json");
+  const previous = existsSync(manifestPath) ? JSON.parse(await readFile(manifestPath, "utf8")) : null;
   const counts = {
     roles: await syncJson("roles", path.join(SRC, "roles"), OUT.roles),
     crews: await syncJson("crews", path.join(SRC, "crews"), OUT.crews),
     examples: await syncExamples(),
     docs: await syncDocs(),
     screenshots: await syncScreenshots(),
+    ...(await syncRuntimes()),
+    ...(await syncTests(previous)),
+    history: syncHistory(),
   };
+  await syncDrills();
   const bad = await auditLinks();
   if (bad.length) {
     console.error(`\n  ${bad.length} link(s) still point at the repo layout:`);

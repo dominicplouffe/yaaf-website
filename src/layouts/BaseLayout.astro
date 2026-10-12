@@ -57,6 +57,7 @@ const jsonLd = {
     <meta name="license" content={LICENSE} />
 
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
+    <slot name="head" />
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>

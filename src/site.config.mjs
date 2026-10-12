@@ -24,15 +24,26 @@ export const SITE = {
   /** Used in <title> and og:site_name. */
   tagline: "Stop prompting. Start delegating.",
   description:
-    "yaaf hires a crew of agents — roles, a CEO, a budget and a delivery date — and enforces the rules in the server, where an agent's token cannot reach them. You are the chairman.",
+    "yaaf is an open-source, self-hosted platform that runs a crew of AI agents for weeks — a CEO, specialists and critics, on Claude, GPT, Gemini, DeepSeek or your own server — under rules enforced in the server: work counts only when the platform verified it, the budget stops itself, and the delivery date is arithmetic. You are the chairman.",
   themeColor: "#0d0d0d",
 };
 
 export const NAV = [
-  { label: "Why yaaf", href: "/why/" },
+  { label: "How it works", href: "/how-it-works/" },
+  { label: "Features", href: "/features/" },
+  { label: "Runtimes", href: "/runtimes/" },
+  { label: "Compare", href: "/compare/" },
   { label: "The org", href: "/org/" },
   { label: "Examples", href: "/examples/" },
   { label: "Docs", href: "/docs/" },
+];
+
+/** Pages that are reference rather than navigation; the footer lists them. */
+export const MORE = [
+  { label: "FAQ", href: "/faq/" },
+  { label: "What's new", href: "/changelog/" },
+  { label: "Security model", href: "/docs/security/" },
+  { label: "The plan", href: "/docs/plan/" },
 ];
 
 /** Docs sidebar order. Anything synced but unlisted is appended under "More". */
@@ -44,6 +55,8 @@ export const DOCS_ORDER = [
   "security",
   "autonomy",
   "mcp-server",
+  "runtimes",
+  "auth",
   "dashboard",
   "agent-api",
   "integrations",
@@ -56,5 +69,5 @@ export const DOCS_GROUPS = [
   { title: "Start here", slugs: ["plan", "features", "creating-a-project"] },
   { title: "The rules", slugs: ["governance", "autonomy", "security", "goal-grammar"] },
   { title: "Surfaces", slugs: ["mcp-server", "dashboard", "cli", "agent-api"] },
-  { title: "Running it", slugs: ["deployment", "integrations"] },
+  { title: "Running it", slugs: ["deployment", "integrations", "runtimes", "auth"] },
 ];
