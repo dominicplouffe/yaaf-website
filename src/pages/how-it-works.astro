@@ -13,10 +13,10 @@ const WHO = [
 ];
 
 const STEPS = [
-  ["Describe", "Write a paragraph. yaaf drafts the goal, team, budget and rules."],
+  ["Describe", "Write a paragraph. The Founder interviews you until nothing is assumed, then drafts the goal, team, budget and rules."],
   ["Review", "The goal is graded against ten things it needs. Missing a key one means not ready."],
-  ["Rehearse", "Run the whole project free on scripted agents. See where it breaks."],
-  ["Hire", "Create it for real: a CEO, teams, a budget and a deadline."],
+  ["Rehearse", "Run the whole company on scripted agents for $0. See where it breaks."],
+  ["Hire", "Create it for real: a CEO, teams, a budget and a deadline. Each seat on its own model and harness."],
   ["Plan", "No work starts until the plan is staged, estimated and fits the budget."],
   ["Work", "Every task must serve a goal and carry a test that can fail."],
   ["Prove", "The platform runs the tests and checks the evidence. Only it marks work done."],
@@ -25,7 +25,7 @@ const STEPS = [
 
 const RUN = [
   ["Wake", "An assignment, a message from you, a schedule or the CEO's heartbeat.", "6 wakes per agent per hour"],
-  ["Lease", "yaaf picks the model, provider and harness for the seat, and checks it can pay.", "7 seat rules"],
+  ["Lease", "yaaf resolves the seat's model, provider and harness, and checks it can pay.", "Seat rules, checked every run"],
   ["Sandbox", "A fresh container with only this role's secrets and a one-run key.", "Gone when the run ends"],
   ["Brief", "The goal, the plan, the task and any rule changes you made.", "Agents can't change rules"],
   ["Work", "The model works. Every call is metered as it happens.", "$2 per run by default"],
@@ -50,12 +50,12 @@ const MONEY = [
   ["A receipt at the end", "What it cost, next to what the platform verified."],
 ];
 ---
-<BaseLayout title="How it works" description="How yaaf works: who can do what, the steps from a paragraph to a running team, one agent run, the autonomy dial, money and containment.">
+<BaseLayout title="How it works" description="How yaaf works: the company harness around your agents — who can do what, the steps from a paragraph to a running company, one agent run, the autonomy dial, money and containment.">
   <section class="page-hero">
     <div class="shell">
       <p class="eyebrow">How it works</p>
-      <h1>From a paragraph to a finished project.</h1>
-      <p class="lede">You describe the goal. A lead agent plans the work and hires the team. yaaf checks every result, tracks every dollar and keeps the date honest.</p>
+      <h1>From a paragraph to a running company.</h1>
+      <p class="lede">You describe the goal. A CEO plans the work and hires the team, each person on their own model and harness. yaaf is the harness around all of them: <strong>it checks every result, meters every dollar and keeps the date honest.</strong></p>
       <nav class="toc" aria-label="On this page">
         <a href="#who">Who can do what</a>
         <a href="#steps">The steps</a>
@@ -88,11 +88,11 @@ const MONEY = [
     </div>
   </Section>
 
-  <Section id="steps" eyebrow="The steps" title="From a paragraph to a working team." lede="The first three steps are free.">
-    <div class="cells">
+  <Section id="steps" eyebrow="The steps" title="Founding day, step by step." lede="The first three steps cost nothing: no key, no model calls.">
+    <div class="cells hued">
       {STEPS.map(([k, v], i) => (
         <div class:list={["cell", { free: i < 3 }]}>
-          <span class="eyebrow">{String(i + 1).padStart(2, "0")}{i < 3 && " · free"}</span>
+          <span class="eyebrow">{String(i + 1).padStart(2, "0")}{i < 3 && " · $0"}</span>
           <h3>{k}</h3>
           <p>{v}</p>
         </div>
@@ -138,7 +138,7 @@ const MONEY = [
   </Section>
 
   <Section id="money" eyebrow="Money" title="A budget you plan with. A wall you can't pass.">
-    <div class="cells c3">
+    <div class="cells c3 hued">
       {MONEY.map(([k, v]) => (
         <div class="cell">
           <h3>{k}</h3>
@@ -172,11 +172,11 @@ const MONEY = [
     <p class="note">No outside security review yet. <a href="/docs/security/">Read the security model →</a></p>
   </Section>
 
-  <Section eyebrow="What you run" title="One machine. Docker. Postgres.">
-    <div class="cells">
+  <Section eyebrow="What you run" title="One machine. Yours." lede="On a laptop, <code>yaaf up</code> starts everything in one command. On a server, one script sets up Docker and Postgres.">
+    <div class="cells hued">
       <div class="cell"><span class="eyebrow">api</span><h3>Control plane</h3><p>Python and FastAPI. The rules, the dashboard API and the MCP server.</p></div>
       <div class="cell"><span class="eyebrow">runner</span><h3>Runner</h3><p>Starts a sandbox container for each run.</p></div>
-      <div class="cell"><span class="eyebrow">sandbox</span><h3>Sandbox image</h3><p>Python, Node, Chromium and each agent harness.</p></div>
+      <div class="cell"><span class="eyebrow">sandbox</span><h3>Sandbox image</h3><p>Python, Node, Chromium and every agent harness: Claude Code, Codex, Gemini CLI, OpenCode.</p></div>
       <div class="cell"><span class="eyebrow">db</span><h3>Postgres 16</h3><p>The record. Tests run on SQLite: {manifest.tests.toLocaleString("en-US")} of them.</p></div>
     </div>
   </Section>
@@ -185,7 +185,6 @@ const MONEY = [
 <style>
   .engine { background: var(--color-surface) !important; }
   .engine h3 { font-size: 1.4rem !important; }
-  .free .eyebrow { color: var(--color-good); }
   .n { display: inline-block; width: 1.6rem; font-family: var(--font-mono); font-size: 12px; color: var(--color-muted); font-weight: 400; }
   .waits { margin-top: 24px; }
   .waits + :global(.drill) { border-top: 0; }

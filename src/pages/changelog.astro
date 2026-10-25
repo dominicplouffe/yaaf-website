@@ -8,6 +8,18 @@ interface Entry { date: string; title: string; body: string; prs?: number[]; hre
 
 /** Curated from the repository's history, newest first. Dates are commit dates. */
 const ENTRIES: Entry[] = [
+  { date: "2026-10-25", title: "Every part of yaaf, on any provider", body: "Roles name a class (frontier, balanced, fast), not a vendor. Every seat, the CEO chat, the Founder and the goal grader run on any of 23 providers, with prices from a feed and a fallback while a provider is down.", prs: [67], href: "/runtimes/" },
+  { date: "2026-10-24", title: "Readable for everyone", body: "Every text colour in the app meets 4.5:1 contrast on the ground it sits on, and every focus state draws a ring.", prs: [68, 69, 70, 71] },
+  { date: "2026-10-24", title: "A project's home is its Inbox", body: "A project opens on what waits on you. The Team page draws large teams without scrolling sideways.", prs: [63] },
+  { date: "2026-10-24", title: "Data and credentials, readable", body: "One crowded settings page became two that say what each connection is for.", prs: [64] },
+  { date: "2026-10-23", title: "Four pages: Team, Chat, Results, Details", body: "A project is a team at work. Results say who made each deliverable and who checked it; every person has a page with their model and their cost.", prs: [61], href: "/docs/dashboard/" },
+  { date: "2026-10-23", title: "yaaf up and yaaf status", body: "From a checkout to a running dashboard in one command, and every project in sentences from the terminal.", href: "/docs/cli/" },
+  { date: "2026-10-23", title: "Decide in one click", body: "Approve, answer, snooze or undo from the Inbox. After your third yes to a spend, yaaf offers to stop asking." },
+  { date: "2026-10-22", title: "The Founder interviews you", body: "It asks until nothing is assumed, and offers its own answer to each question so you can just agree.", prs: [55] },
+  { date: "2026-10-22", title: "Operate projects run in cycles", body: "A project that repeats closes cycles on a rhythm instead of chasing one delivery date.", prs: [55] },
+  { date: "2026-10-17", title: "Deliverables in the chat", body: "Finished files are announced in the CEO chat with a link to the file itself." },
+  { date: "2026-10-15", title: "A quieter Inbox", body: "No banners for waits that end by themselves, and every note to you is written for a reader with no context.", prs: [53, 54] },
+  { date: "2026-10-12", title: "One Inbox and a live org chart", body: "Everything waiting on you in one place, and the team drawn as it works.", prs: [49] },
   { date: "2026-10-12", title: "Any model, same rules", body: "Agents can run on Codex, Gemini CLI, OpenCode, DeepSeek, Kimi, Qwen, Mistral, Grok or your own server.", prs: [45], href: "/runtimes/" },
   { date: "2026-10-12", title: "People and co-chairs", body: "Real accounts replace the shared admin token. Invite co-chairs and observers.", prs: [47], href: "/docs/auth/" },
   { date: "2026-10-12", title: "Faster deliverables", body: "The file list is indexed on the server and stays fast at tens of thousands of files.", prs: [46] },
@@ -22,7 +34,7 @@ const ENTRIES: Entry[] = [
   { date: "2026-08-30", title: "Budget and wall", body: "Going over budget means explaining why. Only the hard limit pauses a project." },
   { date: "2026-08-28", title: "MCP server", body: "Run your projects from Claude.", prs: [16], href: "/docs/mcp-server/" },
   { date: "2026-08-28", title: "The Founder", body: "Describe a project in a paragraph and get a full draft back." },
-  { date: "2026-08-27", title: "Free rehearsal", body: "Run any project on scripted agents before spending anything.", prs: [10] },
+  { date: "2026-08-27", title: "The $0 rehearsal", body: "Run any project on scripted agents before spending anything.", prs: [10] },
   { date: "2026-08-21", title: "The autonomy dial", body: "Choose how much you approve and how much the CEO handles." },
   { date: "2026-08-19", title: "Requirements and deadlines", body: "Work must serve a goal, and the date comes from real pace.", prs: [2] },
   { date: "2026-08-15", title: "Chaos tests and Slack", body: "Tests that crash things on purpose, and a CEO you can chat with." },
@@ -33,13 +45,14 @@ const NEXT = [
   ["Better planning", "Improve how the CEO plans, through context and evals."],
   ["Keep solo mode strong", "One agent under the same rules stays a first-class option."],
   ["Prove it on claude.ai", "A real connection through a public install."],
+  ["A live seat on every provider", "Offline tests pass for all of them. Each needs a real run on real keys."],
 ];
 
 const months = [...new Set(ENTRIES.map((e) => e.date.slice(0, 7)))];
 const monthName = (ym: string) => new Date(`${ym}-01T00:00:00Z`).toLocaleDateString("en-US", { month: "long", year: "numeric", timeZone: "UTC" });
 const dayName = (d: string) => new Date(`${d}T00:00:00Z`).toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
 ---
-<BaseLayout title="What's new" description="What changed in yaaf, newest first: any model, people and co-chairs, the receipt, the MCP server, the free rehearsal, and what's next.">
+<BaseLayout title="What's new" description="What changed in yaaf, newest first: any provider everywhere, the Inbox and the four project pages, yaaf up, people and co-chairs, the MCP server, the $0 rehearsal, and what's next.">
   <section class="page-hero">
     <div class="shell">
       <p class="eyebrow">What's new</p>
@@ -67,7 +80,7 @@ const dayName = (d: string) => new Date(`${d}T00:00:00Z`).toLocaleDateString("en
   </div>
 
   <Section eyebrow="Next" title="What's coming.">
-    <div class="cells c3">
+    <div class="cells c3 hued">
       {NEXT.map(([k, v]) => <div class="cell"><h3>{k}</h3><p>{v}</p></div>)}
     </div>
     <p class="note"><a href="/docs/plan/">The full plan →</a></p>
@@ -82,6 +95,9 @@ const dayName = (d: string) => new Date(`${d}T00:00:00Z`).toLocaleDateString("en
   time { grid-column: 1; font-family: var(--font-mono); font-size: 13px; color: var(--color-muted); }
   .entry h3 { grid-column: 2; margin: 0; font-size: 1.15rem; letter-spacing: -0.02em; }
   .entry h3 a { color: var(--color-ink); text-decoration: none; }
+  .month > h2 { color: var(--color-gold); }
+  .month:nth-of-type(2) > h2 { color: var(--color-rose); }
+  .month:nth-of-type(3) > h2 { color: var(--color-sky); }
   .entry h3 a:hover { color: var(--color-accent-hi); }
   .entry p { grid-column: 3 / span 2; margin: 0; font-size: 15.5px; color: var(--color-ink-2); }
   .pr { margin-left: 10px; font-family: var(--font-mono); font-size: 13px; color: var(--color-muted); text-decoration: none; }

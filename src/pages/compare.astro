@@ -5,15 +5,15 @@ import { REPO_URL } from "../site.config.mjs";
 
 /** Paperclip's column is from its own README (paperclipai/paperclip), read in October 2026. */
 const PAPERCLIP = [
-  ["Where agents run", "Anywhere. “If it can receive a heartbeat, it's hired.”", "In yaaf's sandbox, on yaaf's meter"],
+  ["Where agents run", "Anywhere. “If it can receive a heartbeat, it's hired.”", "Claude Code, Codex, Gemini CLI or OpenCode, inside yaaf's sandbox, on yaaf's meter"],
   ["What “done” means", "A review stage you set up", "The platform ran the test itself"],
   ["Budgets", "Alerts and hard stops on recorded spend", "Metered live; each run stops at its cap"],
-  ["Before you spend", "A test drive on your API key", "A free rehearsal on scripted agents"],
+  ["Before you spend", "A test drive on your API key", "A $0 rehearsal on scripted agents"],
   ["Deadlines", "Not described in its README", "Projected from pace; slips freeze scope"],
   ["Critics", "Review stages", "Roles that can veto, and can't be fired"],
   ["From Claude", "Mobile UI and chat connectors", "An MCP server with 32 tools"],
   ["Telemetry", "On by default", "None"],
-  ["Setup", "One npx command", "Docker and one script"],
+  ["Setup", "One npx command", "<code>yaaf up</code> on a laptop; Docker and one script on a server"],
   ["License", "MIT", "Apache-2.0"],
   ["Maturity", "Since early 2026. Large community.", "Since August 2026. One maintainer."],
 ];
@@ -27,7 +27,7 @@ const AHEAD = [
 ];
 const FURTHER = [
   "Agents can't mark their own work done",
-  "A free rehearsal before any money moves",
+  "A $0 rehearsal before any money moves",
   "Goals graded before a project starts",
   "Spend metered live, not after the fact",
   "Deadlines based on real pace",
@@ -59,6 +59,7 @@ const GLANCE = [
       <p class="lede">Including where others are ahead. One caveat up front: yaaf is a server you run. For a quick, one-off task, that's overkill.</p>
       <nav class="toc" aria-label="On this page">
         <a href="#paperclip">Paperclip</a>
+        <a href="#harnesses">Harnesses</a>
         <a href="#glance">At a glance</a>
         <a href="#frameworks">Frameworks</a>
         <a href="#assistants">Personal agents</a>
@@ -74,7 +75,7 @@ const GLANCE = [
         <thead><tr><th></th><th>Paperclip</th><th class="me">yaaf</th></tr></thead>
         <tbody>
           {PAPERCLIP.map(([k, a, b]) => (
-            <tr><th scope="row">{k}</th><td data-label="Paperclip">{a}</td><td class="me" data-label="yaaf">{b}</td></tr>
+            <tr><th scope="row">{k}</th><td data-label="Paperclip">{a}</td><td class="me" data-label="yaaf" set:html={b} /></tr>
           ))}
         </tbody>
       </table>
@@ -127,7 +128,12 @@ const GLANCE = [
   </Section>
 
   <Section eyebrow="The others" title="Use the right tool.">
-    <div class="cells c3">
+    <div class="cells hued">
+      <div class="cell" id="harnesses">
+        <span class="eyebrow">Claude Code, Codex, Gemini CLI</span>
+        <h3>A harness drives one agent.</h3>
+        <p>yaaf doesn't replace them; it hires them. Each person on the org chart runs in one, and yaaf is the harness around the team.</p>
+      </div>
       <div class="cell" id="frameworks">
         <span class="eyebrow">LangGraph, CrewAI, AutoGen</span>
         <h3>Frameworks build the flow.</h3>

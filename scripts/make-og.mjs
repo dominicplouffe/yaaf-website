@@ -14,7 +14,9 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
-const browser = await chromium.launch();
+// PLAYWRIGHT_CHROMIUM points at a browser already on the machine, when the
+// one this playwright version would download is not installed.
+const browser = await chromium.launch(process.env.PLAYWRIGHT_CHROMIUM ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM } : {});
 const page = await browser.newPage({ viewport: { width: 1200, height: 630 }, deviceScaleFactor: 1 });
 await page.goto("file://" + path.join(HERE, "og.html"), { waitUntil: "networkidle" });
 await page.evaluate(() => document.fonts.ready);

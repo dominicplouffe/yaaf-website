@@ -1,34 +1,49 @@
 @import "tailwindcss";
 
 /* ---------------------------------------------------------------------------
-   Black, white, greys, one accent. Hairlines instead of boxes, sharp corners,
-   medium-weight type set tight. The blue and the orange are yaaf's own and
-   are spent sparingly: blue for links and the thing to look at, orange for
-   the roles that exist to disagree.
+   Yesterday was black and white. The page starts from a deep night and lets
+   the dawn in: one gradient (gold → orange → rose → violet → sky) carries the
+   new way of working, and five named hues give each idea its own colour.
+   Hairlines instead of boxes and medium-weight type set tight stay; the
+   greys are kept for one job only — drawing the old way of doing things.
    --------------------------------------------------------------------------- */
 @theme {
-  --color-page: #000000;
-  --color-surface: #0a0a0a;
-  --color-surface-2: #141414;
-  --color-grid: rgba(255, 255, 255, 0.1);
+  --color-page: #0b0918;
+  --color-surface: #131027;
+  --color-surface-2: #1c1836;
+  --color-grid: rgba(190, 170, 255, 0.09);
 
   --color-ink: #ffffff;
-  --color-ink-2: #b4b4b4;
-  --color-muted: #7a7a7a;
+  --color-ink-2: #cbc6e2;
+  --color-muted: #9690b4;
 
+  /* yaaf's own blue, kept as the link colour and the sky end of the dawn. */
   --color-accent: #3987e5;
   --color-accent-lo: #2f78d4;
-  --color-accent-hi: #5aa2f0;
-  --color-accent-2: #e0663a;
+  --color-accent-hi: #7cb8ff;
+  --color-accent-2: #ff8a4c;
 
-  --color-good: #3ccf6e;
-  --color-warning: #f4ac4f;
-  --color-serious: #ec835a;
-  --color-critical: #ff876f;
+  /* The dawn. */
+  --color-gold: #ffd23f;
+  --color-sun: #ff8a3d;
+  --color-rose: #ff4f9a;
+  --color-violet: #9b6bff;
+  --color-sky: #4cc3ff;
+  --color-mint: #3fe0a5;
+  --color-lime: #c6f24a;
 
-  --color-line: rgba(255, 255, 255, 0.13);
-  --color-line-2: rgba(255, 255, 255, 0.07);
-  --color-line-strong: rgba(255, 255, 255, 0.28);
+  --color-good: #3fe0a5;
+  --color-warning: #ffc53d;
+  --color-serious: #ff8a4c;
+  --color-critical: #ff7a8a;
+
+  --color-line: rgba(200, 185, 255, 0.15);
+  --color-line-2: rgba(200, 185, 255, 0.08);
+  --color-line-strong: rgba(220, 210, 255, 0.32);
+
+  /* The old way: what the page looked like before, kept for drawing it. */
+  --color-old: #8a8a8a;
+  --color-old-bg: #111111;
 
   --font-sans: "Geist Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "Geist Mono Variable", ui-monospace, "SF Mono", Menlo, monospace;
@@ -36,7 +51,7 @@
   --radius-card: 0px;
   --radius-control: 0px;
 
-  --text-hero: clamp(2.9rem, 1.1rem + 5.6vw, 6.4rem);
+  --text-hero: clamp(2.9rem, 1.1rem + 5.6vw, 6.6rem);
   --text-h1: clamp(2.5rem, 1.2rem + 3.8vw, 4.6rem);
   --text-h2: clamp(2rem, 1.25rem + 2.4vw, 3.4rem);
 }
@@ -51,6 +66,7 @@
      cell starts at the same x. */
   --inset: 16px;
   --ease: cubic-bezier(0.165, 0.84, 0.44, 1);
+  --dawn: linear-gradient(100deg, var(--color-gold) 0%, var(--color-sun) 22%, var(--color-rose) 48%, var(--color-violet) 74%, var(--color-sky) 100%);
 }
 @media (min-width: 768px) {
   :root { --gutter: 40px; --inset: 1.6rem; }
@@ -85,7 +101,7 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-::selection { background: color-mix(in srgb, var(--color-accent) 55%, transparent); color: #fff; }
+::selection { background: color-mix(in srgb, var(--color-rose) 60%, transparent); color: #fff; }
 
 :focus-visible {
   outline: 2px solid var(--color-accent-hi);
@@ -178,8 +194,16 @@ h1, h2, h3, h4 { font-weight: 500; letter-spacing: -0.035em; }
 .btn:hover { background-size: 100% 100%; color: var(--on-fill); border-color: var(--fill); }
 .btn svg { width: 15px; height: 15px; flex: none; transition: transform 0.45s var(--ease); }
 .btn:hover svg { transform: translateX(3px); }
-.btn.primary { --fill: #cfcfcf; background-color: #fff; color: #000; border-color: #fff; }
-.btn.primary:hover { border-color: var(--fill); }
+.btn.primary {
+  --fill: #ffffff;
+  color: #14051f;
+  border-color: transparent;
+  background:
+    linear-gradient(var(--fill), var(--fill)) no-repeat bottom / 100% 0%,
+    linear-gradient(100deg, var(--color-gold), var(--color-sun) 45%, var(--color-rose));
+  box-shadow: 0 10px 40px -12px color-mix(in srgb, var(--color-rose) 70%, transparent);
+}
+.btn.primary:hover { background-size: 100% 100%, 100% 100%; border-color: transparent; color: #14051f; }
 .btn.small { min-width: 0; gap: 0.9rem; padding: 0.55rem 0.8rem; font-size: 13.5px; }
 .btns { display: flex; flex-wrap: wrap; gap: 10px; }
 @media (max-width: 520px) {
@@ -193,7 +217,7 @@ h1, h2, h3, h4 { font-weight: 500; letter-spacing: -0.035em; }
 @media (max-width: 760px) { .sec-in { padding-block: 4rem; } }
 
 .head { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0 24px; margin-bottom: 3.25rem; }
-.head > .eyebrow { grid-column: 1 / -1; margin: 0 0 1.4rem; }
+.head > .eyebrow { grid-column: 1 / -1; margin: 0 0 1.4rem; width: fit-content; background: var(--dawn); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .head > h2 {
   grid-column: 1 / span 3;
   margin: 0;
@@ -244,6 +268,43 @@ a.cell { color: inherit; text-decoration: none; transition: background 0.25s; }
 a.cell:hover { background: var(--color-surface-2); }
 .cell.warm h3 { color: var(--color-accent-2); }
 .cell.blue h3 { color: var(--color-accent-hi); }
+
+/* --- hues ---------------------------------------------------------------------
+   Each idea gets its own colour. .hued cycles the five through a grid's cells:
+   a bar of colour along the top edge, the eyebrow and the hover wash in it. */
+.h-gold { --hue: var(--color-gold); }
+.h-sun { --hue: var(--color-sun); }
+.h-rose { --hue: var(--color-rose); }
+.h-violet { --hue: var(--color-violet); }
+.h-sky { --hue: var(--color-sky); }
+.h-mint { --hue: var(--color-mint); }
+.h-lime { --hue: var(--color-lime); }
+.hued > :nth-child(6n + 1) { --hue: var(--color-gold); }
+.hued > :nth-child(6n + 2) { --hue: var(--color-rose); }
+.hued > :nth-child(6n + 3) { --hue: var(--color-sky); }
+.hued > :nth-child(6n + 4) { --hue: var(--color-mint); }
+.hued > :nth-child(6n + 5) { --hue: var(--color-violet); }
+.hued > :nth-child(6n + 6) { --hue: var(--color-sun); }
+.hued > * { position: relative; background: color-mix(in srgb, var(--hue) 5%, var(--color-page)) !important; }
+.hued > *::before {
+  content: "";
+  position: absolute;
+  left: -1px;
+  right: 0;
+  top: -1px;
+  height: 3px;
+  background: var(--hue);
+}
+.hued > * .eyebrow, .hued > * .go, .hued > * .num { color: var(--hue); }
+.hued > a:hover { background: color-mix(in srgb, var(--hue) 12%, var(--color-page)) !important; }
+
+/* Text in the dawn. */
+.dawn-text {
+  background: var(--dawn);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
 
 .num, .cell .num { font-size: clamp(2.6rem, 1.6rem + 2.4vw, 4rem); font-weight: 500; letter-spacing: -0.05em; line-height: 1; margin: 0 0 1.2rem; color: var(--color-ink); }
 .cell.warm .num { color: var(--color-accent-2); }
@@ -329,8 +390,23 @@ code.inline, .cell code, .note code, .head code, .kit-table code {
 }
 
 /* --- a page's own top ------------------------------------------------------- */
-.page-hero { position: relative; padding-block: 7rem 4.5rem; }
-.page-hero .eyebrow { margin: 0; }
+.page-hero { position: relative; padding-block: 7rem 4.5rem; overflow: hidden; }
+/* Every page opens at first light: the same sunrise as the home page, lower. */
+.page-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(45% 70% at 88% 85%, color-mix(in srgb, var(--color-sun) 30%, transparent), transparent 70%),
+    radial-gradient(40% 60% at 70% 80%, color-mix(in srgb, var(--color-rose) 24%, transparent), transparent 70%),
+    radial-gradient(50% 70% at 15% 0%, color-mix(in srgb, var(--color-violet) 24%, transparent), transparent 70%),
+    radial-gradient(35% 50% at 98% 10%, color-mix(in srgb, var(--color-sky) 16%, transparent), transparent 70%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent);
+  mask-image: linear-gradient(to bottom, #000 55%, transparent);
+}
+.page-hero .shell { position: relative; }
+.page-hero .eyebrow { margin: 0; width: fit-content; background: var(--dawn); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .page-hero h1 {
   margin: 1.4rem 0 0;
   font-size: var(--text-h1);
@@ -354,7 +430,7 @@ code.inline, .cell code, .note code, .head code, .kit-table code {
   transition: color 0.2s, background 0.2s;
 }
 .toc a:last-child { border-right: 0; }
-.toc a:hover { color: #000; background: #fff; }
+.toc a:hover { color: #14051f; background: var(--color-gold); }
 @media (max-width: 760px) {
   .toc { width: auto; }
   .toc a { flex: 1 1 auto; border-bottom: 1px solid var(--color-line); text-align: center; }
@@ -436,5 +512,5 @@ section[id], [id].anchor { scroll-margin-top: 84px; }
   white-space: nowrap;
 }
 .prose tbody td { padding: 10px; border-bottom: 1px solid var(--color-line-2); vertical-align: top; }
-.prose tbody tr:hover { background: rgba(255, 255, 255, 0.02); }
+.prose tbody tr:hover { background: rgba(200, 185, 255, 0.04); }
 .prose :is(h2, h3, h4) { scroll-margin-top: 90px; }

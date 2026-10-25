@@ -126,7 +126,7 @@ const { ceo, ceoRole, teams, chairman = "You — the chairman", compact = false,
   .people .lead { color: var(--color-ink-2); font-weight: 600; }
   .people .sep { opacity: 0.5; }
 
-  .stem { width: 1px; height: 20px; background: rgba(255, 255, 255, 0.22); }
+  .stem { width: 1px; height: 20px; background: var(--color-line-strong); }
 
   /* One horizontal rail with a drop into each team box. */
   .branch {
@@ -143,14 +143,14 @@ const { ceo, ceoRole, teams, chairman = "You — the chairman", compact = false,
     left: 50%;
     width: 1px;
     height: 100%;
-    background: rgba(255, 255, 255, 0.22);
+    background: var(--color-line-strong);
   }
   .branch span::after {
     content: "";
     position: absolute;
     top: 0;
     height: 1px;
-    background: rgba(255, 255, 255, 0.22);
+    background: var(--color-line-strong);
     left: 50%;
     right: 0;
   }
