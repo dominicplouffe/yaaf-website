@@ -47,7 +47,7 @@ employees and a lead. The CEO is the only agent that plans.
   down ones whose job is finished, up to `max_teams`, with no approval
   round-trip — it is spending inside a budget it already has, and hiring buys
   no runs (the daily ration and the monthly wall are the project's, not the
-  seat's). Every change lands in your boardroom and on the Overview roster,
+  seat's). Every change lands in your boardroom and on the Team page,
   where you can stand a role down or recall one yourself. Two seats are not the
   CEO's to remove: its last `challenge` role, and its last reader when the
   constitution asks for an independent read.
@@ -111,6 +111,11 @@ Outside Explore mode the root object is not the task, it is the
   server-side.
 
 ## 3. A delivery date the project cannot quietly break
+
+Deliver only. Operate runs on a rhythm and never finishes, so it has no single
+date to promise: the CEO's proposal is refused, and any commitment an Operate
+project picked up before that refusal existed is voided by the janitor. Its
+dates are its cycles' (§4).
 
 - **The commitment is a row the platform owns.** The CEO proposes; it never
   writes the date — `deliver_by` is stamped from the platform's own projection,
@@ -193,7 +198,7 @@ Outside Explore mode the root object is not the task, it is the
   "completed" work and evidence to check yourself, and records your verdict —
   because AI reviewers approve nearly everything, and you don't.
 - **CEO-judgment metric.** The platform tracks how much of what the CEO called
-  progress actually survived verification, and shows it on the Overview.
+  progress actually survived verification, and shows it on the project's Inbox.
 
 ## 7. Money that can't run away
 
@@ -263,7 +268,7 @@ Outside Explore mode the root object is not the task, it is the
   row on your desk carrying when it stops waiting and exactly what it will do
   if you say nothing. It never blocks; the project keeps working. Answer, and
   it acts on that. Say nothing, and at the window it does what it wrote down
-  and tells you it did. It sits on your Decisions screen beside the pending
+  and tells you it did. It sits in your Inbox beside the pending
   approvals, which is the right neighbour: both are clocked, both are yours to
   answer, and both resolve whether or not you do. Neither half can be silent:
   the question is on your desk while it is open, and the CEO cannot go back to
@@ -337,6 +342,9 @@ decision, and configuration change. The dashboard surfaces it as:
 
 - **Runs** — every model call: which agent, which team, why it woke, what it
   cost, its full trace.
+- **Agent inbox** — each agent's unread messages, and how many wakes the
+  project may spend just reading them (`inbox_runs_per_project_per_day`; the
+  quieter tempo cards set it to 0, so agents read on their next work wake).
 - **Messages** — every channel, including ones you can read but not speak in.
 - **Memory** — what the project chose to remember.
 - **Decisions** — everything you decided, and everything that decided itself
@@ -371,7 +379,7 @@ absence, what the CEO decided on its own authority, what you decided, and what
 that leaves waiting on you. It reads in the app under **Inbox → Updates** and
 **Activity → What happened**, from `yaaf briefing`, over MCP, and — with
 `brief_daily_at` set — in your email every morning. It is deliberately not a
-panel on the Overview or the Inbox's Needs-you tab: both of those are the
+panel on the project's Inbox or the Inbox's Needs-you tab: both of those are the
 present tense, and a narrative sitting on top of them restated their own counts
 back at them. It has a tab of its own beside them instead.
 
@@ -421,7 +429,7 @@ costs you the interrupt and never the news: everything in that class is a
 section. Both what was sent and what was held are on the record.
 
 **The agenda — what it is going to do next.** A fourteen-day strip on each
-project's Overview (and `yaaf agenda`): the wall-clock wakes, the standing
+project's Inbox (and `yaaf agenda`): the wall-clock wakes, the standing
 review, the cycle roll, bet kill dates, approval and spot-check expiries, the
 budget reset, and the promised delivery date with the platform's own projection
 beside it. Recurring wakes are drawn as *rhythms* — one fact with a cadence and
@@ -542,13 +550,18 @@ evidence at all about your *project*.
 
 ## 16. Setup that can't silently fail
 
-- **Health checklist** on each project's Overview names anything misconfigured
+- **Health checklist** on each project's Inbox names anything misconfigured
   — dead billing, a credential that isn't a URL, an untested data source, a
   team running an outdated role version — in plain language, with a fix link. A
   healthy project shows nothing at all.
-- **Data sources prove themselves.** An MCP server is a one-form add (name,
-  URL, roles, Save): the URL is validated at the door, you can run a live check
-  against it, and the granted roles' sandboxes mount it as real tools.
+- **Data sources prove themselves.** An MCP server is a one-form add that asks
+  for the address first and checks it before anything is stored, including how
+  it wants you to sign in. Every source then shows one state in words with the
+  button that fixes it, and the granted roles' sandboxes mount it as real tools.
+- **Secrets & variables on one line each.** Plain settings show as they are;
+  secrets show their last four characters; an access map shows every grant,
+  variables and data sources alike, against every team, and saves ticks as one
+  batch. Rotating a key keeps who has it.
 - **Project export** downloads the whole project as one JSON file — goal,
   teams and their schedules, constitution, config, data sources, and every
   project service credential *value* (Slack tokens and webhook signing keys

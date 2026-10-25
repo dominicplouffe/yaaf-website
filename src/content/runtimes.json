@@ -45,47 +45,58 @@
       "pinned": null
     },
     {
-      "name": "anthropic_api",
-      "label": "Anthropic API (yaaf's own loop)",
+      "name": "yaaf_loop",
+      "label": "yaaf agent loop (the provider's own API)",
       "family": "loop",
       "providers": [
-        "anthropic"
-      ],
-      "accepts": [
-        "anthropic:api_key"
-      ],
-      "withholds": [
-        "files",
-        "bash",
-        "web"
-      ],
-      "cost": "priced",
-      "search": "provider",
-      "conversation": true,
-      "package": null,
-      "pinned": null
-    },
-    {
-      "name": "openai_compatible",
-      "label": "OpenAI-compatible API (yaaf's own loop)",
-      "family": "loop",
-      "providers": [
+        "anthropic",
+        "openai",
+        "google",
+        "vertex",
+        "azure_openai",
+        "bedrock",
         "deepseek",
+        "mistral",
+        "xai",
         "openrouter",
-        "custom",
+        "groq",
+        "together",
+        "fireworks",
+        "cerebras",
+        "cohere",
+        "nvidia",
+        "huggingface",
+        "zai",
         "moonshot",
         "qwen",
-        "mistral",
-        "xai"
+        "ollama",
+        "lmstudio",
+        "custom"
       ],
       "accepts": [
+        "anthropic:api_key",
+        "openai:api_key",
+        "google:api_key",
+        "vertex:api_key",
+        "azure_openai:api_key",
+        "bedrock:api_key",
         "deepseek:api_key",
+        "mistral:api_key",
+        "xai:api_key",
         "openrouter:api_key",
-        "custom:api_key",
+        "groq:api_key",
+        "together:api_key",
+        "fireworks:api_key",
+        "cerebras:api_key",
+        "cohere:api_key",
+        "nvidia:api_key",
+        "huggingface:api_key",
+        "zai:api_key",
         "moonshot:api_key",
         "qwen:api_key",
-        "mistral:api_key",
-        "xai:api_key"
+        "ollama:api_key",
+        "lmstudio:api_key",
+        "custom:api_key"
       ],
       "withholds": [
         "files",
@@ -93,7 +104,7 @@
         "web"
       ],
       "cost": "priced",
-      "search": "provider",
+      "search": "loop",
       "conversation": true,
       "package": null,
       "pinned": null
@@ -148,20 +159,40 @@
       "providers": [
         "openai",
         "deepseek",
-        "custom",
+        "mistral",
+        "xai",
+        "groq",
+        "together",
+        "fireworks",
+        "cerebras",
+        "cohere",
+        "nvidia",
+        "huggingface",
+        "zai",
         "moonshot",
         "qwen",
-        "mistral",
-        "xai"
+        "ollama",
+        "lmstudio",
+        "custom"
       ],
       "accepts": [
         "openai:api_key",
         "deepseek:api_key",
-        "custom:api_key",
+        "mistral:api_key",
+        "xai:api_key",
+        "groq:api_key",
+        "together:api_key",
+        "fireworks:api_key",
+        "cerebras:api_key",
+        "cohere:api_key",
+        "nvidia:api_key",
+        "huggingface:api_key",
+        "zai:api_key",
         "moonshot:api_key",
         "qwen:api_key",
-        "mistral:api_key",
-        "xai:api_key"
+        "ollama:api_key",
+        "lmstudio:api_key",
+        "custom:api_key"
       ],
       "withholds": [
         "files",
@@ -169,7 +200,7 @@
         "web"
       ],
       "cost": "priced",
-      "search": "none",
+      "search": "platform",
       "conversation": true,
       "package": "opencode-ai",
       "pinned": "1.19.0"
@@ -184,22 +215,30 @@
         {
           "mode": "api_key",
           "meter": "usd",
-          "bills": "Anthropic API key, billed in USD"
+          "bills": "Anthropic API key, billed in USD",
+          "default_harness": "claude_agent_sdk"
         },
         {
           "mode": "subscription",
           "meter": "tokens",
-          "bills": "Claude subscription, metered in tokens"
+          "bills": "Claude subscription, metered in tokens",
+          "default_harness": "claude_agent_sdk"
         }
       ],
       "served_by": [
         "claude_agent_sdk",
         "claude_cli",
-        "anthropic_api"
+        "yaaf_loop"
       ],
       "credential_base_url": false,
       "search": true,
       "reports_cost": false,
+      "local": false,
+      "lineup": {
+        "frontier": "claude-opus-5-5",
+        "balanced": "claude-sonnet-5-5",
+        "fast": "claude-haiku-4-5"
+      },
       "models": [
         "claude-haiku-4-5",
         "claude-sonnet-5",
@@ -218,177 +257,37 @@
       ]
     },
     {
-      "name": "deepseek",
-      "label": "DeepSeek",
-      "default_harness": "openai_compatible",
-      "kinds": [
-        {
-          "mode": "api_key",
-          "meter": "usd",
-          "bills": "DeepSeek API key, billed in USD"
-        }
-      ],
-      "served_by": [
-        "openai_compatible",
-        "opencode"
-      ],
-      "credential_base_url": false,
-      "search": false,
-      "reports_cost": false,
-      "models": [
-        "deepseek-chat",
-        "deepseek-reasoner"
-      ],
-      "priced": []
-    },
-    {
-      "name": "openrouter",
-      "label": "OpenRouter",
-      "default_harness": "openai_compatible",
-      "kinds": [
-        {
-          "mode": "api_key",
-          "meter": "usd",
-          "bills": "OpenRouter API key, billed in USD"
-        }
-      ],
-      "served_by": [
-        "openai_compatible"
-      ],
-      "credential_base_url": false,
-      "search": false,
-      "reports_cost": true,
-      "models": [],
-      "priced": []
-    },
-    {
-      "name": "custom",
-      "label": "Custom endpoint (OpenAI-compatible)",
-      "default_harness": "openai_compatible",
-      "kinds": [
-        {
-          "mode": "api_key",
-          "meter": "usd",
-          "bills": "Custom endpoint key, priced in USD at the rates set in Settings"
-        }
-      ],
-      "served_by": [
-        "openai_compatible",
-        "opencode"
-      ],
-      "credential_base_url": true,
-      "search": false,
-      "reports_cost": false,
-      "models": [],
-      "priced": []
-    },
-    {
-      "name": "moonshot",
-      "label": "Moonshot (Kimi)",
-      "default_harness": "openai_compatible",
-      "kinds": [
-        {
-          "mode": "api_key",
-          "meter": "usd",
-          "bills": "Moonshot (Kimi) API key, billed in USD"
-        }
-      ],
-      "served_by": [
-        "openai_compatible",
-        "opencode"
-      ],
-      "credential_base_url": false,
-      "search": false,
-      "reports_cost": false,
-      "models": [],
-      "priced": []
-    },
-    {
-      "name": "qwen",
-      "label": "Qwen (Alibaba Model Studio)",
-      "default_harness": "openai_compatible",
-      "kinds": [
-        {
-          "mode": "api_key",
-          "meter": "usd",
-          "bills": "Alibaba Model Studio (DashScope) API key, billed in USD"
-        }
-      ],
-      "served_by": [
-        "openai_compatible",
-        "opencode"
-      ],
-      "credential_base_url": false,
-      "search": false,
-      "reports_cost": false,
-      "models": [],
-      "priced": []
-    },
-    {
-      "name": "mistral",
-      "label": "Mistral",
-      "default_harness": "openai_compatible",
-      "kinds": [
-        {
-          "mode": "api_key",
-          "meter": "usd",
-          "bills": "Mistral API key, billed in USD"
-        }
-      ],
-      "served_by": [
-        "openai_compatible",
-        "opencode"
-      ],
-      "credential_base_url": false,
-      "search": false,
-      "reports_cost": false,
-      "models": [],
-      "priced": []
-    },
-    {
-      "name": "xai",
-      "label": "xAI (Grok)",
-      "default_harness": "openai_compatible",
-      "kinds": [
-        {
-          "mode": "api_key",
-          "meter": "usd",
-          "bills": "xAI API key, billed in USD"
-        }
-      ],
-      "served_by": [
-        "openai_compatible",
-        "opencode"
-      ],
-      "credential_base_url": false,
-      "search": false,
-      "reports_cost": false,
-      "models": [],
-      "priced": []
-    },
-    {
       "name": "openai",
       "label": "OpenAI",
-      "default_harness": "codex_cli",
+      "default_harness": "yaaf_loop",
       "kinds": [
         {
           "mode": "api_key",
           "meter": "usd",
-          "bills": "OpenAI API key, billed in USD"
+          "bills": "OpenAI API key, billed in USD",
+          "default_harness": "yaaf_loop"
         },
         {
           "mode": "subscription",
           "meter": "tokens",
-          "bills": "ChatGPT plan (Codex login), metered in tokens"
+          "bills": "ChatGPT plan (Codex login), metered in tokens",
+          "default_harness": "codex_cli"
         }
       ],
       "served_by": [
+        "yaaf_loop",
         "codex_cli",
         "opencode"
       ],
       "credential_base_url": false,
-      "search": false,
+      "search": true,
       "reports_cost": false,
+      "local": false,
+      "lineup": {
+        "frontier": "gpt-6-astra",
+        "balanced": "gpt-6.1-sol",
+        "fast": "gpt-6-luna"
+      },
       "models": [
         "gpt-5.5",
         "gpt-5.6-luna",
@@ -404,25 +303,34 @@
     {
       "name": "google",
       "label": "Google (Gemini)",
-      "default_harness": "gemini_cli",
+      "default_harness": "yaaf_loop",
       "kinds": [
         {
           "mode": "api_key",
           "meter": "usd",
-          "bills": "Gemini API key, billed in USD"
+          "bills": "Gemini API key, billed in USD",
+          "default_harness": "yaaf_loop"
         },
         {
           "mode": "subscription",
           "meter": "tokens",
-          "bills": "Google account login (Gemini CLI), metered in tokens"
+          "bills": "Google account login (Gemini CLI), metered in tokens",
+          "default_harness": "gemini_cli"
         }
       ],
       "served_by": [
+        "yaaf_loop",
         "gemini_cli"
       ],
       "credential_base_url": false,
-      "search": false,
+      "search": true,
       "reports_cost": false,
+      "local": false,
+      "lineup": {
+        "frontier": "gemini-3.1-pro-preview",
+        "balanced": "gemini-3.8-flash",
+        "fast": "gemini-2.5-flash"
+      },
       "models": [
         "gemini-2.5-flash",
         "gemini-3-flash-preview",
@@ -430,6 +338,497 @@
         "gemini-2.5-pro",
         "gemini-3.1-pro-preview"
       ],
+      "priced": []
+    },
+    {
+      "name": "vertex",
+      "label": "Google Vertex AI",
+      "default_harness": "yaaf_loop",
+      "kinds": [
+        {
+          "mode": "api_key",
+          "meter": "usd",
+          "bills": "Vertex AI service account, billed in USD",
+          "default_harness": "yaaf_loop"
+        }
+      ],
+      "served_by": [
+        "yaaf_loop"
+      ],
+      "credential_base_url": true,
+      "search": true,
+      "reports_cost": false,
+      "local": false,
+      "lineup": null,
+      "models": [],
+      "priced": []
+    },
+    {
+      "name": "azure_openai",
+      "label": "Azure OpenAI",
+      "default_harness": "yaaf_loop",
+      "kinds": [
+        {
+          "mode": "api_key",
+          "meter": "usd",
+          "bills": "Azure OpenAI API key, billed in USD",
+          "default_harness": "yaaf_loop"
+        }
+      ],
+      "served_by": [
+        "yaaf_loop"
+      ],
+      "credential_base_url": true,
+      "search": true,
+      "reports_cost": false,
+      "local": false,
+      "lineup": null,
+      "models": [],
+      "priced": []
+    },
+    {
+      "name": "bedrock",
+      "label": "AWS Bedrock",
+      "default_harness": "yaaf_loop",
+      "kinds": [
+        {
+          "mode": "api_key",
+          "meter": "usd",
+          "bills": "AWS Bedrock API key, billed in USD",
+          "default_harness": "yaaf_loop"
+        }
+      ],
+      "served_by": [
+        "yaaf_loop"
+      ],
+      "credential_base_url": true,
+      "search": false,
+      "reports_cost": false,
+      "local": false,
+      "lineup": null,
+      "models": [],
+      "priced": []
+    },
+    {
+      "name": "deepseek",
+      "label": "DeepSeek",
+      "default_harness": "yaaf_loop",
+      "kinds": [
+        {
+          "mode": "api_key",
+          "meter": "usd",
+          "bills": "DeepSeek API key, billed in USD",
+          "default_harness": "yaaf_loop"
+        }
+      ],
+      "served_by": [
+        "yaaf_loop",
+        "opencode"
+      ],
+      "credential_base_url": false,
+      "search": false,
+      "reports_cost": false,
+      "local": false,
+      "lineup": {
+        "frontier": "deepseek-reasoner",
+        "balanced": "deepseek-chat",
+        "fast": "deepseek-chat"
+      },
+      "models": [
+        "deepseek-chat",
+        "deepseek-reasoner"
+      ],
+      "priced": []
+    },
+    {
+      "name": "mistral",
+      "label": "Mistral",
+      "default_harness": "yaaf_loop",
+      "kinds": [
+        {
+          "mode": "api_key",
+          "meter": "usd",
+          "bills": "Mistral API key, billed in USD",
+          "default_harness": "yaaf_loop"
+        }
+      ],
+      "served_by": [
+        "yaaf_loop",
+        "opencode"
+      ],
+      "credential_base_url": false,
+      "search": false,
+      "reports_cost": false,
+      "local": false,
+      "lineup": {
+        "frontier": "mistral-large-latest",
+        "balanced": "mistral-medium-latest",
+        "fast": "mistral-small-latest"
+      },
+      "models": [
+        "mistral-small-latest",
+        "mistral-medium-latest",
+        "mistral-large-latest"
+      ],
+      "priced": []
+    },
+    {
+      "name": "xai",
+      "label": "xAI (Grok)",
+      "default_harness": "yaaf_loop",
+      "kinds": [
+        {
+          "mode": "api_key",
+          "meter": "usd",
+          "bills": "xAI (Grok) API key, billed in USD",
+          "default_harness": "yaaf_loop"
+        }
+      ],
+      "served_by": [
+        "yaaf_loop",
+        "opencode"
+      ],
+      "credential_base_url": false,
+      "search": false,
+      "reports_cost": false,
+      "local": false,
+      "lineup": null,
+      "models": [],
+      "priced": []
+    },
+    {
+      "name": "openrouter",
+      "label": "OpenRouter",
+      "default_harness": "yaaf_loop",
+      "kinds": [
+        {
+          "mode": "api_key",
+          "meter": "usd",
+          "bills": "OpenRouter API key, billed in USD",
+          "default_harness": "yaaf_loop"
+        }
+      ],
+      "served_by": [
+        "yaaf_loop"
+      ],
+      "credential_base_url": false,
+      "search": false,
+      "reports_cost": true,
+      "local": false,
+      "lineup": null,
+      "models": [],
+      "priced": []
+    },
+    {
+      "name": "groq",
+      "label": "Groq",
+      "default_harness": "yaaf_loop",
+      "kinds": [
+        {
+          "mode": "api_key",
+          "meter": "usd",
+          "bills": "Groq API key, billed in USD",
+          "default_harness": "yaaf_loop"
+        }
+      ],
+      "served_by": [
+        "yaaf_loop",
+        "opencode"
+      ],
+      "credential_base_url": false,
+      "search": false,
+      "reports_cost": false,
+      "local": false,
+      "lineup": null,
+      "models": [],
+      "priced": []
+    },
+    {
+      "name": "together",
+      "label": "Together AI",
+      "default_harness": "yaaf_loop",
+      "kinds": [
+        {
+          "mode": "api_key",
+          "meter": "usd",
+          "bills": "Together AI API key, billed in USD",
+          "default_harness": "yaaf_loop"
+        }
+      ],
+      "served_by": [
+        "yaaf_loop",
+        "opencode"
+      ],
+      "credential_base_url": false,
+      "search": false,
+      "reports_cost": false,
+      "local": false,
+      "lineup": null,
+      "models": [],
+      "priced": []
+    },
+    {
+      "name": "fireworks",
+      "label": "Fireworks AI",
+      "default_harness": "yaaf_loop",
+      "kinds": [
+        {
+          "mode": "api_key",
+          "meter": "usd",
+          "bills": "Fireworks AI API key, billed in USD",
+          "default_harness": "yaaf_loop"
+        }
+      ],
+      "served_by": [
+        "yaaf_loop",
+        "opencode"
+      ],
+      "credential_base_url": false,
+      "search": false,
+      "reports_cost": false,
+      "local": false,
+      "lineup": null,
+      "models": [],
+      "priced": []
+    },
+    {
+      "name": "cerebras",
+      "label": "Cerebras",
+      "default_harness": "yaaf_loop",
+      "kinds": [
+        {
+          "mode": "api_key",
+          "meter": "usd",
+          "bills": "Cerebras API key, billed in USD",
+          "default_harness": "yaaf_loop"
+        }
+      ],
+      "served_by": [
+        "yaaf_loop",
+        "opencode"
+      ],
+      "credential_base_url": false,
+      "search": false,
+      "reports_cost": false,
+      "local": false,
+      "lineup": null,
+      "models": [],
+      "priced": []
+    },
+    {
+      "name": "cohere",
+      "label": "Cohere",
+      "default_harness": "yaaf_loop",
+      "kinds": [
+        {
+          "mode": "api_key",
+          "meter": "usd",
+          "bills": "Cohere API key, billed in USD",
+          "default_harness": "yaaf_loop"
+        }
+      ],
+      "served_by": [
+        "yaaf_loop",
+        "opencode"
+      ],
+      "credential_base_url": false,
+      "search": false,
+      "reports_cost": false,
+      "local": false,
+      "lineup": null,
+      "models": [],
+      "priced": []
+    },
+    {
+      "name": "nvidia",
+      "label": "NVIDIA NIM",
+      "default_harness": "yaaf_loop",
+      "kinds": [
+        {
+          "mode": "api_key",
+          "meter": "usd",
+          "bills": "NVIDIA NIM API key, billed in USD",
+          "default_harness": "yaaf_loop"
+        }
+      ],
+      "served_by": [
+        "yaaf_loop",
+        "opencode"
+      ],
+      "credential_base_url": false,
+      "search": false,
+      "reports_cost": false,
+      "local": false,
+      "lineup": null,
+      "models": [],
+      "priced": []
+    },
+    {
+      "name": "huggingface",
+      "label": "Hugging Face",
+      "default_harness": "yaaf_loop",
+      "kinds": [
+        {
+          "mode": "api_key",
+          "meter": "usd",
+          "bills": "Hugging Face API key, billed in USD",
+          "default_harness": "yaaf_loop"
+        }
+      ],
+      "served_by": [
+        "yaaf_loop",
+        "opencode"
+      ],
+      "credential_base_url": false,
+      "search": false,
+      "reports_cost": false,
+      "local": false,
+      "lineup": null,
+      "models": [],
+      "priced": []
+    },
+    {
+      "name": "zai",
+      "label": "Z.ai (GLM)",
+      "default_harness": "yaaf_loop",
+      "kinds": [
+        {
+          "mode": "api_key",
+          "meter": "usd",
+          "bills": "Z.ai (GLM) API key, billed in USD",
+          "default_harness": "yaaf_loop"
+        }
+      ],
+      "served_by": [
+        "yaaf_loop",
+        "opencode"
+      ],
+      "credential_base_url": false,
+      "search": false,
+      "reports_cost": false,
+      "local": false,
+      "lineup": null,
+      "models": [],
+      "priced": []
+    },
+    {
+      "name": "moonshot",
+      "label": "Moonshot (Kimi)",
+      "default_harness": "yaaf_loop",
+      "kinds": [
+        {
+          "mode": "api_key",
+          "meter": "usd",
+          "bills": "Moonshot (Kimi) API key, billed in USD",
+          "default_harness": "yaaf_loop"
+        }
+      ],
+      "served_by": [
+        "yaaf_loop",
+        "opencode"
+      ],
+      "credential_base_url": false,
+      "search": false,
+      "reports_cost": false,
+      "local": false,
+      "lineup": null,
+      "models": [],
+      "priced": []
+    },
+    {
+      "name": "qwen",
+      "label": "Qwen (Alibaba Model Studio)",
+      "default_harness": "yaaf_loop",
+      "kinds": [
+        {
+          "mode": "api_key",
+          "meter": "usd",
+          "bills": "Qwen (Alibaba Model Studio) API key, billed in USD",
+          "default_harness": "yaaf_loop"
+        }
+      ],
+      "served_by": [
+        "yaaf_loop",
+        "opencode"
+      ],
+      "credential_base_url": false,
+      "search": false,
+      "reports_cost": false,
+      "local": false,
+      "lineup": null,
+      "models": [],
+      "priced": []
+    },
+    {
+      "name": "ollama",
+      "label": "Ollama",
+      "default_harness": "yaaf_loop",
+      "kinds": [
+        {
+          "mode": "api_key",
+          "meter": "usd",
+          "bills": "Ollama (local), priced in USD at the rates set in Settings",
+          "default_harness": "yaaf_loop"
+        }
+      ],
+      "served_by": [
+        "yaaf_loop",
+        "opencode"
+      ],
+      "credential_base_url": true,
+      "search": false,
+      "reports_cost": false,
+      "local": true,
+      "lineup": null,
+      "models": [],
+      "priced": []
+    },
+    {
+      "name": "lmstudio",
+      "label": "LM Studio",
+      "default_harness": "yaaf_loop",
+      "kinds": [
+        {
+          "mode": "api_key",
+          "meter": "usd",
+          "bills": "LM Studio (local), priced in USD at the rates set in Settings",
+          "default_harness": "yaaf_loop"
+        }
+      ],
+      "served_by": [
+        "yaaf_loop",
+        "opencode"
+      ],
+      "credential_base_url": true,
+      "search": false,
+      "reports_cost": false,
+      "local": true,
+      "lineup": null,
+      "models": [],
+      "priced": []
+    },
+    {
+      "name": "custom",
+      "label": "Custom endpoint (OpenAI-compatible)",
+      "default_harness": "yaaf_loop",
+      "kinds": [
+        {
+          "mode": "api_key",
+          "meter": "usd",
+          "bills": "Custom endpoint key, priced in USD at the rates set in Settings",
+          "default_harness": "yaaf_loop"
+        }
+      ],
+      "served_by": [
+        "yaaf_loop",
+        "opencode"
+      ],
+      "credential_base_url": true,
+      "search": false,
+      "reports_cost": false,
+      "local": false,
+      "lineup": null,
+      "models": [],
       "priced": []
     }
   ],
@@ -582,6 +981,24 @@
       "id": "gemini-3.1-pro-preview",
       "provider": "google",
       "tier": 5,
+      "price": null
+    },
+    {
+      "id": "mistral-small-latest",
+      "provider": "mistral",
+      "tier": 1,
+      "price": null
+    },
+    {
+      "id": "mistral-medium-latest",
+      "provider": "mistral",
+      "tier": 2,
+      "price": null
+    },
+    {
+      "id": "mistral-large-latest",
+      "provider": "mistral",
+      "tier": 3,
       "price": null
     }
   ]
