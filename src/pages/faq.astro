@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { REPO_URL } from "../site.config.mjs";
+import { REPO_URL, SHOW_COMPARE } from "../site.config.mjs";
 import manifest from "../content/manifest.json";
 
 const h = manifest.history;
@@ -15,7 +15,7 @@ const GROUPS: { title: string; items: QA[] }[] = [
       { id: "harness", q: "What does “a harness for teams of harnesses” mean?", a: `Claude Code, Codex, Gemini CLI and OpenCode are agent harnesses: each drives one model with a loop and tools. yaaf puts each of them in a seat on an org chart and is the harness around the whole team: who is hired, what's next, what it costs, when it's due and whether it's really done. <a href="/runtimes/">Harnesses and models →</a>` },
       { id: "hosted", q: "Is there a hosted version or a paid plan?", a: "No, and there isn't going to be one to upsell you. yaaf is Apache-2.0 software you run yourself. Your agents pay your model provider directly. No account, no telemetry." },
       { id: "who", q: "Who is it for?", a: "Anyone handing off work that runs unattended for weeks and must be checked. Not for quick tasks; use a skill for those." },
-      { id: "paperclip", q: "How is it different from Paperclip?", a: `Paperclip coordinates agents wherever they run. yaaf runs them itself, so only the platform marks work done. <a href="/compare/#paperclip">Full comparison →</a>` },
+      ...(!SHOW_COMPARE ? [] : [{ id: "paperclip", q: "How is it different from Paperclip?", a: `Paperclip coordinates agents wherever they run. yaaf runs them itself, so only the platform marks work done. <a href="/compare/#paperclip">Full comparison →</a>` }]),
     ],
   },
   {
@@ -66,7 +66,7 @@ const faqLd = {
   })),
 };
 ---
-<BaseLayout title="FAQ" description="Short answers about yaaf: what it is, how it differs from Paperclip, how it checks work, which models it runs, what it costs and how safe it is.">
+<BaseLayout title="FAQ" description={`Short answers about yaaf: what it is, ${SHOW_COMPARE ? "how it differs from Paperclip, " : ""}how it checks work, which models it runs, what it costs and how safe it is.`}>
   <script slot="head" type="application/ld+json" set:html={JSON.stringify(faqLd)} is:inline />
 
   <section class="page-hero">

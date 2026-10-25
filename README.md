@@ -62,6 +62,9 @@ Everything that is a decision rather than content is in **`src/site.config.mjs`*
   `public/robots.txt` together.
 - `SOURCE_IS_PUBLIC` — set `false` while `dominicplouffe/yaaf` is private and
   every GitHub CTA becomes a "get notified" CTA instead of a 404.
+- `SHOW_COMPARE` — `false` for now: the Compare page, its nav item, the home
+  page's comparison and the FAQ's Paperclip answer are hidden. The comment on
+  the flag says the three steps to bring them back.
 - `NAV`, `MORE`, `DOCS_GROUPS` — navigation, the footer's reference links, and
   the docs sidebar order.
 
@@ -219,8 +222,9 @@ src/
   assets/screenshots/  2880px originals, processed by astro:assets
   components/          CompanyChart, TeamDiagram, AutonomyDial, OrgChart, RoleCard, Shot, Term, Drill, Section, Nav, Foot
   layouts/             BaseLayout, DocsLayout
-  pages/               index, manifesto, how-it-works, features, runtimes (Harnesses), compare, faq,
-                       changelog, org, examples, docs, 404 (/why/ redirects to /compare/)
+  pages/               index, manifesto, how-it-works, features, runtimes (Harnesses), faq,
+                       changelog, org, examples, docs, 404; _compare is hidden
+                       while SHOW_COMPARE is off, and /why/ redirects to /#why
 scripts/
   sync-content.mjs     the content pipeline
   export-runtimes.py   yaaf's runtime registries -> src/content/runtimes.json

@@ -8,7 +8,7 @@ import Cmd from "../components/Cmd.astro";
 import CompanyChart from "../components/CompanyChart.astro";
 import TeamDiagram from "../components/TeamDiagram.astro";
 import AutonomyDial from "../components/AutonomyDial.astro";
-import { SITE, REPO_URL } from "../site.config.mjs";
+import { SITE, REPO_URL, SHOW_COMPARE } from "../site.config.mjs";
 import manifest from "../content/manifest.json";
 import runtimes from "../content/runtimes.json";
 
@@ -373,8 +373,8 @@ const VS = [
     </p>
   </Section>
 
-  <!-- ============ COMPARE ============ -->
-  <Section eyebrow="Compared" title="Why not just use Claude Code?">
+  <!-- ============ COMPARE (hidden while SHOW_COMPARE is off) ============ -->
+  {SHOW_COMPARE && <Section eyebrow="Compared" title="Why not just use Claude Code?">
     <div class="cells vsg">
       {VS.map((x) => (
         <div class:list={["cell", { us: x.us }]}>
@@ -384,7 +384,7 @@ const VS = [
       ))}
     </div>
     <p class="note">yaaf runs Claude Code and Codex. It doesn't replace them; it gives them a company. <a href="/compare/">Full comparison, including Paperclip →</a></p>
-  </Section>
+  </Section>}
 
   <!-- ============ OPEN SOURCE ============ -->
   <Section id="start" eyebrow="Open source" title="Not a service. Software you own.">

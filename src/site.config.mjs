@@ -6,6 +6,16 @@
 /** Canonical origin. No trailing slash. Must match SITE_HOST in the deploy settings. */
 export const SITE_URL = "https://yaaf.dplouffe.ca";
 
+/**
+ * Off for now: the comparison with other tools (the Compare page, its nav
+ * item, the home page's "Why not just use Claude Code?" and the FAQ's
+ * Paperclip answer). To bring it back, set this true and rename
+ * src/pages/_compare.astro to compare.astro (Astro skips files that start
+ * with an underscore), then point the /why redirect in astro.config.mjs back
+ * at /compare/.
+ */
+export const SHOW_COMPARE = false;
+
 /** Set false before the yaaf repo is public: every GitHub CTA becomes a waitlist CTA. */
 export const SOURCE_IS_PUBLIC = true;
 
@@ -28,7 +38,7 @@ export const SITE = {
   themeColor: "#0b0918",
 };
 
-export const NAV = [
+const NAV_ALL = [
   { label: "How it works", href: "/how-it-works/" },
   { label: "Manifesto", href: "/manifesto/" },
   { label: "Harnesses", href: "/runtimes/" },
@@ -38,6 +48,7 @@ export const NAV = [
   { label: "Compare", href: "/compare/" },
   { label: "Docs", href: "/docs/" },
 ];
+export const NAV = NAV_ALL.filter((i) => SHOW_COMPARE || i.href !== "/compare/");
 
 /** Pages that are reference rather than navigation; the footer lists them. */
 export const MORE = [
