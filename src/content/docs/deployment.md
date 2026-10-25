@@ -17,6 +17,15 @@ No Docker, SQLite instead of Postgres, and the sandbox replaced by a plain
 subprocess. This is the **contributor** path: if you want to *run* yaaf, use
 [the deploy script](#the-real-thing--your-own-server) below instead.
 
+**The short way:** from a checkout with the dashboard built (`cd web && npm install
+&& npm run build`), `yaaf up --no-isolation --email you@example.com` does every step
+below: it keeps a master key and a SQLite database in `~/.yaaf`, creates the schema,
+starts the server and the runner, makes you the first admin and prints your sign-in
+link, seeds an empty role library from `roles/` and `crews/`, and prints the address.
+Ctrl-C (or any SIGTERM) stops both processes. `--no-isolation` is required on
+purpose: it runs agents as you, with no sandbox, and yaaf will not choose that for
+you — set `YAAF_SANDBOX_MODE=docker` instead on anything other than a dev machine.
+
 The compose deployment does four things for you that you have to do by hand
 here. Miss any one and you get a project that looks alive and never moves — so
 each is called out.
@@ -51,7 +60,14 @@ export YAAF_DATABASE_URL=sqlite:////tmp/yaaf.db \
 .venv/bin/yaaf users bootstrap --email you@example.com --name "You"
 .venv/bin/yaaf login --email you@example.com
 .venv/bin/yaaf seed-roles roles/
+.venv/bin/yaaf seed-crews crews/   # the "start from a crew" picker reads these
+.venv/bin/yaaf doctor              # checks all of the above, names any fix
 ```
+
+If the API is not on port 8080, also export `YAAF_API_BASE_URL`: it is what
+the runner calls and what the bootstrap link is built from, and it defaults to
+`http://localhost:8080` — so on another port the runner talks to nothing, or
+to somebody else's server, without an error you would notice.
 
 Open the link `bootstrap` printed, choose a password, and you are in the
 dashboard at **http://localhost:8080/app**. See [AUTH.md](/docs/auth/) for who
@@ -90,7 +106,7 @@ curl -fsSL https://get.docker.com | sh          # if docker isn't there yet
 sudo usermod -aG docker "$USER"                 # then log out and back in
 
 git clone <your-yaaf-remote> yaaf && cd yaaf
-./deploy_single_server.sh
+deploy/deploy_single_server.sh
 ```
 
 That is the whole install. The script is idempotent — re-run it after a
@@ -143,8 +159,8 @@ Worth knowing, because when something breaks you debug these, not the script:
 ### Living with it
 
 ```bash
-./update_single_server.sh    # pull, back up, rebuild, migrate, verify
-./kill_single_server.sh      # stop, keep data      (--wipe destroys the database)
+deploy/update_single_server.sh    # pull, back up, rebuild, migrate, verify
+deploy/kill_single_server.sh      # stop, keep data      (--wipe destroys the database)
 ```
 
 **Updating, including updates that carry migrations, needs no special step.**
@@ -214,7 +230,7 @@ container entrypoints already do.
 
 ## Reaching a server you SSH into
 
-`./deploy_single_server.sh` binds the dashboard to `127.0.0.1` precisely so
+`deploy/deploy_single_server.sh` binds the dashboard to `127.0.0.1` precisely so
 that a remote box does not publish it. Nothing listens on the network, so
 there is nothing to firewall. Reach it by forwarding the port from your
 laptop:
@@ -298,7 +314,7 @@ is the check: exactly one `published: "8080"`, carrying `host_ip: 127.0.0.1`.
 
 **`docker compose exec api yaaf seed-roles roles/` looks like it works and
 does nothing.** The image has no `roles/` directory, and the command globs an
-empty path, prints nothing, and exits 0. `./deploy_single_server.sh` loads them
+empty path, prints nothing, and exits 0. `deploy/deploy_single_server.sh` loads them
 over HTTP; by hand it is the loop above, or from a checkout with the CLI
 installed:
 `YAAF_API=http://localhost:8080 yaaf login && yaaf seed-roles roles/` (an
@@ -314,7 +330,7 @@ itself with either.
 
 **A library seeded once does not grow by itself.** Both scripts load only the
 slugs the library is missing, so a role added to the repository after your
-first deploy arrives on the next `./update_single_server.sh`, and no role you
+first deploy arrives on the next `deploy/update_single_server.sh`, and no role you
 already have is re-versioned. By hand it is
 `yaaf seed-roles roles/ --only-missing`.
 
@@ -357,7 +373,7 @@ admin until one is made — the chairman's own email keeps every project they
 chair:
 
 ```bash
-./update_single_server.sh --admin-email you@example.com
+deploy/update_single_server.sh --admin-email you@example.com
 ```
 
 A forgotten password is a fresh setup link, from a shell on the box:
@@ -365,7 +381,7 @@ A forgotten password is a fresh setup link, from a shell on the box:
 Ten wrong passwords for one address lock that address for fifteen minutes.
 
 **The role pickers are empty when creating a project.** The library was never
-seeded. Re-run `./deploy_single_server.sh` — it seeds only when the library is
+seeded. Re-run `deploy/deploy_single_server.sh` — it seeds only when the library is
 empty, so this is safe.
 
 **A run starts and immediately dies.** Usually the sandbox image is missing or
@@ -392,6 +408,38 @@ decision; see docs/AUTONOMY.md). It still isolates stacks from each other.
 `deploy/Dockerfile` builds the control plane (api + runner + web UI).
 `deploy/sandbox/Dockerfile` builds the image agent runs execute inside. **They
 are separate — rebuild both** when you change something that affects each.
+
+### Providers, and what they need from the network
+
+Every provider is reached from two places: the **sandbox**, where a seat's run
+calls its provider's API (yaaf's loop copies `yaaf/runtimes/wire.py` into the
+image for that), and the **control plane**, which calls the same APIs for the
+Founder, a credential's **Check**, the provider check, model discovery and
+`yaaf smoke` — and, once a day if Settings → Models → *Keep models and prices
+current* is on, to re-read each key's model list. Both need
+outbound HTTPS to the providers an install pays — and the control plane needs
+it to `oauth2.googleapis.com` too if Vertex AI is one of them, because it mints
+Vertex's tokens there (the service account key never enters a sandbox).
+
+- **A local model server** (Ollama, LM Studio, vLLM) is reached *from the
+  sandbox*, so its credential's address is the server's name on the sandbox
+  network — `http://ollama:11434/v1`, not `localhost` — and the server must be
+  attached to that network (`YAAF_SANDBOX_NETWORK`).
+- **The price feed** is read by the control plane when an administrator
+  imports prices (Settings → Model prices → Import), and daily when upkeep is
+  on (only prices that came from the feed are moved). An install with no route
+  to `raw.githubusercontent.com` imports the snapshot shipped with yaaf, or
+  points the feed at a mirror of its own.
+- **The web search backend**, when one is configured, is called from the
+  sandbox, like the providers.
+
+After deploying, `yaaf smoke <credential>` makes one real, trivial call per
+credential through the wire its seats will use — the quickest proof that a
+key, an address and a network path all work before a project depends on them.
+`yaaf check-provider <credential>` goes further: probes and five small agent
+tasks on each model the credential's classes resolve to, graded
+mechanically, with the cost stated before it runs — whether the model can do
+the work, not only answer.
 
 ---
 
@@ -518,7 +566,7 @@ these polling floors, never a replacement for them.
 
 - `GET /healthz` — process liveness.
 - `GET /observe/projects/{id}/health` — the per-project setup checklist, the
-  same one the Overview renders. All green = the UI hides the card.
+  same one the project's Inbox renders. All green = the UI hides the card.
 - Dispatcher, janitor, and Slack threads log at INFO to the `api` container. A
   plan meter throttled by Anthropic logs one WARNING naming the token digest and
   how long it is staying quiet; it never retries through a `Retry-After`. A
@@ -531,7 +579,7 @@ these polling floors, never a replacement for them.
 Everything that matters is in **Postgres** (`pgdata` volume) plus the
 **artifacts** directory. Back up both.
 
-`./update_single_server.sh` dumps the database into `backups/` before every
+`deploy/update_single_server.sh` dumps the database into `backups/` before every
 upgrade, which covers the "that migration was a mistake" case but is not an
 offsite backup — `backups/` lives on the same disk as the volume it came from.
 
@@ -546,7 +594,7 @@ git be the durable copy.
 ### Upgrades
 
 ```bash
-./update_single_server.sh
+deploy/update_single_server.sh
 ```
 
 Pull, back up, rebuild both images, apply migrations, verify. **An update that
@@ -562,7 +610,7 @@ docker build -f deploy/sandbox/Dockerfile -t yaaf-sandbox:latest .   # sandbox i
 cd deploy && docker compose up --build -d                             # control plane
 ```
 
-Take a dump first if you do it that way — `update_single_server.sh` refuses to
+Take a dump first if you do it that way — `deploy/update_single_server.sh` refuses to
 migrate without one, and a migration that applies cleanly can still be one you
 want to undo:
 
@@ -624,7 +672,7 @@ difference. Three things are worth knowing:
 - **The names are placeholders.** A migrated key is called
   `Migrated <old name> (<id>)`, because two projects could each have had a key
   named `anthropic-api-key` and the shared list needs distinct names. Open
-  Settings → LLM credentials once and rename them; the Overview of every
+  Settings → Providers once and rename them; the Inbox of every
   project on a credential shows the name.
 - **Its billing mode is read from the project it paid for.** A key no project
   was attached to is decrypted to tell an API key from a subscription token —
@@ -672,7 +720,7 @@ roles/          starter role library — thirty-two roles in six hiring aisles:
                 general, tutor, adversary, markets desk, game studio,
                 data-science bench
 crews/          fourteen pre-staffed teams the hiring desk offers
-deploy/         Dockerfiles and compose
+deploy/         Dockerfiles, compose, and the install/update/stop scripts
 evals/          golden-transcript evals — regression-gate for prompt edits
 tests/          invariant suite over HTTP, chaos tests, eval checks
 migrations/     Alembic

@@ -99,7 +99,7 @@ a key you have already read.
 
 ## Try this next
 
-- **Cut a lesson** you don't care about on the Plan tab, with a reason. Watch
+- **Cut a lesson** you don't care about on the Roadmap, with a reason. Watch
   the arc re-sequence around it.
 - Then **[06 — A red team that can block](/examples/06-a-red-team/)**, where a second
   agent gets a veto over the first.

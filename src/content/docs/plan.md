@@ -75,12 +75,12 @@ golden-transcript evals — SQLite between edits, Postgres in CI.
 | Spend envelope, purchases, revenue-by-webhook | Built. |
 | Sandbox — container per run, scoped secrets, Chromium in the box | Built. |
 | Evidence verification, webhooks, spot-audit, CEO-judgment metric | Built. |
-| Dashboard — Home, Inbox, and per project Overview, Chat, Roadmap, Tasks, Deliverables, Team, Spend, Reviews, Activity, Settings | Built. See [ux-redesign](https://github.com/dominicplouffe/yaaf/blob/main/docs/ux-redesign/README.md) for why it is laid out this way. |
+| Dashboard — Home, Inbox, and per project Team, Chat, Results and Details (Roadmap, Tasks, Deliverables, Spend, Reviews, Activity, Settings) | Built. See [ux-redesign](https://github.com/dominicplouffe/yaaf/blob/main/docs/ux-redesign/README.md) for why it is laid out this way. |
 | The chairman's MCP server — 32 tools across four scopes | Built, M0 through M5. Claude gets its own credential, never its person's own; nothing irreversible lands in one call; agent text arrives wrapped and labelled untrusted; no secret is readable at any scope. See [MCP_SERVER.md](/docs/mcp-server/). |
 | People — accounts, sessions, personal tokens; chairman, co-chairs, observers | Built. One box, several people, each project with one chairman who alone decides who decides; co-chairs decide as peers and are recorded as themselves. Every human route declares its authority and a test refuses one that does not. The static admin token is retired. See [AUTH.md](/docs/auth/). |
 | Integrations — Slack (Socket Mode), GitHub, MCP data sources, S3, email | Built. |
 | Staffing — the CEO hires and stands roles down; the plan carries each seat's end | Built. Bounded by `max_teams`, a refusal to orphan open work, and a refusal to remove its own last critic. A declared `stand_down_when` is fired by the janitor, not by a reminder. |
-| Runtimes — a seat on any harness and provider, under the same rules | Built through M6: Claude through the Agent SDK, the Claude CLI or yaaf's own loop on the API; OpenAI through the Codex CLI; Google through the Gemini CLI; and DeepSeek, OpenRouter, Kimi, Qwen, Mistral, Grok or a local server through the same loop on the OpenAI-compatible API, or OpenCode. A live seat on each harness but the SDK is the line only a deployment can tick. Every seat is metered against its project's one cap; a seat that cannot be paid, priced, or given what its role grants is refused at the door. See [RUNTIMES.md](/docs/runtimes/). |
+| Runtimes — a seat on any harness and provider, under the same rules | Built through M7: roles name a class of model and run on whichever provider pays the project; yaaf's own loop speaks every provider's own API — Anthropic, OpenAI and Azure, Gemini and Vertex, Bedrock, and the OpenAI chat shape of DeepSeek, Mistral, xAI, Groq, Together and the rest, local servers included — beside the Agent SDK, the Claude, Codex and Gemini CLIs and OpenCode. Prices import from a feed with their provenance; search is a platform capability on every provider; a long run compacts its history to its model's window; a provider check proves a model can do the work, readiness names every gap with its fix before a door refuses, and a failing provider's class seats move to a project's fallback. A live seat on each provider is the line only a deployment can tick, with `yaaf check-provider`. Every seat is metered against its project's one cap; a seat that cannot be paid, priced, modelled or given what its role grants is refused at the door. See [RUNTIMES.md](/docs/runtimes/) and [PROVIDERS.md](/docs/providers/). |
 | Attribution — who spent which runs, and on what | Built. One producer behind the chairman's screen, the CLI, the chairman's MCP and the CEO's own reader, so the two sides of the boardroom cannot hold different numbers. |
 
 ## What is next
@@ -105,9 +105,13 @@ golden-transcript evals — SQLite between edits, Postgres in CI.
 - **A worker fleet.** Same reason. It is a deploy choice, not an architecture
   change, and it waits for demonstrated need.
 - **A model router.** Seats run on many providers ([RUNTIMES.md](/docs/runtimes/)),
-  but a seat runs on what it was hired on: no automatic fallback from one
-  provider to another when a call fails, and no exchange rate between a meter
-  in dollars and a meter in tokens.
+  and a seat runs on what it was hired on. The one exception is deliberate and
+  narrow: a project that names a fallback credential has its *class* seats
+  moved to it while its billing provider keeps failing, and back when it
+  recovers ([PROVIDERS.md](/docs/providers/) §9) — a state change judged from
+  whole runs, not a router choosing per call. Pinned seats never move, nothing
+  picks a provider for price, and there is no exchange rate between a meter in
+  dollars and a meter in tokens.
 - **Teardown machinery.** Winding a project down is a decision, not a script.
   The account registry records what exists so you can settle it yourself.
 - **Virtual-card issuance.** Recommended hardening if you bring an issuer,
@@ -143,4 +147,5 @@ golden-transcript evals — SQLite between edits, Postgres in CI.
 - [GOVERNANCE.md](/docs/governance/) — every rule and its default.
 - [MCP_SERVER.md](/docs/mcp-server/) — chairing yaaf from a model client: design and milestones.
 - [RUNTIMES.md](/docs/runtimes/) — any harness, any provider, the same rules: design and milestones.
+- [PROVIDERS.md](/docs/providers/) — any model from the first screen: classes, one loop on every wire, prices, search.
 

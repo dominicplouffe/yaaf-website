@@ -30,18 +30,18 @@ const MODES = [
   ["explore", "Chase a goal with no fixed end."],
 ];
 ---
-<BaseLayout title="Use cases" description={`${examples.length} projects you can hand to an AI team today: code, research, content, data and more. Try any of them free.`}>
+<BaseLayout title="Use cases" description={`${examples.length} projects you can hand to an AI company today: code, research, content, data and more. Rehearse any of them for $0.`}>
   <section class="page-hero">
     <div class="shell">
       <p class="eyebrow">Use cases</p>
-      <h1>{examples.length} projects you can hand off today.</h1>
-      <p class="lede">Each one is ready to run. Try it free with practice agents, then make it yours.</p>
+      <h1>{examples.length} companies you can start today.</h1>
+      <p class="lede">Each one is a ready-made company: a goal, a CEO, the teams and a budget. Rehearse it on scripted agents for $0, then make it yours.</p>
       <div class="try"><Cmd cmd="yaaf rehearse examples/01-your-first-hour.json" /></div>
     </div>
   </section>
 
   <Section first={true} eyebrow="Start here" title="Two to learn the basics.">
-    <div class="cells">
+    <div class="cells hued">
       {basics.map((e) => (
         <a class="cell ex" href={`/examples/${e.id}/`}>
           <span class="eyebrow">{e.data.number}</span>
@@ -58,7 +58,7 @@ const MODES = [
   </Section>
 
   <Section eyebrow="Real work" title={`${rest.length} that run for days or weeks.`} lede="Code, research, content, data and teaching. Each one keeps going without you.">
-    <div class="cells">
+    <div class="cells hued">
       {rest.map((e) => (
         <a class="cell ex" href={`/examples/${e.id}/`}>
           <span class="eyebrow">{e.data.number}</span>

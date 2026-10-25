@@ -11,8 +11,9 @@ const GROUPS: { title: string; items: QA[] }[] = [
   {
     title: "Basics",
     items: [
-      { id: "what", q: "What is yaaf?", a: "Open-source software that runs a team of AI agents on one goal for weeks. The server enforces the rules, not the prompt." },
-      { id: "hosted", q: "Is there a hosted version or a paid plan?", a: "No. It's open source and self-hosted. You pay your model provider directly. No account, no telemetry." },
+      { id: "what", q: "What is yaaf?", a: "Open-source software for building a company of AI agents. You describe the goal and hire a CEO; the CEO runs a team for weeks, and yaaf's server enforces the rules, not the prompt." },
+      { id: "harness", q: "What does “a harness for teams of harnesses” mean?", a: `Claude Code, Codex, Gemini CLI and OpenCode are agent harnesses: each drives one model with a loop and tools. yaaf puts each of them in a seat on an org chart and is the harness around the whole team: who is hired, what's next, what it costs, when it's due and whether it's really done. <a href="/runtimes/">Harnesses and models →</a>` },
+      { id: "hosted", q: "Is there a hosted version or a paid plan?", a: "No, and there isn't going to be one to upsell you. yaaf is Apache-2.0 software you run yourself. Your agents pay your model provider directly. No account, no telemetry." },
       { id: "who", q: "Who is it for?", a: "Anyone handing off work that runs unattended for weeks and must be checked. Not for quick tasks; use a skill for those." },
       { id: "paperclip", q: "How is it different from Paperclip?", a: `Paperclip coordinates agents wherever they run. yaaf runs them itself, so only the platform marks work done. <a href="/compare/#paperclip">Full comparison →</a>` },
     ],
@@ -29,17 +30,17 @@ const GROUPS: { title: string; items: QA[] }[] = [
   {
     title: "Models and cost",
     items: [
-      { id: "models", q: "Which models does it run?", a: `Claude, GPT, Gemini, DeepSeek, Kimi, Qwen, Mistral, Grok, OpenRouter or your own server. ${manifest.harnesses} harnesses, ${manifest.providers} providers. <a href="/runtimes/">Runtimes →</a>` },
+      { id: "models", q: "Which models does it run?", a: `Claude, GPT, Gemini, Bedrock, Vertex, Azure, DeepSeek, Mistral, Kimi, Qwen, Grok, Groq, OpenRouter, a local Ollama or LM Studio, or any OpenAI-compatible server: ${manifest.providers} providers through ${manifest.harnesses} harnesses. Roles name a class (frontier, balanced, fast), so a team runs on whichever provider you pay. <a href="/runtimes/">Harnesses and models →</a>` },
       { id: "subscription", q: "Can I use my Claude subscription?", a: "For personal tinkering only. Anthropic's terms don't allow running fleets on a personal plan. Use an API key." },
-      { id: "cost", q: "How much does it cost?", a: "Nobody has published a real bill yet. The free rehearsal tells you the most a run can cost and still fit your budget." },
-      { id: "local", q: "Can it run on local models?", a: "Yes, through any OpenAI-compatible server. The prompts were tuned on Claude, so quality may vary." },
+      { id: "cost", q: "How much does it cost?", a: "yaaf itself costs nothing. The models cost what your provider charges. Nobody has published a real month's bill yet; the $0 rehearsal tells you the most a run can cost and still fit your budget, and every run is metered against a cap you set." },
+      { id: "local", q: "Can it run on local models?", a: "Yes: Ollama, LM Studio or any OpenAI-compatible server. The prompts were tuned on Claude, so quality may vary." },
     ],
   },
   {
     title: "Running it",
     items: [
-      { id: "try", q: "Can I try it for free?", a: "Yes. Clone the repo, install it with pip and run <code>yaaf rehearse examples/01-your-first-hour.json</code>. No key, no Docker." },
-      { id: "install", q: "What do I need to install it?", a: `A Linux machine with Docker. One script does the rest. <a href="/docs/deployment/">Install guide →</a>` },
+      { id: "try", q: "Can I see a company run before I pay for any model?", a: "Yes. Clone the repo, <code>pip install -e .</code> and run <code>yaaf rehearse examples/01-your-first-hour.json</code>. A whole project runs on scripted agents: no key, no Docker, $0." },
+      { id: "install", q: "What do I need to install it?", a: `On your own machine, a checkout and <code>yaaf up</code>, which starts everything and prints the address. On a server, a Linux box with Docker; one script does the rest. <a href="/docs/deployment/">Install guide →</a>` },
       { id: "claude", q: "Can I run it from Claude?", a: "Yes. yaaf is an MCP server. Claude Code, Claude Desktop and Cursor connect with a token. claude.ai needs a public address." },
       { id: "secure", q: "Is it secure?", a: `Agents run in sandboxes with limited secrets, but they can reach the internet. No outside review yet. <a href="/docs/security/">Security model →</a>` },
     ],

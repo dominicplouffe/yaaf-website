@@ -135,7 +135,8 @@ be true at the end — and work exists to make requirements true.
 |---|---|---|
 | `POST /requirements` | `statement`, `acceptance_test`, `stage`, `est_runs`, `depends_on?` | **CEO only.** Proposes; does not create scope. The chairman accepts (or the CEO itself, when `plan_authority` says so). Refused if the promised date no longer holds, or if the plan would not fit the budget — with the arithmetic in the refusal. |
 | `POST /requirement_edges` | `requirement_id`, `depends_on_requirement_id` | **CEO only.** Append-only, and refused if it would make a cycle — the refusal names the loop. |
-| `POST /commitments` | `note?` | **CEO only.** Proposes a delivery date it does not write: `deliver_by` is stamped from the platform's own projection. Under `commitment_authority: ceo` proposing accepts it too. |
+| `POST /commitments` | `note?` | **CEO only, Deliver only** — an Operate project runs on cycles and has no single date to promise. Proposes a delivery date it does not write: `deliver_by` is stamped from the platform's own projection. Under `commitment_authority: ceo` proposing accepts it too. |
+| `POST /cycle_goal` | `goal`, `due_at?`, `due_source_kind?`, `due_source_url?`, `due_source_note?` | **CEO only, Operate only** (tool: `cycle_goal`). What the open cycle is for, and — when the world sets one — when its work is due. A `due_at` is a fact, not a promise, so it must cite a source: `data` with the URL it was read from, or `calendar`. With one, the cycle rolls on it instead of the rhythm, and the answer carries the platform's capacity forecast. Audited. |
 | `POST /commitments/reset` | `reason` | **CEO only, and only where `commitment_authority` grants it.** Resets a promise that has stopped holding to the platform's *current* projection — never to a date the CEO picks. Refused while the promise still holds. Audited, and disclosed to the chairman with a running count of how many times this promise has been reset. |
 | `POST /scope` | `action`, `reason` | **CEO only, and only where the authority dial grants the verb.** `action.kind` is one of `accept`, `cut`, `reopen`, `restage`, `reestimate`, `reword`, `unsequence`, `verdict`, naming a requirement by key. Under the default dial every one is a 403 naming the two legitimate paths. Every self-exercise is audited and disclosed to the chairman. |
 | `POST /review_narrative` | `narrative`, `recommended?` | **CEO only**, into the open review, on a reserved governance run. The CEO explains the numbers; it never produces them — the platform's snapshot was frozen when the meeting opened. |
@@ -265,12 +266,15 @@ is responsible, because every task carries a start time the CEO chose).
 
 | Endpoint | Body | Notes |
 |---|---|---|
-| `POST /approvals` | `kind`, `title`, `body`, `amount_usd?` | Expires per `approval_timeout_days` — **default-deny**. The response says so, and tells the agent to frame requests as recommendations it would defend, not open questions. `kind: owner_decision` is **refused** on a project whose authority dial already gives the CEO the plan, the scope and the date — an approval blocks on a human, and filing one for a decision the chairman delegated is the one way an autonomous project can still stall on him. The refusal names the verb to use instead. `spend`, `legal`, `tool_request` and `assist` are undelegable and unaffected at every setting. |
+| `POST /approvals` | `kind`, `title`, `body`, `if_declined`, `amount_usd?` | `if_declined` is required: what happens if he says no or lets it expire, filed as the case's last line ("What happens without it:") so the Inbox shows it under *if you deny*. Expires per `approval_timeout_days` — **default-deny**. The response says so, and tells the agent to frame requests as recommendations it would defend, not open questions. `kind: owner_decision` is **refused** on a project whose authority dial already gives the CEO the plan, the scope and the date — an approval blocks on a human, and filing one for a decision the chairman delegated is the one way an autonomous project can still stall on him. The refusal names the verb to use instead. `spend`, `legal`, `tool_request` and `assist` are undelegable and unaffected at every setting. |
 | `GET /approvals` | — | This agent's pending requests. |
-| `POST /asks` | `title`, `body`, `answer_by_hours`, `default_action` | **CEO only.** A question to the chairman that the next move depends on. Posts to the boardroom and opens a row with a clock: the cadence never governs it, and it does **not** block — `default_action` is what the CEO does if the window passes, written down before the answer is known. Capped by `ask_window_hours_max` and `max_open_asks`. It sits on his desk beside the pending approvals while it is open — the same shelf, because both are clocked things he answers and neither is gated on the autonomy dial. The janitor marks it answered the moment he says anything in the boardroom after it, chases him halfway through the window, and at `answer_by` lapses it with an **urgent** notice — which is the wake that makes the default happen on a project whose board emptied while it waited. |
+| `POST /asks` | `title`, `body`, `why`, `options?`, `recommendation?`, `answer_by_hours`, `default_action` | **CEO only.** A question to the chairman that the next move depends on. `why` (why it matters now) is required; `options` (up to four one-liners) and `recommendation` are for a choice and left out for a question of fact. The platform files them as one labelled case, posts it with the deadline in the project's timezone, and shows the same case in the Inbox and the email chase. Posts to the boardroom and opens a row with a clock: the cadence never governs it, and it does **not** block — `default_action` is what the CEO does if the window passes, written down before the answer is known. Capped by `ask_window_hours_max` and `max_open_asks`. It sits on his desk beside the pending approvals while it is open — the same shelf, because both are clocked things he answers and neither is gated on the autonomy dial. The janitor marks it answered the moment he says anything in the boardroom after it, chases him halfway through the window, and at `answer_by` lapses it with an **urgent** notice — which is the wake that makes the default happen on a project whose board emptied while it waited. |
 | `POST /asks/close` | `ask_id`, `message_id` | Close an ask by having acted on it and said so. `message_id` must be a boardroom message this agent posted — the proof, exactly as with `flags/raise`. An open ask cannot be closed, and no ask closes by going quiet. |
 | `GET /asks` | — | This project's live questions and the ones this agent still owes an answer about. |
-| `POST /capacity` | `rule`, `to`, `buys`, `costs`, `without` | **CEO only.** A case for MORE of a capacity dial — runs a day or an hour, concurrency, queue depth, the month's money. All three of buys/costs/without are required, because the difference between this and a remark in the boardroom is that this carries the numbers to decide on. It does **not** move the dial and does **not** block: keep working at the cap you have and treat a yes as upside. Restricted to the rules that govern *how much work the project may do* — the mirror of `directive_file`, which is restricted to rules that limit what you ask of him. Authority, the quality bar, verdict policy and the audit rates are refused: arguing for a lower bar on yourself is not a capacity request. `max_concurrent_runs` is granted differently from the rest and says so — it protects a provider rate limit every project on the box shares. |
+| `POST /capacity` | `rule`, `to`, `buys`, `costs`, `without` | **CEO only.** A case for MORE of a capacity dial — runs a day or an hour, concurrency, queue depth, the month's money. All three of buys/costs/without are required, because the difference between this and a remark in the boardroom is that this carries the numbers to decide on. Filing it does **not** move the dial and does **not** block: keep working at the cap you have and treat a yes as upside. His yes raises the dial at once (to his number if he changed it), through the ordinary amendment path, and you are told the number in force. Restricted to the rules that govern *how much work the project may do* — the mirror of `directive_file`, which is restricted to rules that limit what you ask of him. Authority, the quality bar, verdict policy and the audit rates are refused: arguing for a lower bar on yourself is not a capacity request. `max_concurrent_runs` is granted differently from the rest and says so — it protects a provider rate limit every project on the box shares. |
+| `POST /brief` | `goal`, `standing_orders`, `retired`?, `what_changed` | **CEO only.** Write the chairman's current direction back to him for his Confirm: the whole goal as it stands now, every standing order with its number, and what no longer applies, quoting what he said. Nothing changes until he confirms. Confirming replaces the goal and the standing orders every agent reads first on every run, restarts the chat session onto them, and tells you to rewrite the files, scripts and memories that still say the old thing. A newer draft replaces an unconfirmed one; the brief already in force is 409. `POST /approvals` refuses `kind=brief`. |
+| `POST /heads_up` | `title`, `body`, `standing_order` | **CEO only.** Tell the chairman something he *asked* to be told, for him to mark Noted — no Approve, no Deny, no expiry. `standing_order` quotes the order in the brief that asks for it (enough of it to name one order); without one it is refused, because then it is information and belongs in the deliverable or the daily brief. If he must decide, file an approval; if he must do something, an assist. |
+| `POST /notes/{id}/answer` | `reply`, `standing` | **CEO only.** Answer a note the chairman wrote on a decision. Every unanswered note is in the context pack's `chairman_notes` on every run until answered. `reply` is the one line he reads under his note. `standing=true` says it applies beyond that one item, and is refused unless a brief written after the note exists — fold it in with `POST /brief` first. |
 | `POST /ledger/spend` | `usd`, `note`, `approval_id?` | Spends at or above the threshold **require a granted approval id**, or the booking is refused. Money already spent is always *recorded* — an overshoot books with an audit row and a note to the chairman rather than vanishing. |
 | `POST /purchases` | `usd`, `what`, `idempotency_key` | Clears the real-world spend envelope **before** money moves, and reserves the headroom so two overlapping purchases cannot spend it twice. |
 | `POST /purchases/{id}/finish` | `ok`, `receipt?` | Books the ledger row. Finishing twice never double-books. |
@@ -333,7 +337,7 @@ A role is a JSON file in [`roles/`](/org/#roles):
   "name": "Software Engineer",
   "is_ceo_role": false,
   "description": "Builds and runs everything technical. Decides how, never what.",
-  "model": "claude-sonnet-5-5",
+  "model": "@balanced",
   "effort": "xhigh",
   "tool_permissions": {"files": true, "bash": true,
                        "data_processing": true, "web": true},
@@ -343,23 +347,30 @@ A role is a JSON file in [`roles/`](/org/#roles):
 ```
 
 - `model` / `effort` — per role, so your writer isn't paying engineer prices.
-- `harness` (optional) — what drives the model in the sandbox: `claude_agent_sdk`,
-  `claude_cli`, `anthropic_api` — yaaf's own loop on the Messages API, API
-  keys only — `openai_compatible`, the same loop for DeepSeek, OpenRouter
-  and a custom server, `codex_cli`, OpenAI's Codex CLI, `gemini_cli`,
-  Google's Gemini CLI, or `opencode`, the
-  OpenCode CLI for any provider on the OpenAI-compatible chat API
-  ([RUNTIMES.md](/docs/runtimes/)). A `model` the catalog does
-  not list names its provider first: `openrouter/qwen/qwen3-coder`,
-  `custom/llama3.1:8b`. A role granting `web` cannot run on a provider that
-  does not search (nor on OpenCode, which searches for nobody); a role
-  withholding `files` cannot run on Codex, which hands
-  its models a file editor regardless; and an `effort` the model does not take
-  is refused with the list it does. Absent is the model's provider
-  default. It changes how a run is driven, never what the role may do; a
-  harness that cannot take away a grant this role withholds is refused here,
-  and so is a model `anthropic_api` has no price for, because it meters every
-  call by the price.
+  Write the model as a **class** — `@frontier`, `@balanced` or `@fast` — and
+  the role runs on whatever provider pays the project: Claude Sonnet on a
+  project an Anthropic key pays, GPT on one an OpenAI key pays, each provider's
+  model for the class from its lineup ([PROVIDERS.md](/docs/providers/)). Name a
+  model (`claude-opus-5-5`, `gpt-6.1-sol`) only when the role needs that one
+  model whatever pays — it then needs its provider paid too. A model the
+  catalog does not list names its provider first: `openrouter/qwen/qwen3-coder`,
+  `custom/llama3.1:8b`; `openai/@fast` is OpenAI's fast model whoever else
+  pays. `effort` is yaaf's ladder (`low` … `max`): a class seat runs at its
+  model's lowest rung at or above it, a pinned model is held to its own list.
+- `harness` (optional) — what drives the model in the sandbox:
+  `claude_agent_sdk`, `claude_cli`, `yaaf_loop` — yaaf's own loop on the
+  provider's own API, for any API key — `codex_cli`, OpenAI's Codex CLI,
+  `gemini_cli`, Google's Gemini CLI, or `opencode`, the OpenCode CLI for any
+  provider on the OpenAI-compatible chat API ([RUNTIMES.md](/docs/runtimes/)).
+  Absent is the default of whatever credential pays the seat: the Agent SDK
+  for Anthropic, yaaf's loop for every other API key, the provider's own CLI
+  for a login. A role granting `web` cannot run where nothing can search — no
+  search on the harness or the provider, and no web search backend on the
+  install (Settings → Web search); a role withholding `files` cannot run on
+  Codex, which hands its models a file editor regardless. It changes how a run
+  is driven, never what the role may do; a harness that cannot take away a
+  grant this role withholds is refused here, and so is a pinned model the
+  loop has no price for, because it meters every call by the price.
 - `tool_permissions` — `files`, `bash`, `data_processing`, `web`.
   `data_processing` grants the same shell
   `bash` does; it is separate so that a role which has one in order to aggregate

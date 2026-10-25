@@ -23,27 +23,71 @@ const RULES = [
   ["R5", "The project needs a credential for the seat's provider."],
   ["R6", "The model must support the effort level asked for."],
   ["R7", "The CEO's harness must be able to hold a conversation."],
+  ["R8", "A seat that names a class needs a model for that class on its provider."],
+];
+
+const CLASSES = [
+  ["Frontier", "The most capable model the provider sells. For the CEO and the hardest seats.", "rose"],
+  ["Balanced", "The workhorse. Most of a team runs here.", "violet"],
+  ["Fast", "Cheap and quick, for the seats that read and sort.", "sky"],
 ];
 
 const priced = models.filter((m) => m.price).length;
 const pricedBy = providers.filter((p) => p.priced.length).map((p) => p.label).join(" and ");
 ---
-<BaseLayout title="Runtimes" description={`Run each yaaf agent on any of ${harnesses.length} harnesses and ${providers.length} providers — Claude, GPT, Gemini, DeepSeek, Kimi, Qwen, Mistral, Grok, OpenRouter or your own server — under one budget and the same rules.`}>
+<BaseLayout title="Harnesses and models" description={`yaaf is the harness around your agent harnesses: run each seat on any of ${harnesses.length} harnesses — Claude Code, Codex, Gemini CLI, OpenCode, the Agent SDK or yaaf's own loop — and ${providers.length} providers, under one budget and the same rules.`}>
   <section class="page-hero">
     <div class="shell">
-      <p class="eyebrow">Runtimes</p>
-      <h1>Any model. Same rules.</h1>
-      <p class="lede">Run each agent on Claude, GPT, Gemini, DeepSeek or your own server. One budget covers them all, and the rules don't change.</p>
+      <p class="eyebrow">Harnesses and models</p>
+      <h1>Every harness. Every model. One company.</h1>
+      <p class="lede">An agent harness drives one model. yaaf is <strong>the harness around the harnesses</strong>: put each person on the chart on the harness and model that suits the job, and the whole team still answers to one budget and one set of rules.</p>
     </div>
   </section>
 
   <Section first={true}>
-    <div class="cells">
+    <div class="cells hued">
       <div class="cell"><p class="num">{harnesses.length}</p><p>Harnesses</p></div>
       <div class="cell"><p class="num">{providers.length}</p><p>Providers</p></div>
       <div class="cell"><p class="num">{models.length}</p><p>Models in the catalog</p></div>
-      <div class="cell warm"><p class="num">1</p><p>Budget per project</p></div>
+      <div class="cell"><p class="num">1</p><p>Budget per project</p></div>
     </div>
+  </Section>
+
+  <Section eyebrow="Two levels" title="A harness is transport. yaaf is the rules."
+    lede="Claude Code, Codex and the rest decide how a model is driven. They never decide what it may do. That lives in yaaf's server, the same for every harness.">
+    <div class="cells c2 hued">
+      <div class="cell">
+        <span class="eyebrow">The agent harness decides</span>
+        <ul>
+          <li>How the model is called, and its loop</li>
+          <li>The tools it offers the model</li>
+          <li>How a long run is compacted to fit</li>
+        </ul>
+      </div>
+      <div class="cell">
+        <span class="eyebrow">yaaf decides, for every harness</span>
+        <ul>
+          <li>Who is hired, and who they report to</li>
+          <li>What may be worked on, and when it's done</li>
+          <li>What it costs, metered live against one cap</li>
+          <li>When it's due, and what's on the record</li>
+        </ul>
+      </div>
+    </div>
+    <p class="note">A harness that can't report what it spent while it's spending it isn't let in. Every one runs inside yaaf's sandbox, on yaaf's meter.</p>
+  </Section>
+
+  <Section eyebrow="Model classes" title="Roles name a class, not a vendor."
+    lede="A role asks for frontier, balanced or fast. Each provider says which of its models that means, so the same team runs on whichever provider you pay.">
+    <div class="cells c3">
+      {CLASSES.map(([k, v, hue]) => (
+        <div class={`cell h-${hue} cls`}>
+          <h3>{k}</h3>
+          <p>{v}</p>
+        </div>
+      ))}
+    </div>
+    <p class="note">Pin a seat to an exact model whenever you want. If a provider keeps failing, a project can name a fallback credential: its class seats move there until the provider recovers, and back. Pinned seats never move.</p>
   </Section>
 
   <Section eyebrow="Why" title="Two agents on one model share its blind spots.">
@@ -69,7 +113,7 @@ const pricedBy = providers.filter((p) => p.priced.length).map((p) => p.label).jo
         </tbody>
       </table>
     </div>
-    <p class="note">Every harness runs inside yaaf's sandbox, on yaaf's meter. If it can't report spend as it spends, it isn't allowed in.</p>
+    <p class="note">Every person on the org chart runs in one of these. Mix them freely on one team.</p>
   </Section>
 
   <Section id="providers" eyebrow="Providers" title="Who sells the tokens.">
@@ -90,8 +134,8 @@ const pricedBy = providers.filter((p) => p.priced.length).map((p) => p.label).jo
     <p class="note">{priced} models ship with prices, all from {pricedBy}. Price any other model in Settings. Zero is fine for your own server.</p>
   </Section>
 
-  <Section id="rules" eyebrow="Seven rules" title="Checked when a seat is hired, and again before every run.">
-    <div class="cells">
+  <Section id="rules" eyebrow={`${RULES.length} rules`} title="Checked when a seat is hired, and again before every run.">
+    <div class="cells hued">
       {RULES.map(([n, v]) => (
         <div class="cell">
           <span class="eyebrow">{n}</span>
@@ -107,16 +151,16 @@ const pricedBy = providers.filter((p) => p.priced.length).map((p) => p.label).jo
         <h3>Done</h3>
         <ul>
           <li>Every harness passes its contract tests, offline</li>
+          <li>Every part of yaaf runs on any provider: the seats, the CEO chat, the Founder and the goal grader</li>
+          <li>Roles name a class, and prices import from a feed</li>
           <li>Mixed providers on one budget is a test, not a promise</li>
-          <li>The boardroom chat runs on any harness</li>
         </ul>
       </div>
       <div class="cell warm">
         <h3>Not yet</h3>
         <ul>
-          <li>A live run on each non-Claude harness</li>
+          <li>A live seat on each provider, which only a deployment with real keys can prove. <code>yaaf smoke</code> checks one on yours.</li>
           <li>A Cursor CLI driver</li>
-          <li>A recommended non-Claude model</li>
         </ul>
       </div>
     </div>
@@ -126,4 +170,6 @@ const pricedBy = providers.filter((p) => p.priced.length).map((p) => p.label).jo
 
 <style>
   .rule { color: var(--color-ink) !important; font-size: 1.05rem !important; }
+  .cls { border-top: 3px solid var(--hue) !important; background: color-mix(in srgb, var(--hue) 8%, var(--color-page)) !important; }
+  .cls h3 { color: var(--hue); font-size: 1.5rem !important; }
 </style>

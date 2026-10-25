@@ -4,7 +4,7 @@ subtitle: "the constitution, rule by rule"
 slug: "governance"
 sourceFile: "docs/GOVERNANCE.md"
 ---
-Each project runs under a **constitution**: 62 numbers and switches the agents
+Each project runs under a **constitution**: 63 numbers and switches the agents
 cannot edit, argue with, or talk their way around. Every one is enforced
 server-side in [`yaaf/server/policy.py`](https://github.com/dominicplouffe/yaaf/blob/main/yaaf/server/policy.py) as an HTTP
 refusal or an automatic state change. The schema itself lives in
@@ -94,11 +94,12 @@ Also enforced here, and not tunable because they're structural:
 | `approval_threshold_usd` | 250.0 | Spends at or above this — and anything legally ambiguous — wait for you. |
 | `approval_timeout_days` | 7 | An unanswered approval decides itself here, so a vacationing chairman degrades the project instead of deadlocking it. |
 | `approval_timeout_decision` | `"deny"` | What that expiry decides. Default-deny: silence is not consent. |
+| `complete_after_hours` | 24.0 | A Deliver project whose every requirement is settled tells you, then completes itself this long afterwards — the same receipt your Complete button writes — unless its scope moves first. Reopen it from the project page (or `lifecycle reopen` over MCP) for 14 days; a reopened delivery does not close again until its scope has moved. `0`: it waits for your Complete. |
 | `ask_window_hours_max` | 72.0 | The longest window your CEO may give you to answer a question. It names a shorter one when the work has a deadline. There is no setting for what an unanswered question decides — the CEO writes that down before it asks, and you see it in your Inbox. |
 | `max_open_asks` | 3 | How many unanswered questions your CEO may have on your desk at once. Asking is cheap for it and expensive for you. |
 | `plan_authority` | `"chairman"` | Who accepts proposed scope. `"ceo"`: the CEO accepts its own proposals — the plan gate runs the same arithmetic, every acceptance is audited and sent to you. |
 | `scope_authority` | `"chairman"` | Who may cut, reopen, restage, reestimate, reword and unsequence. `"ceo"` hands the verbs to the CEO, on the record, reversibly. Your routes never close. |
-| `commitment_authority` | `"chairman"` | Who signs the delivery date, and who resets one that has stopped holding. `"ceo"`: proposing adopts the platform's own projection immediately, and `commitment_reset` re-adopts it on a slip — the CEO still cannot write a date, only accept the arithmetic's. Your own Move is unrestricted, because you may promise what the arithmetic does not. |
+| `commitment_authority` | `"chairman"` | Who signs the delivery date (Deliver only — Operate has none), and who resets one that has stopped holding. `"ceo"`: proposing adopts the platform's own projection immediately, and `commitment_reset` re-adopts it on a slip — the CEO still cannot write a date, only accept the arithmetic's. Your own Move is unrestricted, because you may promise what the arithmetic does not. |
 | `verdict_policy` | `"chairman"` | Who judges unverifiable observable closes. `"ceo_judgment"`: the CEO judges and keeps going, and every self-judgment is disclosed to you in full — stronger than sampling. |
 | `capability_authority` | `"chairman"` | Who scopes credentials to roles. `"ceo"`: the CEO re-scopes existing service credentials across its team itself, on the record, disclosed to you. Creating a credential is always yours — you hold the values. |
 
@@ -133,7 +134,9 @@ approval is **refused**, naming the verb to use instead: an approval blocks on a
 human and carries a default-deny clock, so filing one for a decision you already
 delegated is the one way an autonomous project can still stall on you. The four
 kinds the dial cannot delegate — `spend`, `legal`, `tool_request`, `assist`, `capacity` —
-still reach you at every setting.
+still reach you at every setting. So does `brief`: the CEO writing your current direction
+back to you (goal, standing orders, what no longer applies). Only your Confirm, or your own
+edit under Settings → Brief, changes what every agent reads first.
 
 ### Budgets
 
@@ -216,7 +219,7 @@ no agent knows which claim will be checked. Sampling never blocks.
 |---|---|---|
 | `cycle_frequency` | `"weekly"` | Operate projects only: `daily`, `weekly`, `monthly` or `quarterly`. Each roll closes the cycle, carries unfinished scope forward and reopens the plan gate. |
 | `cycle_day` | 0 | Weekly: 0=Monday … 6=Sunday. Monthly/quarterly: day 1–28 — the 29th to 31st are refused rather than quietly moved. |
-| `review_interval_days` | 7 | The standing meeting. The janitor opens it on schedule regardless of budget or an empty board and emails you the numbers; the CEO files its variance narrative on a reserved governance run. |
+| `review_interval_days` | 7 | The standing meeting. The janitor opens it on schedule regardless of budget or an empty board and emails you the numbers; the CEO files its variance narrative on a reserved governance run. A review nobody needs closes itself after 24 hours as "no changes" — only when the CEO's narrative is filed and recommends nothing, the promised date still holds, no spot-check failed and the month is inside its plan — and you get the narrative by email; anything else chases you instead. |
 | `commitment_failure_reforecast` | 5 | Dead runs against the plan before the platform re-projects the date and tells the CEO the ground moved. 0 turns this trigger off. |
 
 ### Reporting to you
@@ -230,7 +233,7 @@ remember is a suggestion. It's a refusal now.
 | `chairman_report_interval_hours` | 0.0 | Hours between unprompted status reports. **0 = you never asked for a cadence and nothing is refused.** |
 | `chairman_report_window_local` | none | `"09:00-20:00"`, or blank for any hour. Must not wrap midnight. |
 | `timezone` | `"UTC"` | IANA name, e.g. `America/New_York`. **One zone for the whole rulebook** — the reporting window, the daily CEO wake and every recurring rhythm are read in it. (Was `chairman_report_timezone`, and was also set a second time in project config; one place too many to get wrong.) |
-| `brief_daily_at` | none | `"08:00"` in `timezone`, or blank for none. The daily **briefing** — what happened since the last one, composed by the platform from the record at **zero tokens**. |
+| `brief_daily_at` | `"08:00"` for a new project; none for one created before this default | `"08:00"` in `timezone`, or blank for none. The daily **briefing** — what happened since the last one, composed by the platform from the record at **zero tokens**. A project created without an opinion gets 08:00; a spec that says `null` keeps it off. |
 | `mail_max_per_day` | 5 | How many emails **waiting on a decision from you** the platform may send in a rolling 24 hours. Past it the waits are read in the briefing instead. Alarms are never held. 0 = no limit. |
 
 Replying to something you actually said is always allowed and is not a status.
@@ -272,6 +275,28 @@ A held **action** notice loses you the interrupt, never the news. Everything in
 that class is a *wait*, and the briefing renders every open wait live from the
 record in its "waiting on you" section — so the next brief still names it, and
 the audit log records both what was sent and what was held.
+
+### What reaches your inbox: decide, acknowledge, or neither
+
+Three kinds of thing come to you from the CEO, and each has its own tab.
+
+- **Decide.** An approval, where your click changes something: money is spent, a
+  dial is raised, the brief is replaced, a call is allowed. Each button says
+  what it does — *Approve $199*, *Raise to 60*, *Confirm* — and approving a
+  capacity request raises the dial on the spot. An **assist** sits here too: a
+  step only a human can take, answered with *Done* or *Not done*.
+- **Acknowledge.** What you should know but not decide: a problem the CEO was
+  obliged to raise, and a **heads-up** — something you asked to be told by a
+  standing order in the brief ("send me tomorrow's ticket every evening"). One
+  button, *Noted*. Nothing there blocks or expires. A heads-up that cites no
+  standing order is refused: without your order, it is information.
+- **Information** reaches no inbox at all. It is in the deliverable and the
+  daily briefing.
+
+**Your notes are answered.** Whatever you type on a decision is held until the
+CEO answers it, on every run, and you read its one-line answer under your note.
+A note that holds from now on ("yes, go ahead, every day") goes into the brief
+for you to confirm; the CEO cannot call it standing without drafting one.
 
 ### Runs
 

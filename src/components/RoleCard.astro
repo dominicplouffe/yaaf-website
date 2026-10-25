@@ -19,7 +19,10 @@ const { role, open = false } = Astro.props;
 const tools = Object.entries(role.tool_permissions)
   .filter(([, on]) => on)
   .map(([k]) => k.replace(/_/g, " "));
-const model = role.model.replace(/^claude-/, "").replace(/-\d{8}$/, "");
+// Roles name a model class ("@balanced") since yaaf#67; an exact model is
+// still allowed and shown as itself.
+const CLASS: Record<string, string> = { "@frontier": "Frontier", "@balanced": "Balanced", "@fast": "Fast" };
+const model = CLASS[role.model] ?? role.model.replace(/^claude-/, "").replace(/-\d{8}$/, "");
 ---
 <article class="role" data-category={role.category} data-domains={role.domains.join(" ")}>
   <header>
@@ -34,7 +37,7 @@ const model = role.model.replace(/^claude-/, "").replace(/-\d{8}$/, "");
 
   <dl class="specs">
     <div><dt>Category</dt><dd class={`cat c-${role.category}`}>{role.category}</dd></div>
-    <div><dt>Model</dt><dd>{model}</dd></div>
+    <div><dt>{role.model in CLASS ? "Model class" : "Model"}</dt><dd>{model}</dd></div>
     <div><dt>Effort</dt><dd>{role.effort}</dd></div>
   </dl>
 

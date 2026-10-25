@@ -9,9 +9,11 @@ interface Props {
   /** Crop to an aspect ratio from the top instead, e.g. "16 / 10". Scales with the width. */
   ratio?: string;
   priority?: boolean;
+  /** The colour the frame glows, e.g. "var(--color-rose)". Violet when unset. */
+  glow?: string;
 }
-const { src, alt, caption, crop, ratio, priority = false } = Astro.props;
-const style = [crop && `--crop:${crop}px`, ratio && `aspect-ratio:${ratio}`].filter(Boolean).join(";") || undefined;
+const { src, alt, caption, crop, ratio, priority = false, glow } = Astro.props;
+const style = [crop && `--crop:${crop}px`, ratio && `aspect-ratio:${ratio}`, glow && `--glow:${glow}`].filter(Boolean).join(";") || undefined;
 ---
 <figure class="shot">
   <div class="frame" style={style}>
@@ -28,7 +30,7 @@ const style = [crop && `--crop:${crop}px`, ratio && `aspect-ratio:${ratio}`].fil
     border-radius: var(--radius-card);
     overflow: hidden;
     background: var(--color-page);
-    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6), 0 40px 120px -40px color-mix(in srgb, var(--color-accent) 35%, transparent);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6), 0 40px 120px -40px color-mix(in srgb, var(--glow, var(--color-violet)) 55%, transparent);
     max-height: var(--crop, none);
   }
   .frame::after {

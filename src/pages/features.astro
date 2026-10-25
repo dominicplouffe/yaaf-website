@@ -35,9 +35,9 @@ const GROUPS = [
     id: "team",
     title: "The team and the people",
     items: [
-      ["Role library", `${roles.length} roles with their own prompt, model and tools. Edits never change a running project.`, "/org/"],
+      ["Role library", `${roles.length} roles with their own prompt, model class and tools. Edits never change a running project.`, "/org/"],
       ["Built-in critics", `${critics.length} roles exist to disagree. The CEO can't remove the last one.`, "/org/#challenge"],
-      ["The CEO hires", "It adds and removes roles as the work changes, within your limits.", `${F}1-the-org`],
+      ["The CEO hires", "It adds and removes teams as the work changes, within your limits, and says why on the chart.", `${F}1-the-org`],
       ["Solo mode", "One agent under the same rules, if you just want the guardrails.", `${F}1-the-org`],
       ["Co-chairs", "Invite people as co-chairs or observers. Every action is recorded as theirs.", "/docs/auth/"],
       ["Autonomy dial", "Five switches decide what you approve and what the CEO handles.", "/docs/autonomy/"],
@@ -47,9 +47,9 @@ const GROUPS = [
     id: "start",
     title: "Getting started safely",
     items: [
-      ["Describe it", "Write a paragraph. yaaf drafts the whole project and lists its assumptions.", `${F}18-the-founding-conversation`],
+      ["Describe it", "Write a paragraph. The Founder interviews you until nothing is assumed, with its own answer already picked.", `${F}18-the-founding-conversation`],
       ["Goal grading", "Your goal is checked against ten things a good goal needs.", "/docs/goal-grammar/"],
-      ["Free rehearsal", "Run the full project on scripted agents before spending anything.", `${F}13-a-fire-drill-before-you-spend-a-cent`],
+      ["A $0 rehearsal", "Run the full company on scripted agents before any model is called.", `${F}13-a-fire-drill-before-you-spend-a-cent`],
       ["Health checks", "Bad keys and broken setups are flagged before the first run.", `${F}16-setup-that-cant-silently-fail`],
     ],
   },
@@ -57,10 +57,13 @@ const GROUPS = [
     id: "surfaces",
     title: "Where you work",
     items: [
-      ["Dashboard", "Desk, overview, boardroom, plan, work, review, deliverables and records.", "/docs/dashboard/"],
+      ["The Inbox", "A project opens on what waits on you, soonest consequence first. Decide in one click, snooze, or undo.", "/docs/dashboard/#inbox--the-projects-home"],
+      ["The Team page", "A live org chart: what each person is doing, the model they run on and their cost this month.", "/docs/dashboard/#team--who-is-doing-the-work"],
+      ["Results", "Every deliverable with who made it and who checked it, and the chain back to your goal.", "/docs/dashboard/#results--what-the-team-delivered-and-who-checked-it"],
+      ["A status sentence", "Every project says in one line whether it's fine, and which page fixes it if not.", "/docs/cli/"],
       ["Claude via MCP", "32 tools in four scopes. Irreversible actions need a confirm.", "/docs/mcp-server/"],
-      ["Boardroom chat", "Talk to the CEO in the app or in Slack. It replies in seconds.", `${F}14-talking-to-your-project`],
-      ["Daily briefing", "What happened while you were away, in your inbox. Costs no tokens.", `${F}12-three-tenses-not-one`],
+      ["Chat with the CEO", "In the app or in Slack. Every answer shows what the team did to get there.", `${F}14-talking-to-your-project`],
+      ["Daily letter", "What waits on you, then what happened, in your own time zone. Costs no tokens.", `${F}12-three-tenses-not-one`],
       ["Deliverables", "Every file the agents make, by day, with previews.", `${F}15-deliverables-and-files`],
       ["Full record", "Every message, run, cost, decision and refusal.", `${F}11-everything-on-the-record`],
     ],
@@ -69,7 +72,9 @@ const GROUPS = [
     id: "running",
     title: "Running it",
     items: [
-      ["Any model", `${manifest.harnesses} harnesses and ${manifest.providers} providers, under one budget.`, "/runtimes/"],
+      ["Any harness, any model", `${manifest.harnesses} harnesses and ${manifest.providers} providers, under one budget. Roles name a class, not a vendor.`, "/runtimes/"],
+      ["One command to start", "<code>yaaf up</code> takes a checkout to a running dashboard on your own machine.", "/docs/deployment/"],
+      ["The terminal", "<code>yaaf status</code> says every project in sentences, and what waits on you.", "/docs/cli/"],
       ["Sandboxed runs", "A fresh container per run, with only that role's secrets.", `${F}9-containment`],
       ["Integrations", "Slack, GitHub, webhooks, email, S3 and any MCP server.", "/docs/integrations/"],
       ["Tested rules", `${manifest.tests.toLocaleString("en-US")} tests attack the rules the way an agent would.`, `${F}17-proving-it-works`],
@@ -80,17 +85,17 @@ const GROUPS = [
 const NOT_BUILT = [
   ["Hosted service", "There is none. You run it."],
   ["Multi-tenant orgs", "One machine, many projects, many people."],
-  ["Model fallback", "A seat runs on the model it was hired on."],
+  ["A model router", "A seat runs on what it was hired on. Only a named fallback moves class seats, and only while a provider is down."],
   ["Network allowlist", "Tried and removed. It hid failures."],
 ];
 
 const total = GROUPS.reduce((n, g) => n + g.items.length, 0);
 ---
-<BaseLayout title="Features" description={`${total} yaaf features: verified work, honest deadlines, budgets that stop, a role library with built-in critics, a free rehearsal, Claude via MCP and any model provider.`}>
+<BaseLayout title="Features" description={`${total} yaaf features: verified work, honest deadlines, budgets that stop, a role library with built-in critics, a $0 rehearsal, the Inbox and live org chart, Claude via MCP and any harness or model.`}>
   <section class="page-hero">
     <div class="shell">
       <p class="eyebrow">Features</p>
-      <h1>Everything that keeps your AI team honest.</h1>
+      <h1>Everything that keeps your AI company honest.</h1>
       <p class="lede">{total} features. Each one is backed by a test that tries to break it.</p>
       <nav class="toc" aria-label="On this page">
         {GROUPS.map((g) => <a href={`#${g.id}`}>{g.title}</a>)}
@@ -100,11 +105,11 @@ const total = GROUPS.reduce((n, g) => n + g.items.length, 0);
 
   {GROUPS.map((g) => (
     <Section id={g.id} eyebrow={`${g.items.length} features`} title={g.title}>
-      <div class:list={["cells", { c3: g.items.length % 4 !== 0 && g.items.length % 3 === 0 }]}>
+      <div class:list={["cells", "hued", { c3: g.items.length % 4 !== 0 && g.items.length % 3 === 0 }]}>
         {g.items.map(([k, v, href]) => (
           <a class="cell" href={href}>
             <h3>{k}</h3>
-            <p>{v}</p>
+            <p set:html={v} />
             <span class="go">Learn more →</span>
           </a>
         ))}

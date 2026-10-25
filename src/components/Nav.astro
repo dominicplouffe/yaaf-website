@@ -41,9 +41,20 @@ const isOn = (href: string) => here === href || (href !== "/" && here.startsWith
     position: sticky;
     top: 0;
     z-index: 50;
-    background: rgba(0, 0, 0, 0.86);
-    backdrop-filter: blur(10px);
+    background: color-mix(in srgb, var(--color-page) 84%, transparent);
+    backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--color-line);
+  }
+  /* The dawn, as a thread along the bottom of the bar. */
+  .hdr::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 1px;
+    background: var(--dawn);
+    opacity: 0.75;
   }
   .inner { display: flex; align-items: center; gap: 28px; height: 68px; padding-inline: calc(var(--gutter) + var(--inset)); }
   .brand { display: flex; align-items: center; gap: 9px; text-decoration: none; flex: none; }
@@ -56,7 +67,7 @@ const isOn = (href: string) => here === href || (href !== "/" && here.startsWith
     transition: color 0.2s;
   }
   .links a:hover, .links a.on { color: var(--color-ink); }
-  .links a.on { text-decoration: underline; text-underline-offset: 8px; text-decoration-thickness: 1px; }
+  .links a.on { text-decoration: underline; text-underline-offset: 8px; text-decoration-thickness: 2px; text-decoration-color: var(--color-rose); }
   .gh { margin-left: auto; }
 
   .menu { display: none; margin-left: auto; }
@@ -80,7 +91,7 @@ const isOn = (href: string) => here === href || (href !== "/" && here.startsWith
     left: 0;
     right: 0;
     top: 68px;
-    background: #000;
+    background: var(--color-page);
     border-bottom: 1px solid var(--color-line);
     display: grid;
     padding: 8px var(--gutter) 20px;
@@ -93,7 +104,7 @@ const isOn = (href: string) => here === href || (href !== "/" && here.startsWith
     padding: 12px 0;
     border-bottom: 1px solid var(--color-line-2);
   }
-  .panel a.on { color: var(--color-accent-hi); }
+  .panel a.on { color: var(--color-rose); }
 
   @media (max-width: 1060px) {
     .links, .gh { display: none; }

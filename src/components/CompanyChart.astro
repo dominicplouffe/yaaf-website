@@ -1,0 +1,250 @@
+---
+/**
+ * The home page's picture of the idea: a company of agents, each one inside
+ * its own harness, and yaaf as the harness around all of them.
+ *
+ * The people, models and harnesses are the demo desk the docs screenshots
+ * show (Iris, Maya, Ines, Owen, Juno), each put on a different harness to
+ * show that one company can mix them. Model names come from yaaf's catalog
+ * and harness names from its registry; nothing here is a product claim the
+ * Runtimes page does not also make.
+ */
+const TEAMS = [
+  { team: "Research", who: "Maya", role: "Equity Research Analyst", model: "GPT-6.1 Sol", harness: "Codex CLI", hue: "sky" },
+  { team: "Data", who: "Ines", role: "Market Data Engineer", model: "Gemini 3.8 Flash", harness: "Gemini CLI", hue: "mint" },
+  { team: "Risk", who: "Owen", role: "Risk Manager", model: "DeepSeek Reasoner", harness: "OpenCode", hue: "sun", critic: true },
+  { team: "Compliance", who: "Juno", role: "Compliance Reviewer", model: "Claude Sonnet 5.5", harness: "Claude Code", hue: "violet", critic: true },
+];
+---
+<div class="co" role="img" aria-label="A company in yaaf: you as chairman at the top, Iris the CEO beneath you on Claude Opus through the Claude Agent SDK, and four teams below her — Research on Codex CLI, Data on Gemini CLI, Risk on OpenCode and Compliance on Claude Code. Each person runs inside their own harness, and yaaf is the frame around the whole company, holding the budget, the date and the checks.">
+  <div class="co-tag"><span class="dot"></span>yaaf · the harness around the team</div>
+
+  <div class="you">
+    <span class="av">You</span>
+    <div>
+      <b>You, the chairman</b>
+      <small>The goal, the budget, the date. Only the calls that need you.</small>
+    </div>
+  </div>
+  <div class="stem"></div>
+
+  <div class="ceo">
+    <span class="av">IR</span>
+    <div class="who">
+      <b>Iris <em>CEO</em></b>
+      <small>Picks, prices and assigns the next piece of work</small>
+    </div>
+    <span class="hz"><i>harness</i>Claude Agent SDK<span class="m">Claude Opus 5.5</span></span>
+  </div>
+  <div class="stem"></div>
+  <div class="rail"></div>
+
+  <div class="teams">
+    {TEAMS.map((t) => (
+      <div class={`team h-${t.hue}`}>
+        <p class="tn">{t.team}{t.critic && <span class="veto">can veto</span>}</p>
+        <div class="person">
+          <span class="av sm">{t.who.slice(0, 2).toUpperCase()}</span>
+          <div><b>{t.who}</b><small>{t.role}</small></div>
+        </div>
+        <span class="hz"><i>harness</i>{t.harness}<span class="m">{t.model}</span></span>
+      </div>
+    ))}
+  </div>
+
+  <div class="rules">
+    <span><b>$144</b> of $3,000 · pauses itself at the wall</span>
+    <span><b>Nov 4</b> · projected from measured pace</span>
+    <span><b>2 of 5</b> proven true · by the platform, not the agents</span>
+  </div>
+</div>
+
+<style>
+  .co {
+    position: relative;
+    padding: 3.4rem clamp(14px, 2.4vw, 32px) 0;
+    background:
+      radial-gradient(120% 70% at 50% 0%, color-mix(in srgb, var(--color-violet) 16%, transparent), transparent 70%),
+      color-mix(in srgb, var(--color-page) 62%, transparent);
+    backdrop-filter: blur(6px);
+    isolation: isolate;
+  }
+  /* A gradient border: the dawn, all the way round. */
+  .co::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    padding: 1.5px;
+    background: var(--dawn);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: -1;
+  }
+  .co-tag {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #14051f;
+    background: var(--dawn);
+    padding: 7px 14px;
+  }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: #14051f; }
+
+  .av {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    font-size: 13px;
+    font-weight: 600;
+    color: #14051f;
+    background: var(--hue, var(--color-gold));
+  }
+  .av.sm { width: 34px; height: 34px; font-size: 11.5px; }
+  b { display: block; font-weight: 550; letter-spacing: -0.015em; color: var(--color-ink); }
+  small { display: block; font-size: 13px; line-height: 1.4; color: var(--color-ink-2); margin-top: 2px; }
+
+  .you, .ceo {
+    margin-inline: auto;
+    width: min(100%, 470px);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+  }
+  .you {
+    --hue: var(--color-gold);
+    border: 1px solid color-mix(in srgb, var(--color-gold) 60%, transparent);
+    background: color-mix(in srgb, var(--color-gold) 10%, var(--color-page));
+  }
+  .ceo {
+    --hue: var(--color-rose);
+    flex-wrap: wrap;
+    border: 1px solid color-mix(in srgb, var(--color-rose) 60%, transparent);
+    background: color-mix(in srgb, var(--color-rose) 10%, var(--color-page));
+  }
+  .ceo .who { flex: 1 1 200px; }
+  .ceo .hz { flex: 1 1 100%; }
+  em {
+    font-style: normal;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    color: #14051f;
+    background: var(--color-rose);
+    padding: 2px 6px;
+    margin-left: 6px;
+    vertical-align: 2px;
+  }
+  .stem { width: 1px; height: 22px; margin-inline: auto; background: var(--color-line-strong); }
+  .rail { height: 1px; margin-inline: 12.5%; background: var(--color-line-strong); }
+
+  .teams { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+  .team {
+    position: relative;
+    padding: 14px 14px 14px;
+    border: 1px solid color-mix(in srgb, var(--hue) 45%, transparent);
+    background: color-mix(in srgb, var(--hue) 7%, var(--color-page));
+    margin-top: 22px;
+    min-width: 0;
+  }
+  .team::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: -23px;
+    width: 1px;
+    height: 22px;
+    background: var(--color-line-strong);
+  }
+  .tn {
+    margin: 0 0 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--hue);
+  }
+  .veto {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--color-ink-2);
+    border: 1px solid var(--color-line);
+    padding: 1px 6px;
+    white-space: nowrap;
+  }
+  .person { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .person > div { min-width: 0; }
+  .person small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* Each person's own harness: a dashed box inside the company's frame. */
+  .hz {
+    display: block;
+    margin-top: 12px;
+    padding: 8px 10px;
+    border: 1px dashed color-mix(in srgb, var(--hue) 70%, transparent);
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--color-ink);
+    line-height: 1.3;
+  }
+  .hz i {
+    display: block;
+    font-style: normal;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--hue);
+    margin-bottom: 3px;
+  }
+  .hz .m { display: block; font-weight: 400; font-size: 12.5px; color: var(--color-ink-2); margin-top: 2px; }
+
+  .rules {
+    margin: 22px calc(-1 * clamp(14px, 2.4vw, 32px)) 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    border-top: 1px solid var(--color-line);
+  }
+  .rules span {
+    padding: 14px clamp(14px, 2.4vw, 32px);
+    font-size: 13.5px;
+    color: var(--color-ink-2);
+    line-height: 1.4;
+  }
+  .rules span + span { border-left: 1px solid var(--color-line); }
+  .rules b { display: inline; color: var(--color-ink); }
+
+  @media (max-width: 900px) {
+    .teams { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .rail { margin-inline: 25%; }
+    .team:nth-child(n + 3)::before { display: none; }
+    .rules { grid-template-columns: 1fr; }
+    .rules span + span { border-left: 0; border-top: 1px solid var(--color-line); }
+  }
+  @media (max-width: 480px) {
+    .teams { grid-template-columns: 1fr; }
+    .team::before { display: none; }
+    .rail { display: none; }
+    .team:first-child { margin-top: 22px; }
+    .team { margin-top: 10px; }
+    .co-tag { font-size: 10px; letter-spacing: 0.1em; }
+  }
+</style>

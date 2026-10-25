@@ -34,7 +34,7 @@ always shows the same four things in the same order:
 | **Home** | The landing page: one sentence on whether anything needs you, the decisions themselves, every project side by side, and what happened while you were away. |
 | **Inbox** | Everything that needs you, across every project — and everything worth knowing that doesn't. The badge counts only the first. |
 | **Projects** | Your portfolio — one comparable row per project. |
-| **The project you are in** | A switcher (status, and how many things on it need you), then that project's pages: Overview, Chat, Roadmap, Tasks, Deliverables, Team, Spend, Reviews, Activity, Settings. |
+| **The project you are in** | A switcher (status, and how many things on it need you), then that project's five pages: Inbox, Team, Chat, Results, Details. |
 
 Under the project's pages a **Live now** list names who is working, who is
 waiting and who wakes next; click a name to open that agent. The **Role
@@ -48,8 +48,10 @@ phone the sidebar folds into a drawer behind the menu button.
 a search box of its own) opens a palette
 that finds any page, project or person and runs the few app-wide actions
 (theme, shortcuts, sign out). **?** lists every shortcut. **g** then a letter
-goes to a page of the project you are in — **g o** Overview, **g c** Chat,
-**g k** Tasks, **g t** Team, and so on — and **g i** to the Inbox. No single
+goes to a page of the project you are in — **g o** its Inbox, **g t** Team, **g c** Chat,
+**g r** Results, **g d** Details, and straight to a Details tab with **g m**
+Roadmap, **g k** Tasks, **g f** Deliverables, **g s** Spend, **g v** Reviews,
+**g a** Activity — and **g i** to the Inbox. No single
 keypress ever decides anything: approving, denying and answering are always a
 click on a labelled button.
 
@@ -114,11 +116,12 @@ link to the credentials list.
   refuses these. Projects never store a billing key of their own: they pick
   one of these, under their own Settings → Money, on the New Project form, or
   by telling the Founder.
-- **Founder model credential** — the key the **Founder** runs on. Install,
-  rotate, run a live test against it, remove it, and pick the model it uses.
-  It pays for product-wide conversations and **never reaches a project's
-  agents**: no inheritance, no fallback. It is deliberately not one of the
-  LLM credentials above.
+- **Founder** — the key the **Founder** drafts on: one of the LLM credentials
+  above (**Use** it, one click — the default offered when you add your first),
+  or a key of its own. Install, rotate, run a live test against it, remove it,
+  and pick the model it uses. It pays for drafting and **never reaches a
+  project's agents**: borrowing runs one way — the Founder may use a
+  project-paying credential, a project never uses the Founder's.
 - **Slack connection** — the bot/signing/app tokens for your Slack workspace,
   your member ID, and the channel naming convention, stored once. Every project
   inherits them, so
@@ -141,9 +144,17 @@ into a screenshot.
 One sentence answers it — how many things need you, across how many projects,
 when the soonest decides itself, and how many runs are in flight — and the page
 then shows the decisions themselves (the first five, each with its button), a
-card per project (status, what it is for, runs in flight, spend against the
-cap, how many things on it need you), and **While you were away**: one line
+card per project (status, one sentence on how it is doing, runs in flight,
+spend against the cap, how many things on it need you), and **While you were away**: one line
 per project that moved, from the same briefing your morning mail carries.
+
+The sentence on each card is the project's one-line status — finished,
+stopped, cannot run, paused, failing (its last three runs died), late, at
+risk, decisions waiting, busy with nothing to show (twenty or more paid runs in
+a week, from a project at least a week old, with nothing finished, met,
+published or proven), gone quiet, on track — decided once on the server,
+so the Projects page, the project's Inbox, `yaaf projects`, `yaaf status`
+and Claude's `desk` and `project` say exactly the same thing.
 
 It replaced the Desk as the first screen. The Desk answered "what needs me?"
 very well and nothing else, so a chairman with four healthy projects opened the
@@ -155,12 +166,13 @@ happening at all.
 <img src="/screenshots/inbox.webp" alt="The Inbox: decisions waiting on the chairman across every project, soonest consequence first, with the selected approval's full case and its Approve and Deny buttons">
 
 Two panes, the way a mail client is: a list on the left, the selected item on
-the right, **j**/**k** to walk the list. Four tabs:
+the right, **j**/**k** to walk the list. Five tabs:
 
 | Tab | Holds |
 |---|---|
-| **Needs you** | The decisions only you can make. This is the old Desk, unchanged in its rule, and the only tab the sidebar badge counts. |
-| **Updates** | Each project's briefing — what moved since you last looked — and the flags the CEO raised to you. |
+| **Decide** | The decisions only you can make — the "needs you" list. This is the old Desk, unchanged in its rule, and the only tab the sidebar badge counts. |
+| **Acknowledge** | What you must know but not decide: a problem the CEO was made to raise (answer it with **Noted**), and a heads-up you asked for by standing order (opening it notes it; **Reply to the CEO…** if you have something to say). Nothing there blocks or expires. |
+| **Updates** | Each project's briefing — what moved since you last looked. |
 | **Watching** | Clocks the CEO resolves: droughts, kill dates still ahead, budget pace, unaudited work. Nothing here waits on a click. |
 | **Done** | Approvals and questions decided in the last seven days, and how — by you, or by their clock running out. |
 
@@ -191,8 +203,10 @@ happens if you do nothing**, and the action. Open one and the right pane has
 the whole case:
 
 - **An approval** shows what was asked, by whom, the amount, the reason, and
-  the time left before it denies itself, with **Approve** and **Deny** beside
-  it.
+  the time left before it denies itself, with **Approve** and **Decline…** side
+  by side — declining asks for the reason the CEO re-plans from. Approving a
+  spend asks once more, naming the amount, because a purchase cannot be taken
+  back.
 - **A question from the CEO** shows the question, the default the CEO falls
   back to if you stay silent, and a box to answer it. Your answer is posted to
   the boardroom as a reply to that question, so the CEO reads it where it reads
@@ -201,7 +215,7 @@ the whole case:
 - **Scope, a date, a close to judge** link to the screen where the decision is
   made, with the consequence stated first.
 
-The sidebar badge, Home, the project switcher and each Overview's **Needs you**
+The sidebar badge, Home, the project switcher and each project's Inbox
 card all read the same list from the same request, so they cannot disagree.
 
 **Only live projects appear.** Stopped and completed ones are the Projects
@@ -225,6 +239,16 @@ how many projects are working, when something last ran, and when the next clock
 fires. *Nothing is wrong* and *nothing is happening* are different screens — if
 you have projects that could be working and none is, the Inbox says so instead
 of congratulating you.
+
+**Snooze and Undo.** Every row you own has **Snooze ▾**: for an hour, until
+tomorrow morning, or — for an approval or a question — until two hours before
+it decides itself. A snoozed row leaves your Inbox, your badge and Home until
+then, and waits under **Snoozed** at the foot of the list with **Wake now**.
+It is yours alone (a co-chair's snooze hides nothing from you), and it can
+never run past the moment the decision makes itself: the platform refuses a
+later time. **Approve** and **Decline** wait 8 seconds before they are sent,
+with an **Undo** in the corner; once sent, a decision is final, as it always
+was. Decisions made from the CLI or over MCP are sent at once.
 
 ### Updates — what happened while you were away
 
@@ -321,9 +345,16 @@ Chosen once, at creation, and frozen — the rules differ by shape.
 
 | Shape | What it is | Example goal |
 |---|---|---|
-| **Explore** | Chase a goal with no fixed end. Bets, proof, and your call on when it has earned its keep. No requirements, no Plan tab. | "Find an idea and get one sale in 60 days." |
+| **Explore** | Chase a goal with no fixed end. Bets, proof, and your call on when it has earned its keep. No requirements, no Roadmap page. | "Find an idea and get one sale in 60 days." |
 | **Deliver** | Ship one thing, then stop. You accept what done means; the platform proves it. | "A security audit of our AWS estate." |
 | **Operate** | A Deliver that starts again on a rhythm, and gets better each cycle. | "A weekly market brief, tracked and improved." |
+
+A Deliver project whose every requirement is true tells you so, and then closes
+itself after `complete_after_hours` (24 by default; Settings → Rules in force →
+Autonomy) unless its scope moves: the project's Inbox says when, on its strip, and **Complete
+the project…** does it now. A completed delivery's Inbox offers **Reopen…** for
+14 days; a reopened one runs again and will not close itself until its scope has
+moved.
 
 Outside Explore, a task that serves no requirement is refused, and the project
 starts owing a plan before any work may be created.
@@ -367,105 +398,128 @@ next agent call. A project whose rules were set individually is reported as
 
 # Inside a project
 
-Ten pages, in the sidebar under the project switcher, in the order you reach
-for them: **Overview**, **Chat**, **Roadmap**, **Tasks**, **Deliverables**,
-**Team**, **Spend**, **Reviews**, **Activity**, **Settings**. Each sidebar
-entry carries its own one-word state — how much of the roadmap is settled, how
-many tasks are open, how many seats are busy, how much of the budget is used,
-whether a review is open — so "where should I look?" is answered before you
-click anything.
+A project has five pages, each answering one question:
 
-Every page but the Overview opens with its title — most with one line on what
-it is for — and every page carries the same notices when they apply: why nothing is
-happening when the answer is not obvious, a project paused or stopped and why,
-and a review that is open and waiting on you.
+| Page | Answers |
+|---|---|
+| **Inbox** | What does this project need from me, and what should I know? The project's home. |
+| **Team** | Who is doing my job, who do they report to, and what is each of them on? |
+| **Chat** | Talk to the CEO who runs them. |
+| **Results** | What has the team delivered, and who checked it? |
+| **Details** | How it works inside — Roadmap, Tasks, Deliverables, Spend, Reviews, Activity, Settings, as tabs. Nothing there needs you. |
 
-**Explore projects have no Roadmap page.** They have no requirements by
-design — their shape is bets and evidence — and a page that only ever explains
+The sidebar carries the count of decisions waiting on you beside Inbox (the
+same count as the Inbox above it, for this project), how many people are busy
+beside Team, and marks Details when a review is open. Every page carries the
+same notices when they apply: why nothing is happening when the answer is not
+obvious, a project paused or stopped and why, and a review that is open and
+waiting on you.
+
+Every old address still works: `/overview` opens the project's Inbox, `/team`
+the Team page, and `/roadmap`, `/tasks`, `/deliverables`, `/spend`, `/reviews`,
+`/activity/…` and `/settings` the matching Details tab, with their filters
+intact.
+
+**Explore projects have no Roadmap tab.** They have no requirements by
+design — their shape is bets and evidence — and a tab that only ever explains
 its own absence is clutter. See [project shapes](#project-shapes) below.
 
-## Overview — "is it on track, and what needs me?"
+## Inbox — the project's home
 
-<img src="/screenshots/cockpit-overview.webp" alt="A project's Overview: four numbers, the decisions waiting on you, the team's status, the roadmap, the CEO's latest message, what is coming up, and spend by team">
-
-A five-second read, top to bottom.
+<img src="/screenshots/cockpit-overview.webp" alt="A project's Inbox: the header with its status and a one-line scoreboard, then the three things waiting on the chairman on this project with the selected one opened, and below it the CEO's latest word, what the CEO is watching, the calendar and setup and health">
 
 **The header** says what kind of project this is (its shape, the date it is due,
 how much the CEO decides on its own, your role on it), its name and status, the
-goal (with the platform's status brief one click away), who is on it, and the
-controls: **Start**, **Pause**, **Stop**, and **Message** the CEO.
+project's one-line status (the same sentence as Home, with a link to the page
+that fixes it when something is wrong), the goal (the full brief one click
+away), and the controls: **Start**, **Pause the team**, **Stop**, and
+**Message** the CEO. Under it, one line keeps score: on track or not, how many
+must-be-true things are true (or bets in play, on an Explore project), how many
+results have been delivered, what this month has cost against the cap, and
+runs today. When the projection lands past the promised date, a banner says
+so in days, with your two levers: cut scope, or move the date.
 
-**Four numbers**, each with the line that explains it:
+**The Inbox** is the same Inbox as the one in the sidebar, for this project
+only — the same rows, the same tabs (Decide, Acknowledge, Updates, Watching,
+Done), the same buttons, and the same count. It is one component in both
+places, so the two can never disagree.
 
-- **Delivery** — the promised date against the platform's projection, drawn as
-  a timeline with today on it, and how many days ahead or behind.
-- **Progress** — requirements settled out of scope, as a bar split by status.
-  An Explore project shows **Bets in play** instead.
-- **Spent this month** — against the cap, with the warning line marked.
-- **Working now** — seats running this minute, with runs per hour today as a
-  sparkline under it.
+**Below it:**
 
-When the projection lands past the promised date, a banner under the numbers
-says so in days, with your two levers right there: cut scope, or move the date.
-
-**Left column — what needs you and who is doing what.**
-
-- **Needs you** — this project's rows from the Inbox's Needs-you tab, with
-  their buttons. A quiet project says "nothing waiting on you here."
-- **Team right now** — every seat with its state (working, up next, waiting on
-  you, blocked, idle, paused, stood down) and the one line of what it is doing.
-  Click a seat to open that agent.
-- **Roadmap** (or **Bets** on an Explore project) — the requirements in flight
-  and next up, each with its status.
-
-**Right column — what the CEO is telling you and what happens next.**
-
-- **From the CEO** — its latest message to you in Chat, the flags it has
-  raised (answer each with **Noted**), and one-click starters — "What changed
-  since we last spoke?", "What is the biggest risk to the date?" — that open
-  Chat with the question already typed.
+- **From the CEO** — its latest message to you, the flags it has raised (answer
+  each with **Noted**), and one-click starters that open Chat with the question
+  already typed.
+- **Watching** — clocks the CEO resolves, which therefore never become a
+  Needs-you row: an evidence drought, a kill date, memory nearing its ceiling,
+  a flag the CEO has not yet raised with you, one you answered whose condition
+  is still true.
 - **Coming up** — the next things on the calendar, and **Full calendar** for
-  the fourteen-day view (7 or 30 on the toggle), read in the constitution's
-  one timezone.
-  - **Rhythms** are the recurring wakes — the CEO's daily standup, any agent
-    you put on a clock, the planning heartbeat — each with its cadence, its
-    true next firing, and a mark on every day it touches. The planning
-    heartbeat says when it will be *skipped*, because a cadence that silently
-    does not fire on an empty board reads as a broken one.
-  - **Events** happen once, and the strip colours them by what kind of date
-    they are: something that **resolves itself** (an approval auto-deciding, a
-    bet's kill date, spot-checks expiring), a **deadline** (the promised
-    delivery, a cycle roll, an Explore deadline), a **meeting** (the standing
-    review), or the platform's own **projection** — drawn hollow, because a
-    projection is arithmetic and not a promise anyone made.
-  - It **explains its blanks**: why the next review is not scheduled while one
-    sits open, that nobody is on a wall-clock wake, that a paused project has
-    no schedule at all.
-
-  Everything on it is computed from the same heartbeats and rules the
-  dispatcher and the janitor read, so a wake drawn here is a wake that will
-  actually run.
-- **Where this month's money went** — spend by team, the same ledger and
-  window as the number above it, so the rows add up to it.
-- **Latest deliverables** — the newest files, published or working.
-
-**Below the fold.**
-
-- **Watching** — everything on this project that is running down a clock the
-  CEO resolves, and that therefore never becomes a Needs-you row: an evidence
-  drought (active, or halfway to one), a kill date still ahead, the date your
-  burn rate lands on the cap, memory nearing its ceiling, a flag your CEO has
-  not yet raised with you, a flag you have answered whose condition is still
-  true, and a day that spent money while nothing outside the project verified
-  anything. Nothing here is waiting on a click from you.
+  the fourteen-day view. Rhythms (the CEO's daily standup, the planning
+  heartbeat, any agent on a clock) and one-off events coloured by kind — one
+  that **resolves itself**, a **deadline**, a **meeting**, or the platform's
+  **projection**, drawn hollow.
 - **Setup & health** — anything misconfigured, in plain language, with a fix
-  link: dead billing, a credential of the wrong shape, an untested data source,
-  a team on an outdated role version. **A healthy project collapses this to one
-  green line.**
+  link. Each row is a **problem** (fix it) or a **suggestion** (advice; **Got
+  it** puts it away for you until the finding changes). The badge beside the
+  project's status counts the same rows. A healthy project collapses this to
+  one green line.
 
-**What happened** — the narrative of a window you missed — is not on the
-Overview, which is the present tense. It is one click away under **Inbox →
-Updates** and **Activity → What happened**, and in the morning mail.
+## Team — who is doing the work
+
+<img src="/screenshots/team.webp" alt="The Team page: the chairman's one-line box linking to the Inbox, the CEO beneath, and each team — a newly hired Risk team drawn dashed with the CEO's reason — with every person's state, what they are on, the model they run on and their month's cost">
+
+The org chart, top to bottom:
+
+- **You**, on one line: how many things wait on you, and **Inbox →**.
+- **The CEO**, who reports to you and is the only agent you talk to.
+- **Each team** with its lead and its people. Every person wears their state as
+  a coloured word — **Working**, **Up next**, **Waiting on you**, **Blocked**,
+  **Idle**, **Paused** — says in one line what they are doing, and names the
+  **model** they run on and what they have **cost this month**. An active seat
+  with no run in a week carries a **No run in N days** (or **Never run**)
+  marker.
+- **A large team stays readable.** Past four teams or ten people, teams wrap
+  into a grid of cards instead of one row, the ones with someone at work,
+  waiting or stuck come first, and each person is one line. A thirteen-team
+  project fits the width of the page.
+- **A team the CEO hired this week** is drawn with a dashed outline and a
+  **new** badge, with who hired it, when, and the reason it gave. Hiring is the
+  CEO's own verb — no approval waits — so this is where you see it happened;
+  **Stand down…** is how you disagree. Teams whose job is done fold to one
+  line under the chart, with **Recall** one click away.
+- **+ Add a team** hires from the role library.
+
+**List** shows the same people as a table with runs and spend today.
+
+**Who works when**, under the chart, is one row per person across the day
+around now: the last twelve hours as the runs that happened, a line at now,
+and the next twelve as the wakes the platform will fire (dashed). On a large
+team the people who did not run and have no scheduled wake are counted in one
+line rather than drawn as empty rows — they work when handed work or a
+message. Computed from the same heartbeats the dispatcher reads, so a wake
+drawn here is a wake that will run.
+
+### One person's page
+
+<img src="/screenshots/person.webp" alt="One person's page: what Maya is working on now and the requirement it serves, her run in flight, her week, what she has made and who read it, the model she runs on and her month's cost, and her recent runs each with What they did">
+
+**Click anyone** — on the chart, in the sidebar's Live now, on a task card —
+and their page opens, with an address you can send:
+
+- **Now** — what they are doing, what it is *for* (the goal, the requirement,
+  the task), how long, and the run in flight with **What they have done so
+  far** and its raw log.
+- **Next** — the other work in their hands, each with what it is for.
+- **This week** — finished, runs, cost, and runs today.
+- **What they have made** — their published results and how each was checked.
+- **How they work** — role and version, model and provider, this month's cost,
+  whether they talk to you (only the CEO does), wakes this hour.
+- **Recent runs** — each with **What they did**, and **Every run they have
+  done** opens Activity › Runs filtered to them.
+
+The main button is **Ask the CEO about** them, which opens Chat with a draft
+naming them and what they are doing — because the CEO, not you, directs the
+agents. **Pause** stops their wakes until you resume, after a confirm step.
 
 ## Chat — talk to your CEO
 
@@ -477,6 +531,11 @@ runs are in flight the banner says so ("the CEO is working — 2 runs in
 flight"), so silence is never ambiguous. An empty message box offers a few
 starters — the questions chairmen actually ask — so the first message is never
 a blank page.
+
+Under each of the CEO's messages, **What they did** opens the run that wrote it:
+what it changed on the platform, in order — tasks taken on or finished, files
+published, messages written, requests filed, teams hired — and the tools it
+reached for, from the platform's own rows rather than the model's account.
 
 When the CEO has asked you something, the question sits beside the chat with
 its default and its deadline, and **Answer** puts a reply to it in the box.
@@ -494,6 +553,31 @@ call. See [GOVERNANCE.md](/docs/governance/#the-rules).
 
 The same conversation is reachable from Slack — see
 [INTEGRATIONS.md](/docs/integrations/#slack).
+
+## Results — what the team delivered, and who checked it
+
+<img src="/screenshots/results.webp" alt="Results: each published deliverable with who made it and who checked it — verified by YAAF, read by Juno — and the selected one's evidence: the check, the goal-to-requirement-to-task chain, and what the run that made it did">
+
+One row per published deliverable (its newest version), newest first: who made
+it, and who or what looked at it before it reached you, in the platform's words
+— **verified by YAAF** (the platform ran the check and it passed), **read by**
+a named reviewer (with what they said), **met by judgement** (an observable
+nobody's script can check), or **not checked**. A judgement is never shown as a
+verification. The counts across the top say how much of the shelf is which.
+
+Pick a row for its evidence: who made it, every check, what it was **for** —
+the chain from the project's goal through the requirement to the task — what
+it cost to make (and how many of those runs failed), and **What they did to
+make it**. **Open it** reads the file in Details › Deliverables; **Wrong
+because…** sends your reason to the CEO in Chat.
+
+Drafts and working files are not here. They are in **Details › Deliverables**,
+the full file explorer.
+
+## Details — how it works inside
+
+One page with a tab per subject, so the sidebar can say what the project is.
+Nothing on it needs you — anything that does is on Team and in the Inbox.
 
 ## Roadmap — scope, sequence, and the promise
 
@@ -547,40 +631,6 @@ forecast grades. Nothing but the platform ever writes `met`.
   toward the drought and the external-evidence floor, which is why a
   busy-looking project can still be in a drought.
 
-## Team — who is doing what, right now
-
-<img src="/screenshots/team.webp" alt="Team: the org chart with each agent's status and what it is doing, and one agent's drawer open on what it is working on, its runs and spend today, and a button to ask the CEO about it">
-
-The project as an org chart: you at the top (with your Inbox count), the CEO
-under you, and each team under the CEO with its lead and its seats. Every seat
-wears its state as a coloured word — **Working**, **Up next**, **Waiting on
-you**, **Blocked**, **Idle**, **Paused**, **Stood down** — and says in one line
-what it is doing: the task it holds, what woke it, or the approval it is
-waiting on. **List** shows the same seats as a table with each seat's runs and
-spend today, in the project's own unit. The same numbers reach the CEO, from the same producer, so you and it cannot be reading
-different answers to the same question.
-
-**Click any seat** and a drawer opens on that agent, without leaving the page:
-
-| Tab | Shows |
-|---|---|
-| **Now** | What it is doing this minute, for how long, what woke it, any rule that refused it, and the run's raw trace. |
-| **Work** | The tasks it holds, with their status and why any is stuck. |
-| **Runs** | Its recent runs, when each started, and what each cost. |
-| **About** | Its role and role version, who it reports to, whether it talks to you (only the CEO does), and its wakes this hour. |
-
-The drawer's main button is **Ask the CEO about** the agent, which opens Chat
-with a draft naming the agent and what it is doing — because the CEO, not you,
-directs the agents. **Pause** stops its wakes until you resume it, after a
-confirm step.
-
-Each team carries **stand down** / **recall** with a written reason, which is
-how you overrule a staffing call — your CEO hires and stands roles down itself,
-and this is the same verb on your side of the desk. A team that declared when
-its job ends says so on its header; the platform stops it when that comes true.
-A team on an outdated role version offers to adopt the new one. **Add a team**
-hires from the role library.
-
 ## Spend — "is this worth what it costs?"
 
 - **This month's budget** — spent against the cap in the project's native unit
@@ -600,7 +650,7 @@ hires from the role library.
 
 Opened on schedule by the janitor, with zero tokens, regardless of budget or an
 empty board. A review with nothing on the board is the one you most need. An
-open review shows a banner on the Overview and the Roadmap until you close it.
+open review shows a banner on the project's Inbox and the Roadmap until you close it.
 
 - **The platform's numbers**, frozen at open: pace, requirements met since the
   last review, the commitment's state with promised and projected dates,
@@ -623,7 +673,10 @@ used to be answered by reading two lists with different shapes.
 - **A row per file**, with the type, the name (its folder dimmed in front of
   it), whether it is **published** or **working**, its size and the time it
   landed. Published rows carry what the receipt says: the version, the
-  requirements it satisfies, its hash. Earlier versions of the same deliverable
+  requirements it satisfies, its hash — and how those were checked, in the
+  platform's words: **verified** (it ran the acceptance test), **judged** (an
+  observable somebody judged), or **not yet checked**. A judgement is never
+  shown as a verification. Earlier versions of the same deliverable
   fold under the one that replaced it.
 - **Three filters and a search**, all of them in the URL so the view is a link:
   published or working, file type (the extensions this project actually has,
@@ -641,7 +694,19 @@ used to be answered by reading two lists with different shapes.
 
 ## Activity — "what happened?"
 
-Six ways of asking the same question, kept out of the daily path:
+<img src="/screenshots/activity.webp" alt="Details › Activity › Everything: every run, message and decision newest first, filterable by kind, person and window, each action saying on whose authority it happened, with View run and Export CSV">
+
+**Everything** is the default: one list of every message, run, decision and
+piece of proof, newest first, grouped by day. Filter it by kind — Messages,
+Runs, **Your decisions**, **What the CEO decided**, **By your rules**, Proof —
+by person, and by window (today, 7, 30 or 90 days); the filters live in the
+address, so "Ada's runs this week" is a link. Every action says **on whose
+authority** it happened: your decision, a rule you set (quoting your number —
+"up to 4 teams", "decline after 7 days"), a verb your autonomy setting handed
+the CEO, or what woke a run. **View run** opens that run; **Export CSV**
+downloads the lines you are looking at.
+
+The other views ask the same question one subject at a time:
 
 | View | Shows |
 |---|---|
@@ -704,10 +769,33 @@ Data; everything after is occasional.
   until the window resets. The budget in force is shown read-only: the numbers
   themselves are constitution rules, so the card links to Rules in force rather
   than offering a second editor for them.
-- **Data & credentials** — MCP data sources (one form: name, URL, roles, Save,
-  plus a live check) and scoped variables/credentials for your teams.
 
 **Connections**
+
+- **Data sources** — the MCP servers agents call as tools, one line each. Every
+  source shows one state in words — *Working* (with its tool count), *Needs
+  sign-in*, *Sign-in expired*, *Credential refused*, *Wrong address*, *Not an MCP
+  server*, *Offers no tools*, *Blocked by the network*, *Not answering*, *Can't
+  connect* — with the one button that fixes it beside it (Connect, Reconnect,
+  Test again, Fix it) and the server's own sentence underneath. Test, edit and
+  remove live in the row's **⋯** menu. **Add data source** opens a drawer that
+  asks for the address first, checks it before anything is stored, and says how
+  the server wants you to sign in — no sign-in, a pasted token, or OAuth — so
+  the rest of the form follows from the answer.
+- **Secrets & variables** — what agents receive as environment variables, one
+  56px line each: the name agents see (`$NAME`), its type (**Secret**, **Plain
+  value** or **File**), enough of the value to tell two apart (a plain value
+  whole, a secret's last four characters, a file's name and size), who gets it
+  as team chips, and when it last changed. Search, a **What ⟨team⟩ gets**
+  filter, and an **Access map** — variables and data sources as rows, teams as
+  columns — answer "what does this team have?" on one screen; ticks there stage
+  with an amber ring and save as one batch. Every edit happens in a drawer with
+  one **Save changes**: the type, the value (reveal, copy, replace — each reveal
+  logged), who gets it, and the history in sentences. **Paste .env** splits a
+  pasted file into rows for review. A credential an agent asked for shows at the
+  top with **Add it**, which stores it, grants the asking team and answers the
+  request in one motion. Values a data source or the Slack bridge owns are
+  listed, locked, and link to where they are edited.
 
 - **Integrations** — the Slack bridge and the GitHub workspace. Slack starts
   out **inherited** from the app-wide connection, so the only thing this card
@@ -719,7 +807,7 @@ Data; everything after is occasional.
 
 **Governance**
 
-- **Rules in force** — all 52 constitution rules, each with its own help text
+- **Rules in force** — every constitution rule, each with its own help text
   and its stock default, behind six tabs: Money, Pace & brakes, How work is
   run, Autonomy, Memory, Rhythm & reporting. Edits span tabs; a tray at the
   foot of the pane lists every pending one, takes the required written reason,

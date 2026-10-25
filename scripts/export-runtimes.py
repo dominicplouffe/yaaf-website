@@ -62,12 +62,17 @@ def main(repo: Path) -> None:
         providers.append({
             "name": p.name,
             "label": p.label,
-            "default_harness": p.default_harness,
-            "kinds": [{"mode": k.mode, "meter": k.meter, "bills": k.bills} for k in p.kinds],
+            # A method since yaaf#67: the default harness is a fact about the
+            # credential kind, and this is the first kind's.
+            "default_harness": p.default_harness(),
+            "kinds": [{"mode": k.mode, "meter": k.meter, "bills": k.bills,
+                       "default_harness": k.default_harness} for k in p.kinds],
             "served_by": [h["name"] for h in harnesses if p.name in h["providers"]],
             "credential_base_url": p.credential_base_url,
             "search": p.search,
             "reports_cost": p.reports_cost,
+            "local": getattr(p, "local", False),
+            "lineup": dict(p.lineup) if getattr(p, "lineup", None) else None,
             "models": [m.id for m in MODELS if m.provider == p.name],
             "priced": [m.id for m in MODELS if m.provider == p.name and m.price is not None],
         })

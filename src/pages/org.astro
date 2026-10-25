@@ -26,18 +26,18 @@ const headcount = (c: (typeof crews)[number]) =>
 ---
 <BaseLayout
   title="The team"
-  description={`${roles.length} roles and ${crews.length} ready-made teams. Each role has its own prompt, model and tools, and ${challengers.length} exist to disagree.`}
+  description={`Staff your AI company: ${roles.length} roles and ${crews.length} ready-made teams. Each role has its own prompt, model class and tools, and ${challengers.length} exist to disagree.`}
 >
   <section class="page-hero">
     <div class="shell">
       <p class="eyebrow">The team</p>
-      <h1>Hire the right AI for every job.</h1>
-      <p class="lede">Pick from {roles.length} ready-made roles, or hire a whole team at once. Each role has its own instructions, AI model and tools.</p>
+      <h1>Staff your company.</h1>
+      <p class="lede">Hire from {roles.length} job descriptions, or a whole ready-made team at once. Each role has its own instructions, model class and tools, and runs on whichever harness you seat it on.</p>
     </div>
   </section>
 
   <Section first={true}>
-    <div class="cells">
+    <div class="cells hued">
       <a class="cell" href="#roles"><p class="num">{roles.length}</p><p>Roles</p></a>
       <a class="cell" href="#crews"><p class="num">{crews.length}</p><p>Ready-made teams</p></a>
       <div class="cell"><p class="num">{execs.length}</p><p>Can run as CEO</p></div>
@@ -126,7 +126,7 @@ const headcount = (c: (typeof crews)[number]) =>
   }
   .f span { color: var(--color-muted); margin-left: 4px; }
   .f:hover { border-color: var(--color-line-strong); color: var(--color-ink); }
-  .f.on { color: #000; border-color: #fff; background: #fff; }
+  .f.on { color: #14051f; border-color: var(--color-gold); background: var(--color-gold); }
   .f.on span { color: #555; }
 
   .roles { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; align-items: start; }

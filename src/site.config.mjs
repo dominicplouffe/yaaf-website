@@ -22,14 +22,15 @@ export const PRIMARY_CTA = SOURCE_IS_PUBLIC
 export const SITE = {
   name: "yaaf",
   /** Used in <title> and og:site_name. */
-  tagline: "Hire an AI team. Get the project done.",
+  tagline: "Build a company. Hire a CEO. Let the team work.",
   description:
-    "Describe a project in plain English. yaaf builds a team of AI agents, manages them for days or weeks and checks every result. Free and open source.",
-  themeColor: "#000000",
+    "yaaf is the open-source harness for teams of harnesses. Build a company of AI agents — a CEO, teams on Claude Code, Codex, Gemini CLI or any model — and chair it from your own machine, with work the platform verifies, money that stops itself and a date nobody can quietly move.",
+  themeColor: "#0b0918",
 };
 
 export const NAV = [
   { label: "How it works", href: "/how-it-works/" },
+  { label: "Harnesses", href: "/runtimes/" },
   { label: "Use cases", href: "/examples/" },
   { label: "Features", href: "/features/" },
   { label: "The team", href: "/org/" },
@@ -39,7 +40,6 @@ export const NAV = [
 
 /** Pages that are reference rather than navigation; the footer lists them. */
 export const MORE = [
-  { label: "Supported models", href: "/runtimes/" },
   { label: "FAQ", href: "/faq/" },
   { label: "What's new", href: "/changelog/" },
   { label: "Security model", href: "/docs/security/" },
@@ -56,6 +56,7 @@ export const DOCS_ORDER = [
   "autonomy",
   "mcp-server",
   "runtimes",
+  "providers",
   "auth",
   "dashboard",
   "agent-api",
@@ -69,5 +70,5 @@ export const DOCS_GROUPS = [
   { title: "Start here", slugs: ["plan", "features", "creating-a-project"] },
   { title: "The rules", slugs: ["governance", "autonomy", "security", "goal-grammar"] },
   { title: "Surfaces", slugs: ["mcp-server", "dashboard", "cli", "agent-api"] },
-  { title: "Running it", slugs: ["deployment", "integrations", "runtimes", "auth"] },
+  { title: "Running it", slugs: ["deployment", "integrations", "runtimes", "providers", "auth"] },
 ];

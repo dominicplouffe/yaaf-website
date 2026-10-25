@@ -12,13 +12,13 @@ const { cta = true } = Astro.props;
   {cta && (
     <div class="shell">
       <div class="cta" id="try">
-        <h2>Stop prompting.<br />Start delegating.</h2>
+        <h2><span class="was">Yesterday you prompted.</span><br /><span class="dawn-text">Today you chair the board.</span></h2>
         <div class="cta-r">
-          <p>Run a full example project with practice agents. No account, no API key, no cost.</p>
+          <p>Clone it, rehearse a whole company on scripted agents for $0, then hire one for real on your own machine.</p>
           <Cmd cmd="yaaf rehearse examples/01-your-first-hour.json" />
           <div class="btns">
-            <Button href="/docs/creating-a-project/" primary>Get started</Button>
-            {SOURCE_IS_PUBLIC && <Button href={REPO_URL}>GitHub</Button>}
+            {SOURCE_IS_PUBLIC && <Button href={REPO_URL} primary>Get yaaf on GitHub</Button>}
+            <Button href="/docs/creating-a-project/">Your first project</Button>
           </div>
         </div>
       </div>
@@ -29,7 +29,7 @@ const { cta = true } = Astro.props;
     <div class="grid">
       <div class="about">
         <Wordmark size="1.25rem" />
-        <p>A free, open-source AI team for your projects. Runs on your server.</p>
+        <p>The open-source harness for teams of harnesses. Build a company of AI agents and chair it from your own machine.</p>
       </div>
       <nav aria-label="Footer">
         <p class="eyebrow">Product</p>
@@ -60,6 +60,7 @@ const { cta = true } = Astro.props;
 <style>
   .foot { margin-top: 0; }
   .cta {
+    position: relative;
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 24px 0;
@@ -74,6 +75,18 @@ const { cta = true } = Astro.props;
     line-height: 1;
     letter-spacing: -0.045em;
   }
+  .cta h2 .was { color: var(--color-old); text-decoration: line-through; text-decoration-thickness: 2px; text-decoration-color: color-mix(in srgb, var(--color-rose) 70%, transparent); }
+  .cta h2 .dawn-text { display: inline-block; padding-bottom: 0.08em; }
+  .cta::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(50% 70% at 85% 100%, color-mix(in srgb, var(--color-rose) 22%, transparent), transparent 70%),
+      radial-gradient(40% 60% at 60% 100%, color-mix(in srgb, var(--color-gold) 16%, transparent), transparent 70%);
+  }
+  .cta > * { position: relative; }
   .cta-r { grid-column: 3 / span 2; display: grid; gap: 18px; align-content: start; }
   .cta-r p { margin: 0; color: var(--color-ink-2); font-size: 1.1rem; }
 

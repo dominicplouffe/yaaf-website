@@ -15,9 +15,9 @@ The walk
   ✓ Work was created — 1 task(s)  beat 3
   ✓ Work was claimed — an agent picked it up  beat 4
   ✓ Evidence was filed — 1 row(s) filed  beat 4
-  – Finished work was read by somebody else — not in an Explore project's shape
+  – Finished work was read by somebody else — this project does not ask for it (deliverable_review: none)
   ✓ Work closed with evidence — 1 closed  beat 4
-  ✓ A delivery date was proposed — platform-projected, delivering by 2026-10-12  beat 3
+  ✓ A delivery date was proposed — platform-projected, delivering by 2026-10-25  beat 3
   ✓ The delivery date was signed — status accepted  beat 3
   ✓ A requirement settled true — R-01 — the platform ran the test  beat 4
 
@@ -31,7 +31,7 @@ It stopped and waited for you 7 time(s)
       R-02 — no script can check this
       R-03 — no script can check this
   · 1× sign the date
-      delivering by 2026-10-12
+      delivering by 2026-10-25
   Your autonomy dial decides which of these park. Every one is a
   morning the project is idle until you open the app.
 
@@ -42,11 +42,11 @@ What it will cost
 
 What paces it, over 30 days
   it fits — nothing is on the board that needs a run before then
-  4448 run(s) can start, 0 needed, 0.0 held back for the retries your measured failure rate predicts, 4448.0 spare
+  4523 run(s) can start, 0 needed, 0.0 held back for the retries your measured failure rate predicts, 4523.0 spare
 
 What it still needs before it can really run
   ! no billing credential attached — agents cannot run
-  ! Everything is true. This delivery is waiting on your confirmation. Nothing will run until you complete it — the project has stopped waking for its own agents' messages, so it is not spending while it waits. Confirm it on the project page to write the receipt and close it, or reopen scope if something is still missing.
+  ! Everything is true. This delivery is waiting on your confirmation. Nothing will run until it completes — the project has stopped waking for its own agents' messages, so it is not spending while it waits. Confirm it on the project page to write the receipt and close it now, or let it close itself when your rules say (Complete after, in Settings); reopen scope first if something is still missing.
 
 Not exercised by this drill
   · command success tests — the drill writes observables only, so no command out of a spec file is ever executed
