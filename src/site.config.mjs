@@ -3,8 +3,8 @@
  * One file, so a domain change or a launch flip is one edit.
  */
 
-/** Canonical origin. No trailing slash. Change this when the domain is decided. */
-export const SITE_URL = "https://yaaf.dev";
+/** Canonical origin. No trailing slash. Must match SITE_HOST in the deploy settings. */
+export const SITE_URL = "https://yaaf.dplouffe.ca";
 
 /** Set false before the yaaf repo is public: every GitHub CTA becomes a waitlist CTA. */
 export const SOURCE_IS_PUBLIC = true;
