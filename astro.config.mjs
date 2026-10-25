@@ -15,8 +15,9 @@ export default defineConfig({
   build: { format: "directory", inlineStylesheets: "auto" },
   // /why/ became /compare/ when the comparison grew past three questions.
   // A static redirect page keeps old links and search results working.
-  redirects: { "/why": "/compare/" },
-  integrations: [sitemap({ filter: (page) => !page.includes("/404") && !page.endsWith("/why/") })],
+  // /docs/plan/ was retired with yaaf's PLAN.md; its readers land on the docs.
+  redirects: { "/why": "/compare/", "/docs/plan": "/docs/" },
+  integrations: [sitemap({ filter: (page) => !page.includes("/404") && !page.endsWith("/why/") && !page.endsWith("/docs/plan/") })],
   vite: { plugins: [tailwindcss()] },
   markdown: {
     shikiConfig: {

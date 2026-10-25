@@ -43,12 +43,10 @@ export const MORE = [
   { label: "FAQ", href: "/faq/" },
   { label: "What's new", href: "/changelog/" },
   { label: "Security model", href: "/docs/security/" },
-  { label: "The plan", href: "/docs/plan/" },
 ];
 
 /** Docs sidebar order. Anything synced but unlisted is appended under "More". */
 export const DOCS_ORDER = [
-  "plan",
   "features",
   "creating-a-project",
   "governance",
@@ -67,7 +65,7 @@ export const DOCS_ORDER = [
 ];
 
 export const DOCS_GROUPS = [
-  { title: "Start here", slugs: ["plan", "features", "creating-a-project"] },
+  { title: "Start here", slugs: ["features", "creating-a-project"] },
   { title: "The rules", slugs: ["governance", "autonomy", "security", "goal-grammar"] },
   { title: "Surfaces", slugs: ["mcp-server", "dashboard", "cli", "agent-api"] },
   { title: "Running it", slugs: ["deployment", "integrations", "runtimes", "providers", "auth"] },
