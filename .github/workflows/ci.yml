@@ -41,6 +41,8 @@ jobs:
           test -f dist/404.html
           test -f dist/og.png
           test -f dist/sitemap-index.xml
-          test "$(find dist/docs   -name index.html | wc -l)" -eq 13   # 12 docs + hub
-          test "$(find dist/examples -name index.html | wc -l)" -eq 13 # 12 examples + hub
-          test "$(ls public/setups/*.json | wc -l)" -eq 12
+          docs=$(ls src/content/docs/*.md | wc -l)
+          examples=$(ls src/content/examples/*.md | wc -l)
+          test "$(find dist/docs     -name index.html | wc -l)" -eq $((docs + 1))     # each doc + hub
+          test "$(find dist/examples -name index.html | wc -l)" -eq $((examples + 1)) # each example + hub
+          test "$(ls public/setups/*.json | wc -l)" -eq "$examples"
