@@ -8,6 +8,8 @@ interface Entry { date: string; title: string; body: string; prs?: number[]; hre
 
 /** Curated from the repository's history, newest first. Dates are commit dates. */
 const ENTRIES: Entry[] = [
+  { date: "2026-10-25", title: "One CEO, one record", body: "A note you leave on any Inbox decision is also your line in the CEO chat, and every part of the CEO reads that record, so it stops asking for what you already told it." },
+  { date: "2026-10-25", title: "Setup checklist and pins", body: "A new project's Inbox lists what's left to connect. Pin the pages you open every day under the project's five; Deliverables comes pinned.", prs: [72], href: "/docs/dashboard/#finishing-setup" },
   { date: "2026-10-25", title: "Every part of yaaf, on any provider", body: "Roles name a class (frontier, balanced, fast), not a vendor. Every seat, the CEO chat, the Founder and the goal grader run on any of 23 providers, with prices from a feed and a fallback while a provider is down.", prs: [67], href: "/runtimes/" },
   { date: "2026-10-24", title: "Readable for everyone", body: "Every text colour in the app meets 4.5:1 contrast on the ground it sits on, and every focus state draws a ring.", prs: [68, 69, 70, 71] },
   { date: "2026-10-24", title: "A project's home is its Inbox", body: "A project opens on what waits on you. The Team page draws large teams without scrolling sideways.", prs: [63] },

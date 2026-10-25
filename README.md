@@ -57,8 +57,9 @@ renders them, so a surprising sync is visible on the page.
 Everything that is a decision rather than content is in **`src/site.config.mjs`**:
 
 - `SITE_URL` — canonical origin. Feeds `<link rel=canonical>`, OG tags, the
-  sitemap and `robots.txt`. **Currently a placeholder** (`https://yaaf.dev`);
-  change this one line when the domain is settled, and update `public/robots.txt`.
+  sitemap and `robots.txt`. It is `https://yaaf.dplouffe.ca`, the same host as
+  the `SITE_HOST` deploy variable; if the domain changes, change this line and
+  `public/robots.txt` together.
 - `SOURCE_IS_PUBLIC` — set `false` while `dominicplouffe/yaaf` is private and
   every GitHub CTA becomes a "get notified" CTA instead of a 404.
 - `NAV`, `MORE`, `DOCS_GROUPS` — navigation, the footer's reference links, and
@@ -143,7 +144,7 @@ PLAYWRIGHT_CHROMIUM=/path/to/chrome npm run og
 | `CLOUDFRONT_DISTRIBUTION_ID` | secret | `E123456789ABC` |
 | `AWS_REGION` | variable | `us-east-1` |
 | `S3_BUCKET` | variable | `yaaf-website-prod` |
-| `SITE_HOST` | variable | `yaaf.dev` |
+| `SITE_HOST` | variable | `yaaf.dplouffe.ca` |
 
 There are no AWS access keys anywhere. That is the point of OIDC.
 
