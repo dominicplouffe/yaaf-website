@@ -1,0 +1,255 @@
+---
+/**
+ * The autonomy dial, drawn from the real one: yaaf's five authority switches
+ * (docs/AUTONOMY.md). Position n hands the first n of them to the CEO. The two
+ * ends are the two presets the New-project form offers, and the in-between
+ * positions are what a constitution gets when you set the switches one by one.
+ *
+ * The "stops" count is not typed. It is read from the real `yaaf rehearse`
+ * report on example 06 with every switch handed back (Supervised), which lists
+ * each kind of decision it parked on the chairman's desk. A switch that owns
+ * none of them in that drill subtracts nothing.
+ *
+ * Radios and :has(), no script: the site loads none, and a dial with no
+ * JavaScript still works and still reads in order.
+ */
+import supervised from "../content/drills/supervised.txt?raw";
+
+interface Props {
+  /** Prefix for the radio ids, so two dials could share a page. */
+  id?: string;
+}
+const { id = "dial" } = Astro.props;
+
+const SWITCHES = [
+  {
+    key: "plan_authority",
+    tick: "Plan",
+    stop: "accept scope",
+    you: "You accept each requirement the CEO proposes.",
+    ceo: "The CEO accepts its own plan. The plan gate still runs the same arithmetic.",
+  },
+  {
+    key: "commitment_authority",
+    tick: "Date",
+    stop: "sign the date",
+    you: "You sign the delivery date, and only you move it.",
+    ceo: "The CEO adopts the platform's projected date. It never writes one.",
+  },
+  {
+    key: "scope_authority",
+    tick: "Scope",
+    stop: null,
+    you: "Cutting, reopening and restaging work is yours.",
+    ceo: "The CEO re-scopes on the record. Every change is reversible.",
+  },
+  {
+    key: "verdict_policy",
+    tick: "Verdicts",
+    stop: "judge an observable",
+    you: "Results no script can check wait for your judgment.",
+    ceo: "The CEO judges them, and every self-judged close is disclosed to you.",
+  },
+  {
+    key: "capability_authority",
+    tick: "Access",
+    stop: null,
+    you: "You grant every credential.",
+    ceo: "The CEO re-scopes credentials it already has across its team.",
+  },
+];
+
+// "  · 3× accept scope" -> { "accept scope": 3 }
+const parked: Record<string, number> = {};
+for (const m of supervised.matchAll(/^\s+·\s+(\d+)×\s+(.+?)\s*$/gm)) parked[m[2]] = Number(m[1]);
+const total = Number(supervised.match(/stopped and waited for you (\d+) time/)?.[1] ?? 0);
+for (const s of SWITCHES) {
+  if (s.stop && !(s.stop in parked)) throw new Error(`AutonomyDial: the drill no longer lists “${s.stop}”`);
+}
+const stopsAt = (p: number) => SWITCHES.slice(p).reduce((n, s) => n + (s.stop ? parked[s.stop] : 0), 0);
+if (stopsAt(0) !== total) throw new Error(`AutonomyDial: the drill's ${total} stops are not all mapped to a switch`);
+
+const POSITIONS = SWITCHES.length + 1;
+const name = (p: number) => (p === 0 ? "Supervised" : p === SWITCHES.length ? "Autonomous" : `${p} of ${SWITCHES.length} delegated`);
+
+const NEVER = [
+  "The budget wall. At the limit you set, the company pauses itself.",
+  "Verification. The platform runs the tests, not the agent that wants to pass them.",
+  "Spending, legal and credential approvals still reach you.",
+  "The record. Every decision, yours or the CEO's, is logged with its reason.",
+  "Your buttons. Pause, stop, veto, amend and reopen work at every setting.",
+];
+---
+<div class="dial" id={id}>
+  <fieldset class="track-set">
+    <legend class="sr">How much authority the CEO holds</legend>
+    <div class="ends" aria-hidden="true">
+      <span><b>Chairman-led</b>You approve the big calls</span>
+      <span><b>CEO-led</b>It decides, then tells you</span>
+    </div>
+    <div class="track">
+      <div class="rail" aria-hidden="true"><i></i></div>
+      {Array.from({ length: POSITIONS }, (_, p) => (
+        <label class={`tick t${p}`}>
+          <input type="radio" name={`${id}-pos`} id={`${id}-${p}`} value={p} checked={p === SWITCHES.length} />
+          <span class="knob" aria-hidden="true"></span>
+          <span class="tl">{p === 0 ? "All yours" : SWITCHES[p - 1].tick}</span>
+          <span class="sr">{name(p)}</span>
+        </label>
+      ))}
+    </div>
+  </fieldset>
+
+  <div class="read">
+    <div class="state">
+      {Array.from({ length: POSITIONS }, (_, p) => (
+        <div class={`st s${p}`}>
+          <p class="eyebrow">{p === SWITCHES.length ? "Autonomous · where a new project starts" : p === 0 ? "Supervised · right for your first project" : "Set rule by rule"}</p>
+          <p class="big"><span class="n">{stopsAt(p)}</span> {stopsAt(p) === 1 ? "stop" : "stops"}</p>
+          <p class="why">
+            {stopsAt(p) === 0
+              ? `In a real rehearsal of a red-team project, the company never had to wait for you. You read what the CEO decided afterwards, and can reverse any of it.`
+              : `In a real rehearsal of a red-team project, the company stops and waits for you ${stopsAt(p)} ${stopsAt(p) === 1 ? "time" : "times"}. Each one is a morning it sits idle until you open the app.`}
+          </p>
+        </div>
+      ))}
+    </div>
+
+    <ol class="switches">
+      {SWITCHES.map((s) => (
+        <li class="sw">
+          <code>{s.key}</code>
+          <p class="you"><span class="who">You</span>{s.you}</p>
+          <p class="ceo"><span class="who">CEO</span>{s.ceo}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+
+  <div class="never">
+    <p class="eyebrow">Never moves, at any setting</p>
+    <ul>{NEVER.map((n) => <li>{n}</li>)}</ul>
+    <p class="motto">Delegation changes who makes decisions. It does not remove accountability.</p>
+  </div>
+</div>
+
+<style>
+  .dial {
+    --you: var(--color-gold);
+    --ceo: var(--color-rose);
+    border: 1px solid var(--color-line);
+    background: color-mix(in srgb, var(--color-violet) 5%, var(--color-page));
+  }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  /* ---------- the track ---------- */
+  .track-set { margin: 0; padding: 2rem var(--inset) 1.4rem; border: 0; border-bottom: 1px solid var(--color-line); min-width: 0; }
+  .ends { display: flex; justify-content: space-between; gap: 16px; margin-bottom: 1.6rem; }
+  .ends span { font-size: 13.5px; color: var(--color-ink-2); line-height: 1.4; }
+  .ends span:last-child { text-align: right; }
+  .ends b { display: block; font-family: var(--font-mono); font-size: 11.5px; font-weight: 450; letter-spacing: 0.16em; text-transform: uppercase; color: var(--you); }
+  .ends span:last-child b { color: var(--ceo); }
+
+  .track { position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .rail { position: absolute; left: calc(100% / 12); right: calc(100% / 12); top: 13px; height: 4px; background: var(--color-line); }
+  .rail i { display: block; height: 100%; width: var(--fill, 100%); background: linear-gradient(90deg, var(--you), var(--color-sun), var(--ceo)); transition: width 0.4s var(--ease); }
+  .tick { position: relative; display: grid; justify-items: center; gap: 10px; cursor: pointer; text-align: center; }
+  .tick input { position: absolute; opacity: 0; width: 30px; height: 30px; margin: 0; cursor: pointer; }
+  .knob {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 2px solid var(--color-line-strong);
+    background: var(--color-page);
+    transition: transform 0.25s var(--ease), background 0.25s, border-color 0.25s;
+  }
+  .tick:hover .knob { border-color: var(--color-ink); }
+  .tick input:focus-visible + .knob { outline: 2px solid var(--color-accent-hi); outline-offset: 3px; }
+  .tick input:checked + .knob { background: #fff; border-color: #fff; transform: scale(1.15); box-shadow: 0 0 0 6px color-mix(in srgb, var(--color-sun) 35%, transparent); }
+  .tl { font-size: 13px; color: var(--color-ink-2); }
+  .tick input:checked ~ .tl { color: var(--color-ink); font-weight: 550; }
+
+  /* ---------- the reading ---------- */
+  .read { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); }
+  .state { padding: 1.8rem var(--inset); border-right: 1px solid var(--color-line); }
+  .st { display: none; }
+  .st .eyebrow { margin: 0; color: var(--color-sun); }
+  .big { margin: 0.8rem 0 0; font-size: clamp(2.6rem, 1.6rem + 2.4vw, 4rem); line-height: 1; letter-spacing: -0.05em; font-weight: 500; }
+  .big .n { background: var(--dawn); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .why { margin: 1rem 0 0; font-size: 15px; line-height: 1.55; color: var(--color-ink-2); }
+
+  .switches { list-style: none; margin: 0; padding: 0; }
+  .sw { padding: 1rem var(--inset); border-bottom: 1px solid var(--color-line-2); display: grid; grid-template-columns: 12.5rem minmax(0, 1fr); gap: 4px 18px; align-items: baseline; }
+  .sw:last-child { border-bottom: 0; }
+  .sw code { font-family: var(--font-mono); font-size: 12px; color: var(--color-muted); grid-row: 1; }
+  .sw p { margin: 0; grid-column: 2; grid-row: 1; font-size: 15px; line-height: 1.5; }
+  .who {
+    display: inline-block;
+    min-width: 3.4em;
+    margin-right: 10px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 2px 6px;
+    color: #14051f;
+    vertical-align: 1px;
+  }
+  .you .who { background: var(--you); }
+  .ceo .who { background: var(--ceo); }
+  /* Held by you unless the dial has reached this switch. */
+  .sw .ceo { display: none; }
+
+  /* ---------- what never moves ---------- */
+  .never { border-top: 1px solid var(--color-line); padding: 1.6rem var(--inset) 1.8rem; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 12px 24px; }
+  .never .eyebrow { margin: 0; color: var(--color-mint); }
+  .never ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+  .never li { position: relative; padding-left: 18px; font-size: 14.5px; line-height: 1.5; color: var(--color-ink-2); }
+  .never li::before { content: ""; position: absolute; left: 0; top: 0.55em; width: 8px; height: 8px; background: var(--color-mint); }
+  .motto { grid-column: 2; margin: 0.6rem 0 0; font-size: 1.15rem; line-height: 1.4; letter-spacing: -0.02em; color: var(--color-ink); }
+
+  /* ---------- position n: fill to n, first n switches are the CEO's ---------- */
+  .dial:has(.t0 input:checked) { --fill: 0%; }
+  .dial:has(.t1 input:checked) { --fill: 20%; }
+  .dial:has(.t2 input:checked) { --fill: 40%; }
+  .dial:has(.t3 input:checked) { --fill: 60%; }
+  .dial:has(.t4 input:checked) { --fill: 80%; }
+  .dial:has(.t5 input:checked) { --fill: 100%; }
+  .dial:has(.t0 input:checked) .s0,
+  .dial:has(.t1 input:checked) .s1,
+  .dial:has(.t2 input:checked) .s2,
+  .dial:has(.t3 input:checked) .s3,
+  .dial:has(.t4 input:checked) .s4,
+  .dial:has(.t5 input:checked) .s5 { display: block; }
+  .dial:has(.t1 input:checked) .sw:nth-child(-n + 1),
+  .dial:has(.t2 input:checked) .sw:nth-child(-n + 2),
+  .dial:has(.t3 input:checked) .sw:nth-child(-n + 3),
+  .dial:has(.t4 input:checked) .sw:nth-child(-n + 4),
+  .dial:has(.t5 input:checked) .sw:nth-child(-n + 5) {
+    background: color-mix(in srgb, var(--ceo) 6%, transparent);
+  }
+  .dial:has(.t1 input:checked) .sw:nth-child(-n + 1) .you,
+  .dial:has(.t2 input:checked) .sw:nth-child(-n + 2) .you,
+  .dial:has(.t3 input:checked) .sw:nth-child(-n + 3) .you,
+  .dial:has(.t4 input:checked) .sw:nth-child(-n + 4) .you,
+  .dial:has(.t5 input:checked) .sw:nth-child(-n + 5) .you { display: none; }
+  .dial:has(.t1 input:checked) .sw:nth-child(-n + 1) .ceo,
+  .dial:has(.t2 input:checked) .sw:nth-child(-n + 2) .ceo,
+  .dial:has(.t3 input:checked) .sw:nth-child(-n + 3) .ceo,
+  .dial:has(.t4 input:checked) .sw:nth-child(-n + 4) .ceo,
+  .dial:has(.t5 input:checked) .sw:nth-child(-n + 5) .ceo { display: block; }
+
+  @media (max-width: 900px) {
+    .read, .never { grid-template-columns: 1fr; }
+    .state { border-right: 0; border-bottom: 1px solid var(--color-line); }
+    .motto { grid-column: 1; }
+    .sw { grid-template-columns: 1fr; }
+    .sw p { grid-column: 1; grid-row: auto; }
+  }
+  @media (max-width: 560px) {
+    .tl { font-size: 11px; letter-spacing: -0.01em; }
+    .knob { width: 24px; height: 24px; }
+    .rail { top: 10px; }
+  }
+</style>

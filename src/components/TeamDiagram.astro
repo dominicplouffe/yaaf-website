@@ -1,0 +1,200 @@
+---
+/**
+ * Why a team and not one agent, drawn as the seats of a company you can
+ * click. Each specialist seat is a real role from the library, and its main
+ * sentence is that role's own description; the "bound by" line is a rule the
+ * server enforces on it, never a hope about how it behaves.
+ *
+ * Radios and :has(), no script. With the CSS off it reads as five labelled
+ * panels in order.
+ */
+import { getEntry } from "astro:content";
+
+const role = async (slug: string) => {
+  const r = await getEntry("roles", slug);
+  if (!r) throw new Error(`TeamDiagram: no role “${slug}” in the library`);
+  return r.data;
+};
+const [ceo, researcher, engineer, adversary] = await Promise.all(["ceo", "researcher", "engineer", "adversary"].map(role));
+
+const SEATS = [
+  {
+    id: "chair",
+    name: "Chairman",
+    who: "You",
+    tag: "Goals · Rules · Authority",
+    hue: "gold",
+    lead: "You decide what success means, and how much of the deciding to hand over.",
+    does: [
+      "Sets the goal, the budget and the date.",
+      "Owns the constitution. No agent can edit a rule.",
+      "Delegates authority to the CEO, and takes it back with one amendment.",
+    ],
+    bound: "Your buttons never close: pause, stop, veto, amend and reopen work at every setting.",
+  },
+  {
+    id: "ceo",
+    name: "AI CEO",
+    who: ceo.name,
+    tag: "Plans · Coordinates · Evaluates",
+    hue: "rose",
+    lead: ceo.description,
+    does: [
+      "Breaks the goal into small, testable work.",
+      "Hires the teams the work needs, and says why.",
+      "Kills what the evidence kills.",
+    ],
+    bound: "It cannot edit the constitution, invent a delivery date, or remove its own last critic.",
+  },
+  {
+    id: "research",
+    name: "Research",
+    who: researcher.name,
+    tag: "Find evidence",
+    hue: "sky",
+    lead: researcher.description,
+    does: ["Answers the question its task states, from what it actually read."],
+    bound: "A claim counts only with evidence the platform fetches, hashes and keeps.",
+  },
+  {
+    id: "build",
+    name: "Build",
+    who: engineer.name,
+    tag: "Execute work",
+    hue: "mint",
+    lead: engineer.description,
+    does: ["Builds the smallest thing that makes the success test pass."],
+    bound: "Its work is done when the platform has run the test, not when it says so.",
+  },
+  {
+    id: "critic",
+    name: "Critic",
+    who: adversary.name,
+    tag: "Challenge results",
+    hue: "violet",
+    lead: adversary.description,
+    does: ["Hired on purpose: one agent checking its own work has the same blind spots twice."],
+    bound: "A critic seat can veto the work it checks. The CEO cannot fire the last one.",
+  },
+];
+const [chair, lead, ...desks] = SEATS;
+---
+<div class="td">
+  {SEATS.map((s, i) => <input class="sr" type="radio" name="td-seat" id={`td-${s.id}`} checked={i === 1} aria-label={`${s.name}: ${s.tag}`} />)}
+
+  <div class="chart" aria-hidden="true">
+    <label for={`td-${chair.id}`} class={`seat h-${chair.hue} k-${chair.id}`}><b>{chair.name}</b><small>{chair.tag}</small></label>
+    <span class="stem"></span>
+    <label for={`td-${lead.id}`} class={`seat h-${lead.hue} k-${lead.id}`}><b>{lead.name}</b><small>{lead.tag}</small></label>
+    <span class="stem"></span>
+    <span class="rail"></span>
+    <div class="desks">
+      {desks.map((s) => (
+        <label for={`td-${s.id}`} class={`seat h-${s.hue} k-${s.id}`}><b>{s.name}</b><small>{s.tag}</small></label>
+      ))}
+    </div>
+    <p class="base">Shared goals · Evidence · Memory · Accountability</p>
+    <p class="hint">Click a seat</p>
+  </div>
+
+  <div class="panels">
+    {SEATS.map((s) => (
+      <div class={`panel h-${s.hue} p-${s.id}`}>
+        <p class="eyebrow">{s.name} · {s.tag}</p>
+        <h3>{s.who}</h3>
+        <p class="lead">{s.lead}</p>
+        <ul>{s.does.map((d) => <li>{d}</li>)}</ul>
+        <p class="bound"><span>Bound by</span>{s.bound}</p>
+      </div>
+    ))}
+  </div>
+</div>
+
+<style>
+  .td { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); border: 1px solid var(--color-line); }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  .chart {
+    padding: 2.4rem var(--inset) 1.6rem;
+    border-right: 1px solid var(--color-line);
+    background: radial-gradient(90% 60% at 50% 0%, color-mix(in srgb, var(--color-violet) 14%, transparent), transparent 70%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .seat {
+    display: block;
+    width: min(100%, 300px);
+    padding: 14px 16px;
+    text-align: center;
+    cursor: pointer;
+    border: 1px solid color-mix(in srgb, var(--hue) 50%, transparent);
+    background: color-mix(in srgb, var(--hue) 8%, var(--color-page));
+    transition: background 0.25s, border-color 0.25s, transform 0.25s var(--ease);
+  }
+  .seat:hover { background: color-mix(in srgb, var(--hue) 16%, var(--color-page)); transform: translateY(-2px); }
+  .seat b { display: block; font-weight: 550; font-size: 1.1rem; letter-spacing: -0.02em; color: var(--hue); }
+  .seat small { display: block; margin-top: 4px; font-size: 13px; color: var(--color-ink-2); }
+  .stem { width: 1px; height: 26px; background: var(--color-line-strong); }
+  .rail { width: calc(200% / 3); height: 1px; background: var(--color-line-strong); }
+  .desks { width: 100%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .desks .seat { width: 100%; position: relative; margin-top: 26px; }
+  .desks .seat::before { content: ""; position: absolute; left: 50%; top: -27px; width: 1px; height: 26px; background: var(--color-line-strong); }
+  .base {
+    width: 100%;
+    margin: 22px 0 0;
+    padding: 12px;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #14051f;
+    background: var(--dawn);
+  }
+  .hint { margin: 14px 0 0; font-size: 12.5px; color: var(--color-muted); }
+
+  .panels { padding: 2.2rem var(--inset); }
+  .panel { display: none; }
+  .panel .eyebrow { margin: 0; color: var(--hue); }
+  .panel h3 { margin: 0.8rem 0 0; font-size: 1.6rem; line-height: 1.15; letter-spacing: -0.035em; }
+  .panel h3::after { content: ""; display: block; width: 36px; height: 3px; margin-top: 0.9rem; background: var(--hue); }
+  .lead { margin: 1rem 0 0; font-size: 16px; line-height: 1.55; color: var(--color-ink); }
+  .panel ul { margin: 1rem 0 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+  .panel li { position: relative; padding-left: 16px; font-size: 15px; line-height: 1.5; color: var(--color-ink-2); }
+  .panel li::before { content: ""; position: absolute; left: 0; top: 0.62em; width: 7px; height: 1px; background: var(--hue); }
+  .bound { margin: 1.4rem 0 0; padding-top: 1rem; border-top: 1px solid var(--color-line); font-size: 14.5px; line-height: 1.5; color: var(--color-ink-2); }
+  .bound span { display: block; margin-bottom: 4px; font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-muted); }
+
+  /* The selected seat: its panel shows, its box lights up. */
+  .td:has(#td-chair:checked) .p-chair,
+  .td:has(#td-ceo:checked) .p-ceo,
+  .td:has(#td-research:checked) .p-research,
+  .td:has(#td-build:checked) .p-build,
+  .td:has(#td-critic:checked) .p-critic { display: block; }
+  .td:has(#td-chair:checked) .k-chair,
+  .td:has(#td-ceo:checked) .k-ceo,
+  .td:has(#td-research:checked) .k-research,
+  .td:has(#td-build:checked) .k-build,
+  .td:has(#td-critic:checked) .k-critic {
+    background: color-mix(in srgb, var(--hue) 22%, var(--color-page));
+    border-color: var(--hue);
+    box-shadow: 0 0 0 1px var(--hue), 0 12px 40px -16px var(--hue);
+  }
+  .td:has(#td-chair:focus-visible) .k-chair,
+  .td:has(#td-ceo:focus-visible) .k-ceo,
+  .td:has(#td-research:focus-visible) .k-research,
+  .td:has(#td-build:focus-visible) .k-build,
+  .td:has(#td-critic:focus-visible) .k-critic { outline: 2px solid var(--color-accent-hi); outline-offset: 3px; }
+
+  @media (max-width: 1024px) {
+    .td { grid-template-columns: 1fr; }
+    .chart { border-right: 0; border-bottom: 1px solid var(--color-line); }
+  }
+  @media (max-width: 560px) {
+    .desks { gap: 6px; }
+    .desks .seat { padding: 10px 6px; }
+    .desks .seat b { font-size: 0.95rem; }
+    .desks .seat small { font-size: 11.5px; }
+  }
+</style>

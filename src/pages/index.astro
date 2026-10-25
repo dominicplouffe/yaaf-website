@@ -6,6 +6,8 @@ import Button from "../components/Button.astro";
 import Shot from "../components/Shot.astro";
 import Cmd from "../components/Cmd.astro";
 import CompanyChart from "../components/CompanyChart.astro";
+import TeamDiagram from "../components/TeamDiagram.astro";
+import AutonomyDial from "../components/AutonomyDial.astro";
 import { SITE, REPO_URL } from "../site.config.mjs";
 import manifest from "../content/manifest.json";
 import runtimes from "../content/runtimes.json";
@@ -24,6 +26,25 @@ const examples = await getCollection("examples");
 const providers = runtimes.providers.map((p) => p.label.replace(/ \(.*\)$/, ""));
 const harnesses = runtimes.harnesses.map((h) => h.label.replace(/ \(.*\)$/, ""));
 const SHOWN = 12;
+
+const SHIFT = [
+  { k: "Models", v: "Answer questions." },
+  { k: "Agents", v: "Complete tasks." },
+  { k: "Teams", v: "Pursue outcomes." },
+];
+
+const TRAIL = [
+  { k: "Source", q: "Where did it come from?", v: "External evidence is fetched, hashed and snapshotted by the server, never taken at the agent's word." },
+  { k: "Work", q: "How was it used?", v: "Nothing closes without observed evidence. “Done” on its own is refused." },
+  { k: "Review", q: "Was it challenged?", v: "Critic seats can veto. A random sample of finished work is dealt to you to check." },
+  { k: "Decision", q: "What can we defend?", v: "Every decision, yours or the CEO's, is on the record with its reason and can be reversed." },
+];
+
+const HORIZON = [
+  { k: "A task", v: "A project that delivers one result and stops: a question answered with sources, a fix, a report.", when: "Today", slug: "02-settle-an-argument", ex: "Settle an argument, with sources" },
+  { k: "An operation", v: "A project that keeps running: woken by the world at 3am, a standup each morning, a register that stays current.", when: "Today", slug: "03-a-desk-the-world-wakes", ex: "A desk the world wakes up" },
+  { k: "A business", v: "Today a crew can test one idea for thirty days. Organizations that run a business with extensive autonomy, inside the boundaries their owner sets, are where this is going. We aren't there yet.", when: "The long view", slug: "09-one-idea-thirty-days", ex: "One idea, thirty days" },
+];
 
 const YESTERDAY = [
   "You type, it answers, you check. You are the loop.",
@@ -148,23 +169,30 @@ const VS = [
       <p class="tags">
         <span class="t1">Open source</span><span class="t2">Apache-2.0</span><span class="t3">Runs on your machine</span><span class="t4">Any model</span>
       </p>
+      <p class="belief">Great ideas deserve <span class="dawn-text">great teams.</span></p>
       <h1>
         <span class="l1">Build a company.</span>
         <span class="l2">Hire a CEO.</span>
         <span class="l3 dawn-text">Let the team work.</span>
       </h1>
       <div class="hero-row">
-        <p class="sub">
-          yaaf is <strong>the harness for teams of harnesses</strong>. Claude Code, Codex and Gemini CLI each drive one
-          agent. yaaf gives every one of them a job on an org chart, a CEO to answer to, a budget and a deadline,
-          and runs the company under rules no agent can talk its way around. <strong>You're the chairman.</strong>
-        </p>
+        <div class="sub">
+          <p>
+            Tell yaaf what you want to accomplish. An AI CEO assembles specialists and manages the work, the platform
+            checks every result, and the company remembers what it learns. <strong>You decide how much control to keep.</strong>
+          </p>
+          <p class="sub-2">
+            yaaf is <strong>the harness for teams of harnesses</strong>. Claude Code, Codex and Gemini CLI each drive one
+            agent; yaaf gives each of them a job, a CEO to answer to, a budget and a deadline, under rules no agent can
+            talk its way around.
+          </p>
+        </div>
         <div class="hero-act">
           <div class="btns">
-            <Button href={REPO_URL} primary>Get yaaf on GitHub</Button>
+            <Button href="#how" primary>See how it works</Button>
             <Button href="#start">Rehearse a company for $0</Button>
           </div>
-          <p class="hint">Apache-2.0. No account, no hosted tier, no telemetry. Your agents pay your model provider, at their prices.</p>
+          <p class="hint"><a href={REPO_URL}>Get yaaf on GitHub</a>. Apache-2.0. No account, no hosted tier, no telemetry. Your agents pay your model provider, at their prices.</p>
         </div>
       </div>
     </div>
@@ -186,6 +214,30 @@ const VS = [
     </div>
   </section>
 
+  <!-- ============ 1. WHY YAAF EXISTS ============ -->
+  <Section id="why" eyebrow="Why yaaf exists" title="Great ideas deserve great teams."
+    lede="The world is full of people with ideas they cannot pursue. Not because the ideas aren't good enough, but because bringing one to life takes specialists, leadership and coordination. <strong>Building that team has always been the barrier.</strong>">
+    <div class="shift">
+      {SHIFT.map((x, i) => (
+        <div class:list={["step", { last: i === SHIFT.length - 1 }]}>
+          <span class="eyebrow">0{i + 1}</span>
+          <h3>{x.k}</h3>
+          <p>{x.v}</p>
+        </div>
+      ))}
+    </div>
+    <div class="belief-2">
+      <p class="b-l">Intelligence is not enough.<br /><span class="dawn-text">Organization makes it useful.</span></p>
+      <p class="b-r">
+        A researcher finds evidence. A builder executes. A critic challenges the result. A CEO brings it together, and
+        you decide what success means. No single seat needs to know everything. Click a seat to see what it owns and
+        the rule that binds it.
+      </p>
+    </div>
+    <TeamDiagram />
+    <p class="note"><a href="/manifesto/">Why we built it: read the manifesto →</a></p>
+  </Section>
+
   <!-- ============ YESTERDAY / TODAY ============ -->
   <Section eyebrow="Yesterday → today" title="Yesterday you babysat an agent. Today you run a company.">
     <div class="eras">
@@ -200,6 +252,22 @@ const VS = [
         <ul>{TODAY.map((x) => <li>{x}</li>)}</ul>
       </div>
     </div>
+  </Section>
+
+  <!-- ============ FOUNDING ============ -->
+  <!-- ============ 2. HOW IT WORKS ============ -->
+  <Section id="how" eyebrow="How it works" title="From one paragraph to a staffed company."
+    lede="Say it in the dashboard, or in the Claude window you already have open.">
+    <div class="cells hued">
+      {FOUND.map((s, i) => (
+        <div class="cell">
+          <span class="eyebrow">0{i + 1}</span>
+          <h3>{s.k}</h3>
+          <p>{s.v}</p>
+        </div>
+      ))}
+    </div>
+    <p class="note"><a href="/how-it-works/">How it works, in detail →</a></p>
   </Section>
 
   <!-- ============ THE HARNESS ============ -->
@@ -226,21 +294,6 @@ const VS = [
     </div>
   </Section>
 
-  <!-- ============ FOUNDING ============ -->
-  <Section eyebrow="Founding day" title="From one paragraph to a staffed company."
-    lede="Say it in the dashboard, or in the Claude window you already have open.">
-    <div class="cells hued">
-      {FOUND.map((s, i) => (
-        <div class="cell">
-          <span class="eyebrow">0{i + 1}</span>
-          <h3>{s.k}</h3>
-          <p>{s.v}</p>
-        </div>
-      ))}
-    </div>
-    <p class="note"><a href="/how-it-works/">How it works, in detail →</a></p>
-  </Section>
-
   <!-- ============ TOUR ============ -->
   <Section id="tour" eyebrow="The real thing" title="Then you chair the board."
     lede="Check in when you want. The company keeps working when you don't.">
@@ -259,9 +312,25 @@ const VS = [
     <p class="note">Check in from the app, the terminal (<code>yaaf status</code>), Slack, a daily letter, or <a href="/docs/mcp-server/">Claude over MCP</a>.</p>
   </Section>
 
-  <!-- ============ WHY ============ -->
-  <Section eyebrow="Why it finishes" title="Agents start strong. A company makes them finish."
-    lede="Left alone, agents say they're done when they aren't, wander off and run up the bill. yaaf manages them the way a good company would.">
+  <!-- ============ 3. YOUR LEVEL OF CONTROL ============ -->
+  <Section id="control" eyebrow="Your level of control" title="You decide how much authority to delegate."
+    lede="Some chairmen approve every important decision. Others set a goal and a budget and let the CEO run. Both belong in yaaf. <strong>Move the dial.</strong>">
+    <AutonomyDial />
+    <p class="note">The dial is five real switches in the project's constitution, which no agent can edit. <a href="/docs/autonomy/">How autonomy works →</a></p>
+  </Section>
+
+  <!-- ============ 4. WHY TRUST YAAF ============ -->
+  <Section id="trust" eyebrow="Why trust yaaf" title="Trust is earned through evidence."
+    lede="A confident answer is not a correct one, and one agent agreeing with another proves nothing. Left alone, agents say they're done when they aren't. yaaf gives them checks and balances.">
+    <div class="trail">
+      {TRAIL.map((t, i) => (
+        <div class="tr">
+          <span class="eyebrow">0{i + 1} · {t.k}</span>
+          <h3>{t.q}</h3>
+          <p>{t.v}</p>
+        </div>
+      ))}
+    </div>
     <div class="cells hued">
       {WHY.map((r, i) => (
         <div class="cell">
@@ -274,8 +343,20 @@ const VS = [
   </Section>
 
   <!-- ============ USE CASES ============ -->
-  <Section eyebrow="Use cases" title="What will your company do?"
-    lede={`Start from one of ${crews.length} ready-made teams, or describe your own.`}>
+  <!-- ============ 5. WHAT BECOMES POSSIBLE ============ -->
+  <Section id="possible" eyebrow="What becomes possible" title="From a task, to an operation, to one day a business."
+    lede="Some companies exist for an afternoon. Others run continuously. The last column is a direction, not a feature.">
+    <div class="horizon">
+      {HORIZON.map((h, i) => (
+        <a class:list={["hz-c", { far: i === HORIZON.length - 1 }]} href={`/examples/${h.slug}/`}>
+          <span class="when">{h.when}</span>
+          <h3>{h.k}</h3>
+          <p>{h.v}</p>
+          <span class="go">{h.ex} →</span>
+        </a>
+      ))}
+    </div>
+    <h3 class="uses-h">What will your company do? Start from one of {crews.length} ready-made teams, or describe your own.</h3>
     <div class="cells c3 hued">
       {USES.map((u) => (
         <a class="cell" href={`/examples/${u.slug}/`}>
@@ -403,6 +484,58 @@ const VS = [
   .hero-act { grid-column: 3 / span 2; display: grid; gap: 14px; }
   .hint { margin: 0; font-size: 13.5px; color: var(--color-ink-2); max-width: 46ch; }
   .chartwrap { margin-top: 5.5rem; padding-bottom: 6rem; }
+
+  .belief {
+    margin: 0 0 1.4rem;
+    padding-left: var(--inset);
+    font-size: clamp(1.25rem, 0.9rem + 1.2vw, 1.9rem);
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    font-weight: 450;
+    color: var(--color-ink);
+  }
+  .sub-2 { margin: 1rem 0 0; font-size: 15.5px; line-height: 1.55; color: var(--color-ink-2); }
+  .sub p:first-child { margin: 0; }
+  .hint a { color: var(--color-accent-hi); text-decoration: none; }
+  .hint a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+  /* ---------- why yaaf exists ---------- */
+  .shift { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid var(--color-line); }
+  .step { position: relative; padding: 1.6rem var(--inset) 1.8rem; border-right: 1px solid var(--color-line); background: var(--color-old-bg); }
+  .step:nth-child(2) { background: color-mix(in srgb, var(--color-old-bg) 50%, var(--color-page)); }
+  .step.last { border-right: 0; background: linear-gradient(125deg, var(--color-gold) 0%, var(--color-sun) 32%, var(--color-rose) 66%, var(--color-violet) 100%); }
+  .step:not(.last)::after { content: "→"; position: absolute; right: -0.65em; top: 50%; transform: translateY(-50%); z-index: 1; font-size: 1.2rem; color: var(--color-ink-2); background: var(--color-page); line-height: 1; padding: 4px 2px; }
+  .step .eyebrow { color: var(--color-old); }
+  .step h3 { margin: 0.8rem 0 0; font-size: 1.7rem; letter-spacing: -0.04em; color: #b0b0b0; }
+  .step p { margin: 0.4rem 0 0; color: #9a9a9a; }
+  .step.last .eyebrow, .step.last h3, .step.last p { color: #14051f; }
+  .belief-2 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px 0; margin: 3.4rem 0 2.4rem; }
+  .belief-2 > * { padding-inline: var(--inset); margin: 0; }
+  .b-l { grid-column: 1 / span 2; font-size: clamp(1.6rem, 1rem + 1.8vw, 2.6rem); line-height: 1.05; letter-spacing: -0.045em; font-weight: 500; }
+  .b-r { grid-column: 3 / span 2; color: var(--color-ink-2); font-size: 16px; line-height: 1.6; align-self: end; }
+
+  /* ---------- why trust: the evidence trail ---------- */
+  .trail { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-bottom: 2.4rem; border: 1px solid var(--color-line); background: color-mix(in srgb, var(--color-sky) 4%, var(--color-page)); }
+  .tr { position: relative; padding: 1.6rem var(--inset) 1.8rem; border-right: 1px solid var(--color-line); }
+  .tr:last-child { border-right: 0; }
+  .tr:not(:last-child)::after { content: "→"; position: absolute; right: -0.65em; top: 1.5rem; z-index: 1; color: var(--color-sky); background: var(--color-page); line-height: 1; padding: 4px 2px; }
+  .tr .eyebrow { color: var(--color-sky); }
+  .tr h3 { margin: 0.8rem 0 0; font-size: 1.25rem; letter-spacing: -0.03em; }
+  .tr p { margin: 0.6rem 0 0; font-size: 15px; line-height: 1.55; color: var(--color-ink-2); }
+
+  /* ---------- what becomes possible ---------- */
+  .horizon { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid var(--color-line); }
+  .hz-c { position: relative; display: block; padding: 1.8rem var(--inset) 2rem; border-right: 1px solid var(--color-line); color: inherit; text-decoration: none; background: color-mix(in srgb, var(--color-mint) 6%, var(--color-page)); transition: background 0.25s; }
+  .hz-c:hover { background: color-mix(in srgb, var(--color-mint) 12%, var(--color-page)); }
+  .hz-c:last-child { border-right: 0; }
+  .hz-c.far { background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--color-violet) 7%, var(--color-page)) 0 10px, var(--color-page) 10px 20px); }
+  .hz-c.far:hover { background: color-mix(in srgb, var(--color-violet) 10%, var(--color-page)); }
+  .when { display: inline-block; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; padding: 3px 8px; color: #14051f; background: var(--color-mint); }
+  .far .when { background: transparent; color: var(--color-violet); border: 1px dashed var(--color-violet); }
+  .hz-c h3 { margin: 1rem 0 0; font-size: 1.6rem; letter-spacing: -0.04em; }
+  .hz-c p { margin: 0.6rem 0 0; font-size: 15px; line-height: 1.55; color: var(--color-ink-2); }
+  .hz-c .go { display: inline-block; margin-top: 1rem; font-size: 14px; color: var(--color-accent-hi); }
+  .uses-h { margin: 3.4rem 0 1.4rem; padding-inline: var(--inset); font-size: 1.25rem; letter-spacing: -0.025em; font-weight: 500; color: var(--color-ink-2); max-width: 60ch; }
 
   /* ---------- works with ---------- */
   .runs-in { border-top: 1px solid var(--color-line); padding-block: 2.2rem; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px 0; align-items: center; }
@@ -562,6 +695,14 @@ const VS = [
     .copy, .pic, .flip .copy, .flip .pic { grid-column: 1; grid-row: auto; }
     .copy { padding-bottom: 0; }
     .eras { grid-template-columns: 1fr; }
+    .b-l, .b-r { grid-column: 1 / -1; }
+    .trail { grid-template-columns: 1fr 1fr; }
+    .tr:nth-child(2) { border-right: 0; }
+    .tr:nth-child(-n + 2) { border-bottom: 1px solid var(--color-line); }
+    .tr:nth-child(2)::after { display: none; }
+    .horizon { grid-template-columns: 1fr; }
+    .hz-c { border-right: 0; border-bottom: 1px solid var(--color-line); }
+    .hz-c:last-child { border-bottom: 0; }
     .layer-row { grid-template-columns: 3rem minmax(0, 1fr); }
     .layer-row p { grid-column: 2; }
     .layer-row.lv0 { margin-inline: 8%; }
@@ -576,5 +717,12 @@ const VS = [
     .layer-row p { grid-column: 1; }
     .layer-row.lv0, .layer-row.lv1 { margin-inline: 0; }
     .sun { top: 46rem; }
+    .shift { grid-template-columns: 1fr; }
+    .step { border-right: 0; border-bottom: 1px solid var(--color-line); }
+    .step:not(.last)::after { content: "↓"; right: auto; left: 50%; top: auto; bottom: -0.75em; transform: translateX(-50%); }
+    .trail { grid-template-columns: 1fr; }
+    .tr { border-right: 0; border-bottom: 1px solid var(--color-line); }
+    .tr:last-child { border-bottom: 0; }
+    .tr:not(:last-child)::after { display: block; content: "↓"; right: auto; left: var(--inset); top: auto; bottom: -0.75em; }
   }
 </style>

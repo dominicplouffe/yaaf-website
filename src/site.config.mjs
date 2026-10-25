@@ -30,6 +30,7 @@ export const SITE = {
 
 export const NAV = [
   { label: "How it works", href: "/how-it-works/" },
+  { label: "Manifesto", href: "/manifesto/" },
   { label: "Harnesses", href: "/runtimes/" },
   { label: "Use cases", href: "/examples/" },
   { label: "Features", href: "/features/" },
