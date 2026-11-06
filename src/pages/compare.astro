@@ -1,0 +1,440 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Section from "../components/Section.astro";
+import CompareMatrix, { type Group } from "../components/CompareMatrix.astro";
+import { REPO_URL } from "../site.config.mjs";
+import manifest from "../content/manifest.json";
+
+const roles = await getCollection("roles");
+const crews = await getCollection("crews");
+const examples = await getCollection("examples");
+const since = new Date(manifest.history.firstCommit).toLocaleDateString("en-US", { month: "long", year: "numeric", timeZone: "UTC" });
+
+/**
+ * The field, checked 6 November 2026. CrewAI's and Paperclip's columns are
+ * from their own repositories (docs, README, roadmap). The hosted products'
+ * are from their public docs and pages. Prices that their own pages disagree
+ * about are left out rather than picked between. "Not in its docs" means it
+ * was looked for and not found, which is not the same as "it can't".
+ */
+const PRODUCTS = ["yaaf", "Paperclip", "CrewAI", "Relevance AI", "Nagent", "Sintra"];
+const FIELD: Group[] = [
+  { title: "What it is", hue: "sky", rows: [
+    { q: "Kind of product", a: [
+      [null, "Open source (Apache-2.0). Runs on your own machine."],
+      [null, "Open source (MIT). Self-hosted; a cloud version is on a waitlist."],
+      [null, "Open-source Python library (MIT), plus a paid platform."],
+      [null, "Hosted service."],
+      [null, "Hosted service, with a private-cloud option."],
+      [null, "Hosted service, on the web and iOS."],
+    ]},
+    { q: "What you pay", a: [
+      [null, "Nothing. Your agents pay your model provider."],
+      [null, "Nothing. Your agents pay your model provider."],
+      [null, "The library is free. The platform has a small free tier, then a quote."],
+      [null, "Usage-based plans."],
+      [null, "Monthly plans."],
+      [null, "A monthly plan paid in credits."],
+    ]},
+    { q: "Built for", a: [
+      [null, "One person running long projects while away."],
+      [null, "Developers and solo builders."],
+      [null, "Python developers and enterprise teams."],
+      [null, "Sales and operations teams."],
+      [null, "Marketing and sales teams."],
+      [null, "Small businesses."],
+    ]},
+  ]},
+  { title: "The team", hue: "violet", rows: [
+    { q: "An org chart with a CEO", a: [
+      ["yes", "A CEO, teams and leads. The CEO hires and stands teams down."],
+      ["yes", "An org chart with a CEO. Every task traces back to a goal."],
+      ["part", "One manager agent over its workers."],
+      ["part", "Teams of agents, with no manager."],
+      ["yes", "A lead agent over department chiefs."],
+      ["no", "Separate helpers that don't hand work to each other."],
+    ]},
+    { q: "Plans from a goal", a: [
+      ["yes", "Requirements with tests, in stages. The plan has to fit the money."],
+      ["yes", "Goals, then projects, then issues."],
+      ["part", "A planning step before each run."],
+      ["unk", "Not described."],
+      ["unk", "Not described."],
+      ["no", "Not in its docs."],
+    ]},
+    { q: "Claude Code and Codex as workers", a: [
+      ["yes", "Claude Code, Codex, Gemini CLI and OpenCode, plus its own loop."],
+      ["yes", "The widest list: also Cursor, OpenClaw, and any HTTP or shell agent."],
+      ["no", "No. Coding agents can build CrewAI projects instead."],
+      ["no", "No. Claude Code can call Relevance, not the reverse."],
+      ["unk", "Not described."],
+      ["no", "No."],
+    ]},
+    { q: "A model per seat", a: [
+      ["yes", "Any of 20+ providers, chosen per seat."],
+      ["yes", "Chosen per agent."],
+      ["yes", "Chosen per agent, from most providers."],
+      ["yes", "Chosen per agent. Bring your own keys."],
+      ["part", "Several providers."],
+      ["no", "The models aren't named or chosen."],
+    ]},
+  ]},
+  { title: "Trust", hue: "gold", rows: [
+    { q: "Who decides it's done", a: [
+      ["yes", "The platform. It runs the test and fetches the evidence itself."],
+      ["part", "Review stages and watchdogs you set up."],
+      ["part", "Guardrails. Another model can grade the output."],
+      ["part", "Evals score quality on test cases."],
+      ["unk", "Not described."],
+      ["no", "Not in its docs."],
+    ]},
+    { q: "Money that stops itself", a: [
+      ["yes", "Every run metered. At the wall, the project pauses itself."],
+      ["yes", "Warning and hard-stop limits. Its README notes a stop can lag."],
+      ["part", "A cost policy that emails you. It doesn't stop spend."],
+      ["part", "Usage is metered."],
+      ["yes", "Per-agent credit caps, checked before each paid call."],
+      ["part", "Prepaid credits run out."],
+    ]},
+    { q: "Your sign-off", a: [
+      ["yes", "Spends over a line wait for you. Unanswered ones deny themselves."],
+      ["yes", "The board approves hires and strategy. Tools can “ask first”."],
+      ["yes", "Approve-or-reject steps, and email review on the platform."],
+      ["yes", "Approvals and escalations."],
+      ["yes", "An autonomy ladder. Each step up needs an admin."],
+      ["part", "Approval before actions that write."],
+    ]},
+    { q: "A delivery date", a: [
+      ["yes", "Projected from measured pace. A slip freezes new scope."],
+      ["no", "Not in its docs."],
+      ["no", "Not in its docs."],
+      ["no", "Not in its docs."],
+      ["no", "Not in its docs."],
+      ["no", "Not in its docs."],
+    ]},
+    { q: "A rehearsal before you spend", a: [
+      ["yes", "$0, on scripted agents: where it stalls, what it costs, how often it needs you."],
+      ["no", "A test drive runs on your own key."],
+      ["part", "Replays and simulated triggers."],
+      ["part", "Test scenarios before release."],
+      ["no", "Not in its docs."],
+      ["no", "Not in its docs."],
+    ]},
+    { q: "The record", a: [
+      ["yes", "Every decision and refusal, plus a one-page receipt."],
+      ["yes", "An activity log of every action."],
+      ["part", "Run traces."],
+      ["part", "A task view and run logs."],
+      ["yes", "An append-only log."],
+      ["no", "Not in its docs."],
+    ]},
+  ]},
+  { title: "Day to day", hue: "mint", rows: [
+    { q: "Schedules and triggers", a: [
+      ["yes", "Heartbeats, set times per agent, cycles, and webhooks that wake an agent."],
+      ["yes", "Routines on a schedule, a webhook or an API call."],
+      ["part", "App triggers on the platform."],
+      ["yes", "Schedules, webhooks and app triggers."],
+      ["unk", "Not described."],
+      ["part", "Scheduled tasks."],
+    ]},
+    { q: "Where agents run", a: [
+      ["yes", "A fresh Docker container per run, with a browser."],
+      ["yes", "E2B, Cloudflare, Daytona, Modal or Kubernetes."],
+      ["part", "Code tools on E2B or Daytona."],
+      [null, "On its own servers."],
+      [null, "On its own servers."],
+      [null, "On its own servers."],
+    ]},
+    { q: "Knowledge", a: [
+      ["part", "Curated project and team memory. No document store."],
+      ["part", "Memory plugins, off by default."],
+      ["yes", "Memory, plus search over your documents."],
+      ["yes", "Knowledge bases."],
+      ["yes", "Shared memory and knowledge."],
+      ["yes", "One shared brand “brain”."],
+    ]},
+    { q: "Apps it connects to", a: [
+      ["part", "Any MCP server, Slack, GitHub and email. No catalog."],
+      ["yes", "An MCP gateway, plugins and 16+ apps."],
+      ["yes", "40+ tools and about 30 apps."],
+      ["yes", "2,000+ integrations."],
+      ["yes", "Gmail, Slack, HubSpot, Salesforce and more."],
+      ["yes", "1,000+, through a third party."],
+    ]},
+    { q: "MCP", a: [
+      ["yes", "Uses MCP servers, and is one: 32 tools to chair it from Claude."],
+      ["yes", "An MCP tool gateway."],
+      ["yes", "Uses MCP servers. Also speaks A2A."],
+      ["yes", "Both ways."],
+      ["unk", "Not described."],
+      ["unk", "Not described."],
+    ]},
+    { q: "Where you talk to it", a: [
+      [null, "A web dashboard, Slack, email, or any MCP client."],
+      [null, "A web app and chat. Slack, Discord and Telegram in testing."],
+      [null, "An API. Slack and Teams through a partner."],
+      [null, "Chat, Slack, email, phone and voice."],
+      [null, "A shared workspace, Slack and Gmail."],
+      [null, "Chat, on the web and iOS."],
+    ]},
+    { q: "Ready-made teams", a: [
+      ["part", `${roles.length} roles, ${crews.length} teams and ${examples.length} examples. No shared library yet.`],
+      ["part", "Import from GitHub. Its marketplace hasn't launched."],
+      ["yes", "A marketplace on the platform."],
+      ["yes", "A marketplace of 400+ agents."],
+      ["yes", "An agent marketplace."],
+      ["yes", "A helper marketplace."],
+    ]},
+    { q: "Monitoring", a: [
+      ["part", "Run traces, spend charts and a daily briefing. No OpenTelemetry."],
+      ["yes", "Cost dashboards. OpenTelemetry if you turn it on."],
+      ["yes", "Traces, plus 14+ tools like Langfuse and Datadog."],
+      ["part", "A task view and dashboards."],
+      ["part", "Every action logged with its reasoning."],
+      ["unk", "Not described."],
+    ]},
+    { q: "A team signing in", a: [
+      ["part", "Chairman, co-chairs and observers. No single sign-on yet."],
+      ["yes", "Many companies per install, with roles and invites."],
+      ["yes", "Roles and single sign-on, on the paid platform."],
+      ["yes", "Single sign-on and roles. SOC 2."],
+      ["yes", "Roles. ISO 27001."],
+      ["part", "Extra seats."],
+    ]},
+  ]},
+  { title: "Track record", hue: "rose", rows: [
+    { q: "Age and size", a: [
+      [null, `Since ${since}. One maintainer.`],
+      [null, "Since March 2026. 100k+ GitHub stars."],
+      [null, "Since 2023. 60k GitHub stars and enterprise customers."],
+      [null, "Venture-funded; a Series B in 2025."],
+      [null, "Founded in 2024. A small team."],
+      [null, "40,000+ customers in 2025."],
+    ]},
+  ]},
+];
+
+/** Who is ahead where. One cell per product, yaaf first. */
+const LEADS = [
+  { who: "yaaf", what: "Proof that work is done", why: "Only yaaf runs the test itself, owns the delivery date and rehearses a project for $0." },
+  { who: "Paperclip", what: "Agent choice and community", why: "The most harnesses, plugins and cloud sandboxes, and by far the largest community." },
+  { who: "CrewAI", what: "Building in code", why: "The most mature framework: memory, document search, A2A, and monitoring that plugs into everything." },
+  { who: "Relevance AI", what: "Integrations and voice", why: "Thousands of apps, knowledge bases, phone agents, and evals on every change." },
+  { who: "Nagent", what: "Autonomy for business teams", why: "An autonomy ladder agents climb as approvals pile up. The closest idea to yaaf's dial." },
+  { who: "Sintra", what: "A quick start", why: "Cheap, simple helpers a small business can use the same day. Not built for long projects." },
+];
+
+const LEADING = [
+  "The platform, not the agent, marks work done",
+  "A delivery date projected from real pace",
+  "A $0 rehearsal before any money moves",
+  "Spend that stops itself, metered live",
+  "Chaired from Claude through its own MCP server",
+  "No account and no telemetry",
+];
+const BEHIND = [
+  "No shared library of ready-made companies yet",
+  "No document knowledge base",
+  "Far fewer ready-made app connectors",
+  "No single sign-on or OpenTelemetry yet",
+  "A much smaller community, and one maintainer",
+];
+
+/** Paperclip's column is from its own README (paperclipai/paperclip), read in October 2026. */
+const PAPERCLIP = [
+  ["Where agents run", "Anywhere. “If it can receive a heartbeat, it's hired.”", "Claude Code, Codex, Gemini CLI or OpenCode, inside yaaf's sandbox, on yaaf's meter"],
+  ["What “done” means", "A review stage you set up", "The platform ran the test itself"],
+  ["Budgets", "Alerts and hard stops on recorded spend", "Metered live; each run stops at its cap"],
+  ["Before you spend", "A test drive on your API key", "A $0 rehearsal on scripted agents"],
+  ["Deadlines", "Not described in its README", "Projected from pace; slips freeze scope"],
+  ["Critics", "Review stages", "Roles that can veto, and can't be fired"],
+  ["From Claude", "Mobile UI and chat connectors", "An MCP server with 32 tools"],
+  ["Telemetry", "On by default", "None"],
+  ["Setup", "One npx command", "<code>yaaf up</code> on a laptop; Docker and one script on a server"],
+  ["License", "MIT", "Apache-2.0"],
+  ["Maturity", "Since early 2026. Large community.", "Since August 2026. One maintainer."],
+];
+
+const AHEAD = [
+  "Much bigger community and team",
+  "More agents: Cursor, OpenClaw, Hermes and more",
+  "Plugins, a skill studio and cloud sandboxes",
+  "Many companies per install, and a mobile UI",
+  "Faster setup, no Docker",
+];
+const FURTHER = [
+  "Agents can't mark their own work done",
+  "A $0 rehearsal before any money moves",
+  "Goals graded before a project starts",
+  "Spend metered live, not after the fact",
+  "Deadlines based on real pace",
+  "Critics the CEO can't remove",
+  "No telemetry",
+];
+
+const GRADED = [
+  ["Finish line", "weak", "$1M MRR is a number, but whose record proves it?"],
+  ["Who it's for", "missing", "Which users must the app be right for?"],
+  ["Standard", "missing", "Judged against what?"],
+  ["What doesn't count", "missing", "Signups and stars will look like progress."],
+  ["Quality bar", "missing", "When is it good, not just done?"],
+  ["If it fails", "missing", "What is owed if it stalls at $40k?"],
+];
+
+const GLANCE = [
+  ["What it is", "One assistant", "One agent that learns", "A library", "A control plane", "An org with rules"],
+  ["Who picks the next task", "You", "You", "Your code", "Agents and the org chart", "A CEO, inside a checked plan"],
+  ["“Done” means", "You say so", "You say so", "The code returned", "A review passed", "The platform verified it"],
+  ["Cost control", "Your own", "Your own", "Your own", "Budgets and stops", "Live metering and a wall"],
+];
+---
+<BaseLayout title="Compare" description="How yaaf compares to Paperclip, CrewAI, Relevance AI, Nagent and Sintra, feature by feature, and to personal agents and Claude skills, including where the others are ahead.">
+  <section class="page-hero">
+    <div class="shell">
+      <p class="eyebrow">Compare</p>
+      <h1>How yaaf compares.</h1>
+      <p class="lede">Including where others are ahead. One caveat up front: yaaf is a server you run. For a quick, one-off task, that's overkill.</p>
+      <nav class="toc" aria-label="On this page">
+        <a href="#field">The field</a>
+        <a href="#leads">Who leads where</a>
+        <a href="#paperclip">Paperclip</a>
+        <a href="#harnesses">Harnesses</a>
+        <a href="#glance">At a glance</a>
+        <a href="#frameworks">Frameworks</a>
+        <a href="#assistants">Personal agents</a>
+        <a href="#skill">Skills</a>
+      </nav>
+    </div>
+  </section>
+
+  <Section id="field" eyebrow="The field" title="Six ways to put agents to work."
+    lede="The same questions, asked of each. A full circle is a yes, a half is a partial answer, and the words say why.">
+    <CompareMatrix products={PRODUCTS} groups={FIELD} />
+    <p class="note">
+      Checked 6 November 2026. Paperclip and CrewAI from their own repositories; the hosted products from their public docs and pages.
+      Prices their own pages disagree about are left out. <strong>Nagent</strong> is Nagent AI (nagent.ai).{" "}
+      <strong>Clipmart</strong>, Paperclip's planned marketplace for whole companies (now called ClipHub), hasn't launched, so it has no column of its own.
+      Spot something wrong? <a href={`${REPO_URL}/issues`} rel="noopener">Open an issue</a>.
+    </p>
+  </Section>
+
+  <Section id="leads" eyebrow="Who leads where" title="Each one is best at something."
+    lede="yaaf leads on proof. The others lead on reach.">
+    <div class="cells c3 hued leads">
+      {LEADS.map((l) => (
+        <div class:list={["cell", { us: l.who === "yaaf" }]}>
+          <span class="eyebrow">{l.who}</span>
+          <h3>{l.what}</h3>
+          <p>{l.why}</p>
+        </div>
+      ))}
+    </div>
+    <div class="cells c2 sides">
+      <div class="cell blue"><h3>Where yaaf leads the field</h3><ul>{LEADING.map((a) => <li>{a}</li>)}</ul></div>
+      <div class="cell"><h3>Where yaaf is behind</h3><ul>{BEHIND.map((a) => <li>{a}</li>)}</ul></div>
+    </div>
+  </Section>
+
+  <Section id="paperclip" eyebrow="yaaf vs. Paperclip" title="Same org chart. Different idea of trust."
+    lede="Paperclip coordinates agents wherever they run. yaaf runs them itself, so only the platform decides what's done.">
+    <div class="kit-table stack">
+      <table>
+        <thead><tr><th></th><th>Paperclip</th><th class="me">yaaf</th></tr></thead>
+        <tbody>
+          {PAPERCLIP.map(([k, a, b]) => (
+            <tr><th scope="row">{k}</th><td data-label="Paperclip">{a}</td><td class="me" data-label="yaaf" set:html={b} /></tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p class="note">
+      From <a href="https://github.com/paperclipai/paperclip" rel="noopener">Paperclip's README</a>, October 2026.
+      Spot something wrong? <a href={`${REPO_URL}/issues`} rel="noopener">Open an issue</a>.
+    </p>
+
+    <div class="cells c2 sides">
+      <div class="cell"><h3>Where Paperclip is ahead</h3><ul>{AHEAD.map((a) => <li>{a}</li>)}</ul></div>
+      <div class="cell blue"><h3>Where yaaf goes further</h3><ul>{FURTHER.map((a) => <li>{a}</li>)}</ul></div>
+    </div>
+  </Section>
+
+  <Section eyebrow="One goal, graded" title="“Build the #1 AI note-taking app to $1M MRR.”"
+    lede="Paperclip's example goal, checked against yaaf's goal rubric by hand. Not a dig: it's the most common shape of goal, and the shape is the problem.">
+    <div class="kit-table stack">
+      <table>
+        <thead><tr><th>Element</th><th>Grade</th><th>The gap</th></tr></thead>
+        <tbody>
+          {GRADED.map(([k, g, v]) => (
+            <tr>
+              <th scope="row">{k}</th>
+              <td data-label="Grade"><span class:list={["pill", g === "weak" ? "warm" : "dim"]}>{g}</span></td>
+              <td data-label="The gap">{v}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p class="note"><a href="/docs/goal-grammar/">The ten things a good goal needs →</a></p>
+  </Section>
+
+  <Section id="glance" eyebrow="At a glance" title="Five tools, five jobs.">
+    <div class="kit-table stack">
+      <table class="wide">
+        <thead><tr><th></th><th>OpenClaw</th><th>Hermes</th><th>Frameworks</th><th>Paperclip</th><th class="me">yaaf</th></tr></thead>
+        <tbody>
+          {GLANCE.map(([k, a, b, c, d, e]) => (
+            <tr>
+              <th scope="row">{k}</th>
+              <td data-label="OpenClaw">{a}</td><td data-label="Hermes">{b}</td><td data-label="Frameworks">{c}</td>
+              <td data-label="Paperclip">{d}</td><td class="me" data-label="yaaf">{e}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </Section>
+
+  <Section eyebrow="The others" title="Use the right tool.">
+    <div class="cells hued">
+      <div class="cell" id="harnesses">
+        <span class="eyebrow">Claude Code, Codex, Gemini CLI</span>
+        <h3>A harness drives one agent.</h3>
+        <p>yaaf doesn't replace them; it hires them. Each person on the org chart runs in one, and yaaf is the harness around the team.</p>
+      </div>
+      <div class="cell" id="frameworks">
+        <span class="eyebrow">LangGraph, CrewAI, AutoGen</span>
+        <h3>Frameworks build the flow.</h3>
+        <p>yaaf enforces the rules around it. Use a framework while you build. Use yaaf when it has to run for weeks without you.</p>
+      </div>
+      <div class="cell" id="assistants">
+        <span class="eyebrow">OpenClaw, Hermes</span>
+        <h3>Personal agents help you.</h3>
+        <p>One agent, with you present. yaaf is many agents, accountable to each other, while you're away. They can work together over MCP.</p>
+      </div>
+      <div class="cell" id="skill">
+        <span class="eyebrow">Claude skills</span>
+        <h3>A skill does a task.</h3>
+        <p>yaaf runs your skills, checks the result and pays from a capped budget. Use a skill when you're watching and it fits in one sitting.</p>
+      </div>
+    </div>
+  </Section>
+
+  <Section eyebrow="The open question" title="Does a team beat one good agent?">
+    <div class="cells c2">
+      <div class="cell"><p class="big">Nobody has shown it yet, including us. Solo mode runs one agent under the same rules so you can compare.</p></div>
+      <div class="cell"><p class="big">If the team doesn't win on quality, proof, cost and time, the org layer gets shelved. That's written in the plan.</p></div>
+    </div>
+    <p class="note"><a href="/docs/plan/">Read the plan →</a></p>
+  </Section>
+</BaseLayout>
+
+<style>
+  .sides { margin-top: 2.5rem; }
+  .leads .cell h3 { font-size: 1.3rem; }
+  .leads .cell.us h3 { background: var(--dawn); -webkit-background-clip: text; background-clip: text; color: transparent; width: fit-content; }
+  .wide { min-width: 860px; }
+  .big { font-size: 1.15rem !important; color: var(--color-ink) !important; line-height: 1.45 !important; }
+  .kit-table tbody th { white-space: nowrap; }
+</style>

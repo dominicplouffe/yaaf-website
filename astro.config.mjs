@@ -14,10 +14,10 @@ export default defineConfig({
   // because an S3 REST origin will not do it for you.
   build: { format: "directory", inlineStylesheets: "auto" },
   // /why/ became /compare/ when the comparison grew past three questions.
-  // While SHOW_COMPARE is off (src/site.config.mjs) it lands on the home
-  // page's "Why yaaf exists" instead.
+  // If SHOW_COMPARE is turned off (src/site.config.mjs), point it back at the
+  // home page's "Why yaaf exists" (/#why).
   // A static redirect page keeps old links and search results working.
-  redirects: { "/why": "/#why" },
+  redirects: { "/why": "/compare/" },
   integrations: [sitemap({ filter: (page) => !page.includes("/404") && !page.endsWith("/why/") })],
   vite: { plugins: [tailwindcss()] },
   markdown: {

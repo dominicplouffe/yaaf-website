@@ -7,14 +7,13 @@
 export const SITE_URL = "https://yaaf.dplouffe.ca";
 
 /**
- * Off for now: the comparison with other tools (the Compare page, its nav
- * item, the home page's "Why not just use Claude Code?" and the FAQ's
- * Paperclip answer). To bring it back, set this true and rename
- * src/pages/_compare.astro to compare.astro (Astro skips files that start
- * with an underscore), then point the /why redirect in astro.config.mjs back
- * at /compare/.
+ * The comparison with other tools: the Compare page, its nav item, the home
+ * page's "Why not just use Claude Code?" and the FAQ's Paperclip answer. To
+ * hide it again, set this false, rename src/pages/compare.astro to
+ * _compare.astro (Astro skips files that start with an underscore), and point
+ * the /why redirect in astro.config.mjs at /#why.
  */
-export const SHOW_COMPARE = false;
+export const SHOW_COMPARE = true;
 
 /** Set false before the yaaf repo is public: every GitHub CTA becomes a waitlist CTA. */
 export const SOURCE_IS_PUBLIC = true;

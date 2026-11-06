@@ -1,0 +1,149 @@
+---
+/**
+ * The field, side by side: one row per question, one column per product, each
+ * answer a mark and a few words. The mark is the verdict and the words are the
+ * reason, so a reader can disagree with the first by reading the second.
+ *
+ * yaaf sits first, not last as on the smaller tables: this one scrolls
+ * sideways on a tablet, and the column being compared against should never be
+ * the one that scrolls out of view. On a phone each row becomes a card.
+ */
+export type Mark = "yes" | "part" | "no" | "unk";
+export type Answer = [Mark | null, string];
+export interface Row { q: string; a: Answer[] }
+export interface Group { title: string; hue: string; rows: Row[] }
+interface Props { products: string[]; groups: Group[] }
+
+const { products, groups } = Astro.props;
+const SAY: Record<Mark, string> = { yes: "Yes", part: "Partly", no: "No", unk: "Unknown" };
+---
+<div class="legend" aria-hidden="true">
+  {(Object.keys(SAY) as Mark[]).map((m) => (
+    <span><i class:list={["mk", m]}></i>{m === "no" ? "No, or not in its docs" : m === "unk" ? "Not described" : SAY[m]}</span>
+  ))}
+</div>
+
+<div class="kit-table stack matrix">
+  <table>
+    <thead>
+      <tr>
+        <th scope="col"><span class="sr-only">Question</span></th>
+        {products.map((p, i) => <th scope="col" class:list={{ me: i === 0 }}>{p}</th>)}
+      </tr>
+    </thead>
+    {groups.map((g) => (
+      <tbody class={`h-${g.hue}`}>
+        <tr class="grp"><th scope="colgroup" colspan={products.length + 1}><span>{g.title}</span></th></tr>
+        {g.rows.map((r) => (
+          <tr>
+            <th scope="row">{r.q}</th>
+            {r.a.map(([m, t], i) => (
+              <td class:list={{ me: i === 0 }} data-label={products[i]}>
+                {m && <i class:list={["mk", m]} aria-hidden="true"></i>}
+                {m && <span class="sr-only">{SAY[m]}: </span>}
+                <span class="t">{t}</span>
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    ))}
+  </table>
+</div>
+
+<style>
+  /* ---- the four marks: full, half, empty, dashed ---- */
+  .mk {
+    display: inline-block;
+    flex: none;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1.5px solid var(--color-muted);
+    vertical-align: -1px;
+  }
+  .mk.yes { background: var(--color-mint); border-color: var(--color-mint); box-shadow: 0 0 10px -1px color-mix(in srgb, var(--color-mint) 70%, transparent); }
+  .mk.part { border-color: var(--color-gold); background: linear-gradient(90deg, var(--color-gold) 50%, transparent 50%); }
+  .mk.no { border-color: color-mix(in srgb, var(--color-muted) 70%, transparent); }
+  .mk.unk { border-style: dashed; border-color: color-mix(in srgb, var(--color-muted) 55%, transparent); }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 22px;
+    margin: 0 0 1rem;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+  .legend span { display: inline-flex; align-items: center; gap: 8px; }
+
+  /* ---- the table ---- */
+  .matrix table { min-width: 1080px; table-layout: fixed; font-size: 13.5px; }
+  .matrix thead th { font-size: 11.5px; letter-spacing: 0.1em; padding-block: 18px; }
+  .matrix thead th:first-child { width: 170px; }
+  .matrix thead th.me {
+    position: relative;
+    width: 205px;
+    color: var(--color-ink);
+    background: var(--color-surface);
+  }
+  .matrix thead th.me::before {
+    content: "";
+    position: absolute;
+    inset: -1px 0 auto 0;
+    height: 3px;
+    background: var(--dawn);
+  }
+  .matrix tbody th { font-size: 14px; line-height: 1.35; }
+  .matrix tbody td { line-height: 1.45; }
+  .matrix td { position: relative; }
+  .matrix td .mk { position: absolute; left: 16px; top: 18px; }
+  .matrix td:has(.mk) { padding-left: 34px; }
+  .matrix td.me { background: color-mix(in srgb, var(--color-ink) 4%, var(--color-surface)); }
+
+  /* One band per group, in its own hue. */
+  .matrix tr.grp th {
+    padding: 26px 16px 10px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 450;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--hue);
+    border-bottom: 1px solid color-mix(in srgb, var(--hue) 35%, transparent);
+    background: linear-gradient(to bottom, transparent, color-mix(in srgb, var(--hue) 6%, transparent));
+  }
+  .matrix tbody:first-of-type tr.grp th { padding-top: 18px; }
+  /* The band scrolls with the answers; its name stays where the questions are. */
+  .matrix tr.grp th span { position: sticky; left: 16px; }
+  .matrix tbody tr:last-child > * { border-bottom: 1px solid var(--color-line-2); }
+  .matrix tbody:last-of-type tr:last-child > * { border-bottom: 0; }
+  .matrix tbody tr:not(.grp):hover > * { background: color-mix(in srgb, var(--hue) 5%, transparent); }
+  .matrix tbody tr:not(.grp):hover > td.me { background: color-mix(in srgb, var(--hue) 7%, var(--color-surface)); }
+
+  /* Tablet: the question column stays put while the answers scroll. */
+  @media (min-width: 721px) {
+    .matrix thead th:first-child,
+    .matrix tbody tr:not(.grp) th {
+      position: sticky;
+      left: 0;
+      z-index: 1;
+      background: var(--color-page);
+      box-shadow: 1px 0 0 var(--color-line-2);
+    }
+  }
+
+  /* Phone: each row a card, the group band a heading above its cards. */
+  @media (max-width: 720px) {
+    .matrix tr.grp { padding: 0; border-bottom: 0; }
+    .matrix tr.grp th { padding: 22px 16px 10px; }
+    .matrix td:has(.mk) { padding-left: 20px; }
+    .matrix td .mk { left: 0; top: 22px; }
+    .matrix tbody td.me { padding-left: 12px; }
+    .matrix tbody td.me:has(.mk) { padding-left: 32px; }
+    .matrix tbody td.me .mk { left: 13px; }
+  }
+</style>
