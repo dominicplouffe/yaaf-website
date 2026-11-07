@@ -82,5 +82,5 @@ export const DOCS_GROUPS = [
   { title: "Start here", slugs: ["plan", "features", "creating-a-project"] },
   { title: "The rules", slugs: ["governance", "autonomy", "security", "goal-grammar"] },
   { title: "Surfaces", slugs: ["mcp-server", "dashboard", "cli", "agent-api"] },
-  { title: "Running it", slugs: ["deployment", "integrations", "runtimes", "providers", "auth"] },
+  { title: "Running it", slugs: ["install", "configuration", "deployment", "architecture", "integrations", "runtimes", "providers", "auth"] },
 ];
