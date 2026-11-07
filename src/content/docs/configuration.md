@@ -12,11 +12,11 @@ Two kinds of settings, kept apart on purpose:
   sandboxes, email. Set by whoever runs the server.
 - **Governed**: how a project behaves. Budget, deadline, wake limits,
   approvals. Stored in the database, per project, and changed in the dashboard.
-  Never in environment variables. See [GOVERNANCE.md](/docs/governance/).
+  Never in environment variables.
 
 **Model API keys are not environment variables.** Add them in the dashboard
 under Settings → Providers, or with `yaaf create-llm-credential`. They are
-stored encrypted.
+stored encrypted. See [PROVIDERS.md](/docs/providers/).
 
 ## What you must set
 
@@ -29,19 +29,8 @@ stored encrypted.
 ## Where to put them
 
 **Docker.** Put them in `deploy/.env`, then re-run `deploy/deploy_single_server.sh`.
+Every variable in that file reaches both the `api` and `runner` containers.
 Containers read settings only when they start.
-
-Only these variables are passed from `deploy/.env` into the containers:
-`YAAF_MASTER_KEY`, `YAAF_PUBLIC_BASE_URL`, the `YAAF_SMTP_*` group,
-`YAAF_CHAIRMAN_WEBHOOK_URL`, and the four [second-stack](#running-a-second-stack)
-variables. For anything else, add it to `deploy/docker-compose.override.yml`:
-
-```yaml
-services:
-  api:
-    environment:
-      YAAF_MCP_REDIRECT_HOSTS: "claude.ai,claude.com,my-client.example.com"
-```
 
 **Native.** `yaaf setup` writes what it needs. To change something, export it
 before `yaaf up`, or edit the service with `systemctl --user edit yaaf`.
@@ -57,7 +46,7 @@ start `yaaf-server` and `yaaf-runner` from.
 |---|---|---|
 | `YAAF_DATABASE_URL` | `postgresql+psycopg://yaaf:yaaf@localhost:5432/yaaf` | Where all state lives. Postgres for servers. SQLite works too: `sqlite:////path/to/yaaf.db` |
 | `YAAF_MASTER_KEY` | *(none)* | Encrypts every stored secret. **Required. Never change it. Back it up.** See [below](#the-master-key). |
-| `YAAF_API_HOST` | `0.0.0.0` | Address the server listens on |
+| `YAAF_API_HOST` | `127.0.0.1` | Address the server listens on. The Docker image sets `0.0.0.0` inside the container; the published port decides who can reach it. |
 | `YAAF_API_PORT` | `24247` | Port the server listens on |
 | `YAAF_API_BASE_URL` | `http://localhost:24247` | How the runner and sandboxes reach the server. Change it if you change the port. |
 | `YAAF_PUBLIC_BASE_URL` | *(none)* | The https address people use, like `https://yaaf.example.com`. Needed for claude.ai, OAuth data sources, and secure cookies. |
@@ -76,12 +65,24 @@ python3 -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().
 Do not use Python's `secrets.token_urlsafe(32)`. It drops the padding and
 fails the first time you save a secret.
 
-- **If you change it,** every stored key becomes unreadable.
-- **If you lose it,** the same. There is no recovery.
+- **If you lose it,** every stored secret is unreadable. There is no recovery.
+- **If you edit it by hand,** the same. To change it, rotate it (below).
 - **If it is empty,** the server refuses to save or read any secret.
 
 Docker keeps it in `deploy/.env`. Native mode keeps it in `~/.yaaf/master.key`.
 Keep a copy somewhere safe, away from the machine.
+
+**Rotating it.** This re-encrypts every stored secret under a new key, all at
+once. If any value can't be read, nothing changes.
+
+| Install | Command |
+|---|---|
+| Docker | `deploy/rotate_master_key.sh` (backs up, stops yaaf, rotates, updates `deploy/.env`, starts yaaf) |
+| Native | `systemctl --user stop yaaf`, then `yaaf rotate-master-key`, then `systemctl --user start yaaf` |
+
+Keep the old key. Backups taken before the rotation can only be read with it.
+The Docker script saves it as `deploy/.env.<date>.bak`; native mode keeps it
+as `~/.yaaf/master.key.<date>.old`.
 
 ## Runner and sandboxes
 
@@ -134,8 +135,10 @@ S3, MinIO or Cloudflare R2, install `pip install 'yaaf[s3]'` and set:
 Set the same values on both the server and the runner.
 
 The bundled MinIO (`docker compose --profile s3 up -d`) reads
-`MINIO_ROOT_USER` (default `yaaf`) and `MINIO_ROOT_PASSWORD`. **Change the
-password**; the default is for development.
+`MINIO_ROOT_USER` (default `yaaf`) and `MINIO_ROOT_PASSWORD`. The deploy script
+writes a random password to `deploy/.env`; there is no default. Its ports
+listen on `127.0.0.1` only. Point yaaf at it with
+`YAAF_ARTIFACT_S3_ENDPOINT=http://minio:9000`.
 
 ## Timing
 
@@ -170,6 +173,8 @@ second stack's `deploy/.env`. Leave them unset for a normal install.
 |---|---|
 | `YAAF_ADMIN_EMAIL` | In `deploy/.env`: the account to make admin on a fresh install. Same as `--admin-email`. |
 | `YAAF_ACCEPT_NATIVE` | Set to `1` to skip the native installer's "are you sure" question |
+| `YAAF_IMAGE_REGISTRY` | Where to pull published images from. Default `ghcr.io/dominicplouffe`. Set it for a fork that publishes its own. |
+| `MINIO_ROOT_PASSWORD` | Written by the deploy script for the optional MinIO store. See [S3](#artifact-storage-s3). |
 
 ## Command line (`yaaf`)
 

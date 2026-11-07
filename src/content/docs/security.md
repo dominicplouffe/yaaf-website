@@ -20,7 +20,7 @@ There are four principals and they are not equal.
 
 | Principal | Holds | Can |
 |---|---|---|
-| **A person** | a password, then a browser session or an expiring personal token | what their roles hold: on the box (the instance admin runs it and reads every project), and per project (chairman, co-chair, observer) — see [docs/AUTH.md](/docs/auth/) |
+| **A person** | a password, then a browser session or an expiring personal token | what their roles hold: on the box (the instance admin runs it and reads every project), and per project (chairman, co-chair, observer) |
 | **Claude, via MCP** | its own scoped token, never its person's own credential | only what its scope names, only on its person's projects; nothing irreversible in one call |
 | **An agent run** | a per-run token, one run, one agent, one project | only the `/agent/*` surface, only inside its own project |
 | **Everything an agent reads** | nothing | nothing — and it will try |
@@ -36,7 +36,9 @@ scoped so that a compromised agent is bounded by the project it belongs to.
 Four things, and it is worth being exact because a fifth used to be on this list:
 
 1. **A fresh container per run.** No privileges (`no-new-privileges`), CPU and
-   memory caps, and it dies when the run does.
+   memory caps, and it dies when the run does. In host mode it is a fresh
+   bubblewrap jail per run instead — see the sharp edges below for what that
+   does and does not give you.
 2. **A role-scoped credential set.** A role declares `secret_scopes`; it gets
    those and nothing else. File-shaped credentials are written to a tmpfs
    outside `/workspace`, mode 0600, so a key never reaches a disk and cannot be
@@ -48,7 +50,7 @@ Four things, and it is worth being exact because a fifth used to be on this list
    into a sandbox at all: the control plane mints an hour-long token from it,
    and the run asks `/agent/model-token` for the next one with its own run
    token — so a leaked token is worth an hour, and only for the provider the
-   run was leased on (`docs/PROVIDERS.md` §4).
+   run was leased on.
 3. **A metered budget.** Every run is priced, killed ones included. At the hard
    stop the project pauses itself and live run tokens are revoked.
 4. **An audited API.** Agents act only through `/agent/*` on a per-run token.
@@ -58,7 +60,7 @@ Four things, and it is worth being exact because a fifth used to be on this list
 ## What does **not** contain an agent run
 
 **The network.** There is no egress proxy and no per-role domain allowlist. One
-existed; it was removed deliberately (`docs/PLAN.md`) because a blocked request
+existed; it was removed deliberately because a blocked request
 surfaced as an unlogged proxy 403 three layers from the agent that made it, and
 invisible failures cost more than they bought. That is a real trade and this is
 the honest statement of what it costs:
@@ -93,15 +95,26 @@ design — which is the whole thesis of the project applied to itself.
 
 Stated here rather than waiting for someone to find them:
 
-- **No outside security review has happened.** `docs/PLAN.md` names the moment
-  it will: the first claude.ai connection against a public deployment is also
-  the first time the security model is tested by someone who did not write it.
+- **No outside security review has happened.** The first claude.ai connection
+  against a public deployment is also the first time the security model is
+  tested by someone who did not write it.
 - **`sandbox_mode="subprocess"` has no isolation.** It exists for laptops and
   CI without Docker. A task's success test can be a command string an *agent*
   wrote, and in this mode it would run on the runner host — so the platform now
   refuses it unless `allow_host_success_tests` is set explicitly. Docker mode,
   the default, is unaffected: there the command runs in a throwaway container
   with no credentials.
+- **`sandbox_mode="host"` is a jail, not a container.** Agents run as you, on
+  your machine, each inside a bubblewrap jail (`yaaf/runner/host_jail.py`). It
+  hides your home folder, yaaf's database and master key, the host's `/run`
+  (the Docker socket, the session bus) and every process outside the run, and
+  gives the run an environment built from nothing — each attacked in
+  `tests/selftest_invariants/test_host_jail.py`. It does **not** cap memory or
+  CPU; it leaves `/etc`, `/opt` and `/usr` readable; and it shares your network
+  namespace, so a run can reach services listening on `localhost` and abstract
+  Unix sockets, which a Docker bridge cannot. It is as strong as your kernel's
+  user namespaces, with none of a container runtime's seccomp profile. Right
+  for a desktop you are sitting at; on a box other people reach, use docker.
 - **Sandboxes share one Docker bridge.** Concurrent runs from different
   projects can reach each other on the network. Per-project networks are the
   obvious fix and are not built.

@@ -21,7 +21,6 @@ import roadmap from "../assets/screenshots/plan-and-promise.png";
 
 const roles = await getCollection("roles");
 const crews = await getCollection("crews");
-const examples = await getCollection("examples");
 
 const providers = runtimes.providers.map((p) => p.label.replace(/ \(.*\)$/, ""));
 const harnesses = runtimes.harnesses.map((h) => h.label.replace(/ \(.*\)$/, ""));
@@ -41,9 +40,9 @@ const TRAIL = [
 ];
 
 const HORIZON = [
-  { k: "A task", v: "A project that delivers one result and stops: a question answered with sources, a fix, a report.", when: "Today", slug: "02-settle-an-argument", ex: "Settle an argument, with sources" },
-  { k: "An operation", v: "A project that keeps running: woken by the world at 3am, a standup each morning, a register that stays current.", when: "Today", slug: "03-a-desk-the-world-wakes", ex: "A desk the world wakes up" },
-  { k: "A business", v: "Today a crew can test one idea for thirty days. Organizations that run a business with extensive autonomy, inside the boundaries their owner sets, are where this is going. We aren't there yet.", when: "The long view", slug: "09-one-idea-thirty-days", ex: "One idea, thirty days" },
+  { k: "A task", v: "A project that delivers one result and stops: a question answered with sources, a fix, a report.", when: "Today" },
+  { k: "An operation", v: "A project that keeps running: woken by the world at 3am, a standup each morning, a register that stays current.", when: "Today" },
+  { k: "A business", v: "Today a crew can test one idea for thirty days. Organizations that run a business with extensive autonomy, inside the boundaries their owner sets, are where this is going. We aren't there yet.", when: "The long view" },
 ];
 
 const YESTERDAY = [
@@ -139,12 +138,12 @@ const WHY = [
 ];
 
 const USES = [
-  { k: "Fix your code overnight", v: "Each night, a crew picks the most useful fix in your repo and opens a pull request.", slug: "04-an-overnight-crew" },
-  { k: "Research you can defend", v: "Analysts read a company's filings and write the report. Every claim links to its source.", slug: "10-read-the-filings" },
-  { k: "Test a business idea", v: "Thirty days to prove real people want it, or a clear reason to stop.", slug: "09-one-idea-thirty-days" },
-  { k: "Run a content engine", v: "Writers and an editor publish on your topic and learn what readers respond to.", slug: "12-a-content-engine" },
-  { k: "Build a small app or game", v: "A developer, a designer and a tester build it together. You can read how they decided.", slug: "08-a-game-you-can-play" },
-  { k: "Get a weekly briefing", v: "What changed in the things you depend on. Nothing you already know.", slug: "07-tell-me-what-changed" },
+  { k: "Fix your code overnight", v: "Each night, a crew picks the most useful fix in your repo and opens a pull request." },
+  { k: "Research you can defend", v: "Analysts read a company's filings and write the report. Every claim links to its source." },
+  { k: "Test a business idea", v: "Thirty days to prove real people want it, or a clear reason to stop." },
+  { k: "Run a content engine", v: "Writers and an editor publish on your topic and learn what readers respond to." },
+  { k: "Build a small app or game", v: "A developer, a designer and a tester build it together. You can read how they decided." },
+  { k: "Get a weekly briefing", v: "What changed in the things you depend on. Nothing you already know." },
 ];
 
 const OPEN = [
@@ -309,14 +308,14 @@ const VS = [
         </div>
       ))}
     </div>
-    <p class="note">Check in from the app, the terminal (<code>yaaf status</code>), Slack, a daily letter, or <a href="/docs/mcp-server/">Claude over MCP</a>.</p>
+    <p class="note">Check in from the app, the terminal (<code>yaaf status</code>), Slack, a daily letter, or <a href="/docs/install/#after-you-install">Claude over MCP</a>.</p>
   </Section>
 
   <!-- ============ 3. YOUR LEVEL OF CONTROL ============ -->
   <Section id="control" eyebrow="Your level of control" title="You decide how much authority to delegate."
     lede="Some chairmen approve every important decision. Others set a goal and a budget and let the CEO run. Both belong in yaaf. <strong>Move the dial.</strong>">
     <AutonomyDial />
-    <p class="note">The dial is five real switches in the project's constitution, which no agent can edit. <a href="/docs/autonomy/">How autonomy works →</a></p>
+    <p class="note">The dial is five real switches in the project's constitution, which no agent can edit. <a href="/how-it-works/">How it works →</a></p>
   </Section>
 
   <!-- ============ 4. WHY TRUST YAAF ============ -->
@@ -348,27 +347,23 @@ const VS = [
     lede="Some companies exist for an afternoon. Others run continuously. The last column is a direction, not a feature.">
     <div class="horizon">
       {HORIZON.map((h, i) => (
-        <a class:list={["hz-c", { far: i === HORIZON.length - 1 }]} href={`/examples/${h.slug}/`}>
+        <div class:list={["hz-c", { far: i === HORIZON.length - 1 }]}>
           <span class="when">{h.when}</span>
           <h3>{h.k}</h3>
           <p>{h.v}</p>
-          <span class="go">{h.ex} →</span>
-        </a>
+        </div>
       ))}
     </div>
     <h3 class="uses-h">What will your company do? Start from one of {crews.length} ready-made teams, or describe your own.</h3>
     <div class="cells c3 hued">
       {USES.map((u) => (
-        <a class="cell" href={`/examples/${u.slug}/`}>
+        <div class="cell">
           <h3>{u.k}</h3>
           <p>{u.v}</p>
-          <span class="go">See the example →</span>
-        </a>
+        </div>
       ))}
     </div>
     <p class="note">
-      <a href="/examples/">All {examples.length} examples →</a>
-      <span class="sep">·</span>
       <a href="/org/">{roles.length} roles to hire from →</a>
     </p>
   </Section>
@@ -400,16 +395,16 @@ const VS = [
       <div class="start-l">
         <h3>Run a whole company in three lines.</h3>
         <p>The last one rehearses an example project end to end on scripted agents. No key, no Docker, $0. When you're ready for real agents, <code>yaaf up</code> starts everything and prints the address.</p>
-        <p class="note"><a href="/docs/install/">Install guide →</a><span class="sep">·</span><a href="/docs/creating-a-project/">Your first project →</a></p>
+        <p class="note"><a href="/docs/install/">Install guide →</a><span class="sep">·</span><a href="/docs/providers/">Models and keys →</a></p>
       </div>
       <div class="start-r">
         <Cmd cmd={`git clone ${REPO_URL} && cd yaaf`} />
-        <Cmd cmd="pip install -e ." />
-        <Cmd cmd="yaaf rehearse examples/01-your-first-hour.json" />
+        <Cmd cmd="python3 -m venv .venv && .venv/bin/pip install -e ." />
+        <Cmd cmd=".venv/bin/yaaf rehearse examples/01-your-first-hour.json" />
       </div>
     </div>
     <p class="note">
-      Early days: pre-1.0, {manifest.history.commits} commits since {new Date(manifest.history.firstCommit).toLocaleDateString("en-US", { month: "long", day: "numeric", timeZone: "UTC" })}, built in the open with Claude Code. <a href="/docs/plan/">What's done and what isn't →</a>
+      Early days: pre-1.0, {manifest.history.commits} commits since {new Date(manifest.history.firstCommit).toLocaleDateString("en-US", { month: "long", day: "numeric", timeZone: "UTC" })}, built in the open with Claude Code.
     </p>
   </Section>
 </BaseLayout>
@@ -526,15 +521,12 @@ const VS = [
   /* ---------- what becomes possible ---------- */
   .horizon { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid var(--color-line); }
   .hz-c { position: relative; display: block; padding: 1.8rem var(--inset) 2rem; border-right: 1px solid var(--color-line); color: inherit; text-decoration: none; background: color-mix(in srgb, var(--color-mint) 6%, var(--color-page)); transition: background 0.25s; }
-  .hz-c:hover { background: color-mix(in srgb, var(--color-mint) 12%, var(--color-page)); }
   .hz-c:last-child { border-right: 0; }
   .hz-c.far { background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--color-violet) 7%, var(--color-page)) 0 10px, var(--color-page) 10px 20px); }
-  .hz-c.far:hover { background: color-mix(in srgb, var(--color-violet) 10%, var(--color-page)); }
   .when { display: inline-block; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; padding: 3px 8px; color: #14051f; background: var(--color-mint); }
   .far .when { background: transparent; color: var(--color-violet); border: 1px dashed var(--color-violet); }
   .hz-c h3 { margin: 1rem 0 0; font-size: 1.6rem; letter-spacing: -0.04em; }
   .hz-c p { margin: 0.6rem 0 0; font-size: 15px; line-height: 1.55; color: var(--color-ink-2); }
-  .hz-c .go { display: inline-block; margin-top: 1rem; font-size: 14px; color: var(--color-accent-hi); }
   .uses-h { margin: 3.4rem 0 1.4rem; padding-inline: var(--inset); font-size: 1.25rem; letter-spacing: -0.025em; font-weight: 500; color: var(--color-ink-2); max-width: 60ch; }
 
   /* ---------- works with ---------- */

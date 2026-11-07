@@ -37,12 +37,34 @@ concurrency cap is a setting).
 2. **Creates folders** at `/var/lib/yaaf/workspaces` and `/var/lib/yaaf/artifacts`.
 3. **Creates `deploy/.env`** with a new `YAAF_MASTER_KEY`. Never overwrites it.
 4. **Binds the port** to `127.0.0.1:24247` (in `deploy/docker-compose.override.yml`).
-5. **Builds two images:** the app image (`deploy/Dockerfile`) and the sandbox
-   image (`deploy/sandbox/Dockerfile`).
+5. **Gets two images:** the app (`deploy/Dockerfile`) and the sandbox
+   (`deploy/sandbox/Dockerfile`). See [Images](#images).
 6. **Starts** the stack. Migrations run when the containers start.
 7. **Checks** the schema reached the latest migration.
 8. **Creates the first admin** if there is none, and prints a setup link.
 9. **Loads** the role library and ready-made teams. Adds only what is missing.
+
+## Images
+
+CI publishes both images for every commit on `main`, for Intel and ARM
+(Apple Silicon included):
+
+| Image | What it is |
+|---|---|
+| `ghcr.io/dominicplouffe/yaaf` | The app: api and runner |
+| `ghcr.io/dominicplouffe/yaaf-sandbox` | What each agent run executes inside |
+
+Each is tagged `sha-<commit>`. The deploy and update scripts pull the pair
+built from **exactly** the commit you have checked out, so the code that runs
+is the code you have. They build from source instead when:
+
+- the checkout has local changes,
+- the commit was never published (a branch, or CI hasn't finished), or
+- you pass `--build`.
+
+Releases also get `:<version>` and `:latest`, and `main` gets `:main`. To use
+your own registry (for a fork), set `YAAF_IMAGE_REGISTRY`, for example
+`ghcr.io/you`.
 
 ## Reaching the dashboard
 
@@ -119,13 +141,15 @@ server logs the address it advertises at startup.
 deploy/update_single_server.sh
 ```
 
-It refuses to run on a checkout with local edits, then: pulls, backs up the
-database to `backups/`, rebuilds both images, restarts, and checks the
-migrations applied. Migrations need no extra step.
+It refuses to run on a checkout with local edits, then: pulls, dumps the
+database to `backups/`, gets both images for the new code, restarts, and checks the
+migrations applied. Migrations need no extra step. That dump is for undoing a
+bad migration; for real backups, see [Backups](#backups).
 
 | Flag | Effect |
 |---|---|
-| `--no-pull` | Rebuild what is checked out |
+| `--no-pull` | Don't `git pull`; update to what is checked out |
+| `--build` | Build the images from source instead of pulling them |
 | `--no-backup` | Skip the backup (not recommended) |
 | `--keep-chat` | Leave running CEO chat sessions on the old code |
 
@@ -143,7 +167,7 @@ to `~/.yaaf/backups`, pulls, rebuilds only what changed, and restarts.
 
 ## Backups
 
-Three things matter. Back up all three, off the server.
+Three things matter, and one command saves all three in a single file:
 
 | What | Where | Why |
 |---|---|---|
@@ -151,20 +175,31 @@ Three things matter. Back up all three, off the server.
 | **Master key** | `deploy/.env` | Without it, every stored API key is unreadable. **It cannot be recovered.** |
 | **Artifacts** | `/var/lib/yaaf/artifacts` | Files your agents produced |
 
-Workspaces (`/var/lib/yaaf/workspaces`) are working files. Back them up if
-agents keep work there, or connect a GitHub repo to the project and let git
-hold it.
-
-A manual database backup:
-
 ```bash
-mkdir -p backups
-docker compose -f deploy/docker-compose.yml exec -T db pg_dump -U yaaf yaaf \
-  | gzip > "backups/yaaf-$(date +%Y%m%d-%H%M%S).sql.gz"
+deploy/backup_single_server.sh
 ```
 
-The backups the update script takes live on the same disk. They protect you
-from a bad migration, not from a dead disk.
+It writes `backups/yaaf-backup-<date>.tar.gz`, readable by you only. **The file
+holds your master key**: store it like a password, and copy it off the server.
+A backup on the same disk doesn't survive the disk.
+
+| Flag | Effect |
+|---|---|
+| `--out PATH` | Write it somewhere else, like a mounted backup drive |
+| `--workspaces` | Also include the agents' working folders |
+
+To run it nightly, add a cron line (`crontab -e`) that runs the script with
+`--out` pointing at your backup drive.
+
+**Restore** a backup. It saves the current database, `deploy/.env` and
+artifacts first, then restores and restarts yaaf:
+
+```bash
+deploy/restore_single_server.sh backups/yaaf-backup-<date>.tar.gz
+```
+
+**Native installs** use `yaaf backup` and `yaaf restore <file>`. Same contents,
+from `~/.yaaf`.
 
 ## Stopping
 
@@ -182,7 +217,9 @@ Stops everything and keeps all data. Run the deploy script to bring it back.
 
 ## Health
 
-- `GET /healthz`: the process is alive. It does not prove the database works.
+- `GET /healthz`: the process is alive.
+- `GET /readyz`: the database is reachable and the schema exists. Returns 503
+  if not. Point your monitoring here.
 - `yaaf doctor`: checks the whole install and says what to fix.
 - `yaaf smoke <credential>`: one real, tiny call per model key, to prove the
   key and network path work.
@@ -208,7 +245,7 @@ runners on several machines can share one database safely. Each runner needs:
 
 - the same `YAAF_DATABASE_URL` and `YAAF_MASTER_KEY`
 - its own `YAAF_WORKER_NAME`
-- Docker, with the sandbox image built
+- Docker, with the sandbox image (pulled or built)
 
 ## Two stacks on one server
 

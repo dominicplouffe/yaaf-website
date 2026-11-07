@@ -12,7 +12,8 @@ const roles = defineCollection({
     category: z.enum(["research", "challenge", "content", "growth", "build", "leadership"]),
     domains: z.array(z.string()),
     description: z.string(),
-    model: z.string(),
+    // Gone from roles since yaaf#79: the app picks the model and harness.
+    model: z.string().optional(),
     effort: z.string(),
     tool_permissions: z.record(z.string(), z.boolean()).default({}),
     secret_scopes: z.array(z.string()).default([]),
@@ -43,32 +44,6 @@ const crews = defineCollection({
   }),
 });
 
-const examples = defineCollection({
-  loader: glob({ pattern: "*.md", base: "./src/content/examples" }),
-  schema: z.object({
-    number: z.string(),
-    title: z.string(),
-    slug: z.string(),
-    mode: z.enum(["explore", "deliver", "operate"]),
-    solo: z.boolean(),
-    cap: z.number().nullable(),
-    projectName: z.string(),
-    whySkill: z.string(),
-    whatYouGet: z.string(),
-    whatItCosts: z.string(),
-    whatYouNeed: z.string(),
-    spec: z.string(),
-    teams: z.array(
-      z.object({
-        name: z.string(),
-        role: z.string(),
-        employees: z.array(z.string()),
-        lead: z.string().nullable(),
-      }),
-    ),
-  }),
-});
-
 const docs = defineCollection({
   loader: glob({ pattern: "*.md", base: "./src/content/docs" }),
   schema: z.object({
@@ -79,4 +54,4 @@ const docs = defineCollection({
   }),
 });
 
-export const collections = { roles, crews, examples, docs };
+export const collections = { roles, crews, docs };

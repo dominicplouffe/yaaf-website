@@ -9,9 +9,10 @@ Three ways to run yaaf. Pick the one that fits.
 | | Docker | Native | From source |
 |---|---|---|---|
 | **For** | A server, or any machine you want to run it on for real | Your own Linux desktop or laptop | Working on yaaf itself |
+| **Runs on** | Linux, macOS, Windows (WSL2) | Linux only | Linux, macOS |
 | **Agents run in** | A fresh container per run | A bubblewrap jail per run | A plain process (no isolation) |
 | **Database** | Postgres | SQLite | SQLite |
-| **Time** | ~10 minutes (image builds) | ~5 minutes | ~5 minutes |
+| **Time** | A few minutes (about 10 if it builds the images) | ~5 minutes | ~5 minutes |
 
 All three need a model key to do real work: from Anthropic, OpenAI, Google,
 or any provider yaaf supports. A local Ollama needs no key.
@@ -21,16 +22,17 @@ scripted agents:
 
 ```bash
 git clone https://github.com/dominicplouffe/yaaf && cd yaaf
-pip install -e .        # Python 3.12+
-yaaf rehearse examples/01-your-first-hour.json
+python3 -m venv .venv && .venv/bin/pip install -e .     # Python 3.12+
+.venv/bin/yaaf rehearse examples/01-your-first-hour.json
 ```
 
 ---
 
 ## Option 1: Docker
 
-**You need:** Linux with Docker and the compose plugin, `git`, `openssl` and
-`curl`. No Python or Node; the images build everything.
+**You need:** Docker with the compose plugin, `git`, `openssl` and `curl`. No
+Python or Node; the images carry everything. Linux is the tested path; for a Mac
+or Windows, see [macOS and Windows](#macos-and-windows) first.
 
 **1. Install Docker** (skip if you have it):
 
@@ -48,7 +50,7 @@ git clone https://github.com/dominicplouffe/yaaf && cd yaaf
 deploy/deploy_single_server.sh --admin-email you@example.com
 ```
 
-The script creates the secrets, builds both images, starts Postgres, the
+The script creates the secrets, gets both images, starts Postgres, the
 server and the runner, applies the schema, loads the role library, and makes
 you the admin. It ends by printing a one-time link to set your password.
 
@@ -74,8 +76,31 @@ Open the setup link, choose a password, and you are in.
 | `--port 9090` | Use another port |
 | `--bind ADDRESS` | Listen on another address. Repeatable. `0.0.0.0` exposes it to every network, so put TLS in front first. |
 | `--skip-roles` | Don't load the role library |
+| `--build` | Build the images from source instead of pulling them |
 
 To run it on a public server, read [DEPLOYMENT.md](/docs/deployment/).
+
+### macOS and Windows
+
+Docker works on both through Docker Desktop. These are less tested than Linux;
+tell us what breaks.
+
+**macOS.** Install [Docker Desktop](https://www.docker.com/products/docker-desktop/).
+Before the first deploy, keep yaaf's data in your home folder, which Docker
+Desktop shares with containers (`/var/lib` is not shared):
+
+```bash
+mkdir -p ~/yaaf-data
+echo "YAAF_STATE_ROOT=$HOME/yaaf-data" >> deploy/.env
+deploy/deploy_single_server.sh --admin-email you@example.com
+```
+
+**Windows.** Install [WSL2](https://learn.microsoft.com/windows/wsl/install)
+with Ubuntu, and Docker Desktop with WSL integration turned on for it. Then run
+every command in this guide inside the Ubuntu terminal, as on Linux.
+
+Native mode needs bubblewrap, which only exists on Linux, so it does not run on
+either.
 
 ---
 
@@ -138,10 +163,12 @@ Arch, Fedora and Debian need nothing extra.
 | Update | `yaaf update` (backs up the database first) |
 | See what an update brings | `yaaf update --check` |
 | Open to your network | `yaaf setup --bind <address>` |
+| Back up | `yaaf backup` (copy the file off this machine) |
 | Health check | `yaaf doctor` |
 
 Data lives in `~/.yaaf`: the database, the master key, workspaces and
-artifacts. Back up that folder.
+artifacts. `yaaf backup` saves the parts you can't rebuild into one file;
+`yaaf restore <file>` puts them back.
 
 ---
 
@@ -177,6 +204,8 @@ See [CONTRIBUTING.md](https://github.com/dominicplouffe/yaaf/blob/main/CONTRIBUT
 ## After you install
 
 1. **Add a model key.** Settings → Providers. Agents cannot run without one.
+   [PROVIDERS.md](/docs/providers/) covers every provider, subscriptions and local
+   models.
 2. **Check the install.**
 
    ```bash
@@ -185,8 +214,8 @@ See [CONTRIBUTING.md](https://github.com/dominicplouffe/yaaf/blob/main/CONTRIBUT
    ```
 
    `doctor` lists anything that is wrong and how to fix it.
-3. **Create a project.** Follow [CREATING_A_PROJECT.md](/docs/creating-a-project/),
-   or import one from [examples/](/examples/).
+3. **Create a project.** In the dashboard, click New Project, or import one of
+   the ready-made specs in `examples/`.
 4. **Connect Claude** (optional):
 
    ```bash

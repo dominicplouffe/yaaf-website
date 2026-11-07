@@ -57,7 +57,7 @@ One Python process (FastAPI + Uvicorn). It serves:
 | `/agent` | Agents, from inside their sandbox |
 | `/mcp` | Claude and other MCP clients |
 | `/webhooks` | Signed events from outside (GitHub, your systems) |
-| `/healthz` | Liveness check |
+| `/healthz`, `/readyz` | Liveness, and readiness (database and schema) |
 
 It also runs background threads:
 
@@ -132,7 +132,7 @@ stored.
 | Governed | Database, per project | Budget, deadline, wake limits, who approves what |
 
 Operational settings are in [CONFIGURATION.md](/docs/configuration/). Governed rules
-are in [GOVERNANCE.md](/docs/governance/).
+are set per project in the dashboard.
 
 ## Code map
 
@@ -160,7 +160,10 @@ Vite, Docker, bubblewrap.
 
 ## Read next
 
+- [INSTALL.md](/docs/install/): get it running.
+- [CONFIGURATION.md](/docs/configuration/): every environment variable.
+- [DEPLOYMENT.md](/docs/deployment/): run it on a server.
+- [PROVIDERS.md](/docs/providers/): models, keys, harnesses and prices.
+- [CLI.md](/docs/cli/): every `yaaf` command.
 - [SECURITY.md](/docs/security/): what contains an agent and what does not.
-- [RUNTIMES.md](/docs/runtimes/): harnesses and providers in depth.
-- [AGENT_API.md](/docs/agent-api/): what agents can do.
 

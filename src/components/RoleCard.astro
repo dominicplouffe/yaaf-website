@@ -6,7 +6,7 @@ interface Props {
     category: string;
     domains: string[];
     description: string;
-    model: string;
+    model?: string;
     effort: string;
     is_ceo_role: boolean;
     tool_permissions: Record<string, boolean>;
@@ -19,10 +19,10 @@ const { role, open = false } = Astro.props;
 const tools = Object.entries(role.tool_permissions)
   .filter(([, on]) => on)
   .map(([k]) => k.replace(/_/g, " "));
-// Roles name a model class ("@balanced") since yaaf#67; an exact model is
-// still allowed and shown as itself.
+// Since yaaf#79 a role carries no model: the install picks the model and the
+// harness for each seat. A role synced from before that still shows its own.
 const CLASS: Record<string, string> = { "@frontier": "Frontier", "@balanced": "Balanced", "@fast": "Fast" };
-const model = CLASS[role.model] ?? role.model.replace(/^claude-/, "").replace(/-\d{8}$/, "");
+const model = role.model ? (CLASS[role.model] ?? role.model.replace(/^claude-/, "").replace(/-\d{8}$/, "")) : null;
 ---
 <article class="role" data-category={role.category} data-domains={role.domains.join(" ")}>
   <header>
@@ -37,7 +37,7 @@ const model = CLASS[role.model] ?? role.model.replace(/^claude-/, "").replace(/-
 
   <dl class="specs">
     <div><dt>Category</dt><dd class={`cat c-${role.category}`}>{role.category}</dd></div>
-    <div><dt>{role.model in CLASS ? "Model class" : "Model"}</dt><dd>{model}</dd></div>
+    {model && <div><dt>{role.model! in CLASS ? "Model class" : "Model"}</dt><dd>{model}</dd></div>}
     <div><dt>Effort</dt><dd>{role.effort}</dd></div>
   </dl>
 
