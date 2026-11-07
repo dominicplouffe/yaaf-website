@@ -27,11 +27,9 @@ const SRC = path.resolve(process.env.YAAF_REPO ?? path.join(SITE, "..", "yaaf"))
 const OUT = {
   roles: path.join(SITE, "src/content/roles"),
   crews: path.join(SITE, "src/content/crews"),
-  examples: path.join(SITE, "src/content/examples"),
   docs: path.join(SITE, "src/content/docs"),
   assets: path.join(SITE, "src/assets/screenshots"),
   public: path.join(SITE, "public/screenshots"),
-  setups: path.join(SITE, "public/setups"),
 };
 
 /** Docs that are indexes or meta, not pages of their own. */
@@ -65,20 +63,16 @@ function rewriteLinks(md, kind) {
       // README.md means the index of whichever set the file lives in. The
       // fragment is dropped: those hubs are composed here, not copied, so an
       // anchor from the repo's own index would not resolve.
-      .replace(
-        /\]\((?:\.\.\/)?(?:examples\/)?README\.md(?:#[^)\s]*)?\)/g,
-        kind === "examples" ? "](/examples/)" : "](/docs/)",
-      )
+      .replace(/\]\((?:\.\.\/)?README\.md(?:#[^)\s]*)?\)/g, "](/docs/)")
       // docs/FOO.md, ./FOO.md, ../docs/FOO.md  ->  /docs/foo/
       .replace(
         /\]\((?:\.\/|\.\.\/)?(?:docs\/)?([A-Z][A-Z0-9_]*)\.md(#[^)\s]*)?\)/g,
         (_m, name, hash) => `](/docs/${docSlug(name + ".md")}/${hash ?? ""})`,
       )
       .replace(/\]\((?:\.\.\/)?LICENSE\)/g, `](${GH}/blob/main/LICENSE)`)
-      // examples/07-foo.md (or a bare sibling 07-foo.md) -> /examples/07-foo/
-      .replace(/\]\((?:\.\.\/)?(?:examples\/)?(\d\d-[a-z0-9-]+)\.md(#[^)\s]*)?\)/g, "](/examples/$1/$2)")
-      .replace(/\]\((?:\.\.\/)?examples\/[0-9a-z-]+\.json\)/g, "](/examples/)")
-      .replace(/\]\((?:\.\.\/)?examples\/\)/g, "](/examples/)")
+      // The example specs are importable files, not pages: link the repository.
+      .replace(/\]\((?:\.\.\/)?examples\/([0-9a-z-]+\.json)\)/g, `](${GH}/blob/main/examples/$1)`)
+      .replace(/\]\((?:\.\.\/)?examples\/\)/g, `](${GH}/tree/main/examples)`)
       // the role library has a page of its own here
       .replace(/\]\((?:\.\.\/)?roles\/?\)/g, "](/org/#roles)")
       // directories and source files that only exist in the repository
@@ -131,23 +125,12 @@ async function syncJson(kind, fromDir, toDir) {
 /** Root-level markdown that belongs in the docs nav anyway. */
 const ROOT_DOCS = ["SECURITY.md"];
 
-/**
- * A docs/ file that is only a pointer to the real one elsewhere in the repo.
- * docs/GOAL_GRAMMAR.md exists because the rubric has to live beside the code
- * that reads it at runtime; the repo's reader can follow a link into the
- * package, but a page on this site that says "it's over there" is a page with
- * nothing on it. Publish the file it points at instead, under the same slug.
- */
-const POINTER_DOCS = { "GOAL_GRAMMAR.md": "yaaf/founder/GOAL_GRAMMAR.md" };
-
 async function syncDocs() {
   await reset(OUT.docs);
   const dir = path.join(SRC, "docs");
   const files = (await readdir(dir)).filter((f) => f.endsWith(".md") && !SKIP_DOCS.has(f)).sort();
   const sources = [
-    ...files.map((f) =>
-      POINTER_DOCS[f] ? [path.join(SRC, POINTER_DOCS[f]), f, POINTER_DOCS[f]] : [path.join(dir, f), f, `docs/${f}`],
-    ),
+    ...files.map((f) => [path.join(dir, f), f, `docs/${f}`]),
     ...ROOT_DOCS.map((f) => [path.join(SRC, f), f, f]),
   ];
   for (const [abs, f, rel] of sources) {
@@ -169,54 +152,6 @@ async function syncDocs() {
   }
   log(`docs: ${sources.length}`);
   return sources.length;
-}
-
-async function syncExamples() {
-  await reset(OUT.examples);
-  await reset(OUT.setups);
-  const dir = path.join(SRC, "examples");
-  const files = (await readdir(dir)).filter((f) => /^\d\d-.*\.md$/.test(f)).sort();
-  for (const f of files) {
-    const raw = await readFile(path.join(dir, f), "utf8");
-    const spec = JSON.parse(await readFile(path.join(dir, f.replace(/\.md$/, ".json")), "utf8"));
-    const { title, body } = splitTitle(rewriteLinks(raw, "examples"));
-    const num = f.slice(0, 2);
-    const slug = f.replace(/^\d\d-/, "").replace(/\.md$/, "");
-    const project = spec.project ?? {};
-    const teams = (project.teams ?? []).map((t) => ({
-      name: t.name,
-      role: t.role_slug,
-      employees: t.employees ?? [],
-      lead: t.lead ?? null,
-    }));
-    const fm = [
-      "---",
-      `number: ${y(num)}`,
-      `title: ${y((title ?? slug).replace(/^\d\d\s*—\s*/, ""))}`,
-      `slug: ${y(`${num}-${slug}`)}`,
-      `mode: ${y(project.mode ?? "deliver")}`,
-      `solo: ${y(Boolean(project.solo))}`,
-      `cap: ${y(project.constitution?.monthly_usd_cap ?? null)}`,
-      `projectName: ${y(project.name ?? "")}`,
-      `whySkill: ${y(labelled(raw, "Why not just a Claude Skill\\?") ?? "")}`,
-      `whatYouGet: ${y(labelled(raw, "What you get") ?? "")}`,
-      `whatItCosts: ${y(labelled(raw, "What it costs") ?? "")}`,
-      `whatYouNeed: ${y(labelled(raw, "What you need") ?? "")}`,
-      `spec: ${y(`examples/${f.replace(/\.md$/, ".json")}`)}`,
-      `teams: ${JSON.stringify(teams)}`,
-      "---",
-      "",
-    ].join("\n");
-    await writeFile(path.join(OUT.examples, `${num}-${slug}.md`), fm + body.trimStart() + "\n");
-    // The importable bundle, served as-is, so an example is actionable from
-    // the site whether or not the reader can reach the repository.
-    await copyFile(
-      path.join(dir, f.replace(/\.md$/, ".json")),
-      path.join(OUT.setups, f.replace(/\.md$/, ".json")),
-    );
-  }
-  log(`examples: ${files.length}`);
-  return files.length;
 }
 
 async function syncScreenshots() {
@@ -249,13 +184,12 @@ async function auditLinks() {
   // once became /docs/claude/ — so a site route has to resolve to a file too.
   const pages = {
     docs: new Set((await readdir(OUT.docs)).map((f) => f.replace(/\.md$/, ""))),
-    examples: new Set((await readdir(OUT.examples)).map((f) => f.replace(/\.md$/, ""))),
   };
-  for (const dir of [OUT.docs, OUT.examples]) {
+  for (const dir of [OUT.docs]) {
     for (const name of await readdir(dir)) {
       const text = await readFile(path.join(dir, name), "utf8");
       for (const m of text.matchAll(/\]\(([^)\s]+)\)/g)) {
-        const route = m[1].match(/^\/(docs|examples)\/([^/#]+)\//);
+        const route = m[1].match(/^\/(docs)\/([^/#]+)\//);
         if (route && !pages[route[1]].has(route[2])) {
           bad.push(`${path.basename(dir)}/${name} -> ${m[1]} (no such page)`);
           continue;
@@ -384,7 +318,6 @@ async function main() {
   const counts = {
     roles: await syncJson("roles", path.join(SRC, "roles"), OUT.roles),
     crews: await syncJson("crews", path.join(SRC, "crews"), OUT.crews),
-    examples: await syncExamples(),
     docs: await syncDocs(),
     screenshots: await syncScreenshots(),
     ...(await syncRuntimes()),

@@ -1,19 +1,18 @@
 {
-  "syncedAt": "2026-10-25",
+  "syncedAt": "2026-11-07",
   "roles": 38,
   "crews": 17,
-  "examples": 12,
-  "docs": 16,
+  "docs": 7,
   "screenshots": 10,
   "harnesses": 6,
   "providers": 23,
-  "tests": 2309,
-  "testsCollectedAt": "2026-10-25",
+  "tests": 2743,
+  "testsCollectedAt": "2026-11-07",
   "history": {
     "firstCommit": "2026-08-14",
-    "lastCommit": "2026-10-25",
-    "commits": 595,
-    "activeDays": 47,
-    "claudeShare": 96
+    "lastCommit": "2026-11-07",
+    "commits": 643,
+    "activeDays": 58,
+    "claudeShare": 97
   }
 }

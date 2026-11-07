@@ -17,7 +17,7 @@ The walk
   ✓ Evidence was filed — 1 row(s) filed  beat 3
   – Finished work was read by somebody else — this project does not ask for it (deliverable_review: none)
   ✓ Work closed with evidence — 1 closed  beat 3
-  ✓ A delivery date was proposed — platform-projected, delivering by 2026-10-25  beat 2
+  ✓ A delivery date was proposed — platform-projected, delivering by 2026-11-07  beat 2
   ✓ The delivery date was signed — status accepted  beat 2
   ✓ A requirement settled true — R-01 — the platform ran the test  beat 4
 
@@ -34,10 +34,7 @@ What it will cost
 
 What paces it, over 30 days
   it fits — nothing is on the board that needs a run before then
-  4451 run(s) can start, 0 needed, 0.0 held back for the retries your measured failure rate predicts, 4451.0 spare
-
-What it still needs before it can really run
-  ! no billing credential attached — agents cannot run
+  4481 run(s) can start, 0 needed, 0.0 held back for the retries your measured failure rate predicts, 4481.0 spare
 
 Not exercised by this drill
   · command success tests — the drill writes observables only, so no command out of a spec file is ever executed

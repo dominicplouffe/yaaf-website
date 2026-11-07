@@ -92,7 +92,7 @@ const CHAPTERS = [
       "The organization works for you, not the other way around.",
     ],
     figure: "dial",
-    today: { v: "The dial above is the real one: five switches in a constitution no agent can edit. Budgets, verification and the record bind the same at every setting.", href: "/docs/autonomy/", go: "Autonomy" },
+    today: { v: "The dial above is the real one: five switches in a constitution no agent can edit. Budgets, verification and the record bind the same at every setting.", href: "/how-it-works/", go: "How it works" },
   },
   {
     id: "standard",
@@ -117,7 +117,7 @@ const CHAPTERS = [
       { k: "Decision", v: "What can we defend?", hue: "gold" },
     ],
     pull: ["Trust should never require blind faith."],
-    today: { v: "Nothing closes without observed evidence. External evidence is fetched, hashed and snapshotted by the server, and a random sample of finished work is dealt to you to check.", href: "/docs/features/", go: "Features" },
+    today: { v: "Nothing closes without observed evidence. External evidence is fetched, hashed and snapshotted by the server, and a random sample of finished work is dealt to you to check.", href: "/features/", go: "Features" },
   },
   {
     id: "challenge",
@@ -140,7 +140,7 @@ const CHAPTERS = [
       { k: "The plan", v: "A credible next step", hue: "mint" },
     ],
     pull: ["The CEO should question its own conclusions, too."],
-    today: { v: "Before anything exists, the Founder grades your goal against a written ten-point standard and argues with you. Critic seats can veto the work they check, and the CEO cannot remove the last one.", href: "/docs/goal-grammar/", go: "The goal standard" },
+    today: { v: "Before anything exists, the Founder grades your goal against a written ten-point standard and argues with you. Critic seats can veto the work they check, and the CEO cannot remove the last one." },
   },
   {
     id: "process",
@@ -157,7 +157,7 @@ const CHAPTERS = [
       "But learning requires memory. Improvement requires evidence. And progress requires the willingness to admit when something isn’t working.",
     ],
     figure: "gap",
-    today: { v: "Work hangs off bets with kill dates. An expired bet dies on schedule unless you extend it with a reason, and every killed bet stays on the record.", href: "/docs/features/", go: "Features" },
+    today: { v: "Work hangs off bets with kill dates. An expired bet dies on schedule unless you extend it with a reason, and every killed bet stays on the record.", href: "/features/", go: "Features" },
   },
   {
     id: "advantage",
@@ -173,7 +173,7 @@ const CHAPTERS = [
       "The organization should not have to start from zero every time it begins a new task.",
     ],
     figure: "memory",
-    today: { v: "Each project keeps a memory the CEO curates and each team one its lead curates, searchable by agents and readable by you. Memory that carries from one project to the next is not built yet.", href: "/docs/features/", go: "Features" },
+    today: { v: "Each project keeps a memory the CEO curates and each team one its lead curates, searchable by agents and readable by you. Memory that carries from one project to the next is not built yet.", href: "/features/", go: "Features" },
   },
   {
     id: "future",
@@ -198,7 +198,7 @@ const CHAPTERS = [
       { k: "An operation", v: "Run a virtual assistant", hue: "mint" },
       { k: "A business", v: "Build and operate a product", hue: "sun" },
     ],
-    today: { v: "A project can deliver a result and stop, or operate continuously, woken by the world. A company that runs a business on its own is the direction, not a feature.", href: "/examples/", go: "Use cases" },
+    today: { v: "A project can deliver a result and stop, or operate continuously, woken by the world. A company that runs a business on its own is the direction, not a feature." },
   },
 ];
 
@@ -319,7 +319,7 @@ const pad = (n: number) => String(n).padStart(2, "0");
             )}
           </div>
 
-          <p class="today"><span>In yaaf today</span>{c.today.v} <a href={c.today.href}>{c.today.go} →</a></p>
+          <p class="today"><span>In yaaf today</span>{c.today.v}{c.today.href && <> <a href={c.today.href}>{c.today.go} →</a></>}</p>
         </div>
       </div>
     </section>

@@ -42,7 +42,6 @@ const NAV_ALL = [
   { label: "How it works", href: "/how-it-works/" },
   { label: "Manifesto", href: "/manifesto/" },
   { label: "Harnesses", href: "/runtimes/" },
-  { label: "Use cases", href: "/examples/" },
   { label: "Features", href: "/features/" },
   { label: "The team", href: "/org/" },
   { label: "Compare", href: "/compare/" },
@@ -55,32 +54,21 @@ export const MORE = [
   { label: "FAQ", href: "/faq/" },
   { label: "What's new", href: "/changelog/" },
   { label: "Security model", href: "/docs/security/" },
-  { label: "The plan", href: "/docs/plan/" },
 ];
 
 /** Docs sidebar order. Anything synced but unlisted is appended under "More". */
 export const DOCS_ORDER = [
-  "plan",
-  "features",
-  "creating-a-project",
-  "governance",
-  "security",
-  "autonomy",
-  "mcp-server",
-  "runtimes",
-  "providers",
-  "auth",
-  "dashboard",
-  "agent-api",
-  "integrations",
-  "cli",
+  "install",
+  "configuration",
   "deployment",
-  "goal-grammar",
+  "architecture",
+  "providers",
+  "cli",
+  "security",
 ];
 
 export const DOCS_GROUPS = [
-  { title: "Start here", slugs: ["plan", "features", "creating-a-project"] },
-  { title: "The rules", slugs: ["governance", "autonomy", "security", "goal-grammar"] },
-  { title: "Surfaces", slugs: ["mcp-server", "dashboard", "cli", "agent-api"] },
-  { title: "Running it", slugs: ["deployment", "integrations", "runtimes", "providers", "auth"] },
+  { title: "Get it running", slugs: ["install", "configuration", "deployment"] },
+  { title: "How it works", slugs: ["architecture", "providers", "security"] },
+  { title: "Reference", slugs: ["cli"] },
 ];

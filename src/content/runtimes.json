@@ -430,11 +430,13 @@
       "reports_cost": false,
       "local": false,
       "lineup": {
-        "frontier": "deepseek-reasoner",
-        "balanced": "deepseek-chat",
-        "fast": "deepseek-chat"
+        "frontier": "deepseek-v4-pro",
+        "balanced": "deepseek-v4-flash",
+        "fast": "deepseek-v4-flash"
       },
       "models": [
+        "deepseek-v4-flash",
+        "deepseek-v4-pro",
         "deepseek-chat",
         "deepseek-reasoner"
       ],
@@ -894,6 +896,18 @@
       }
     },
     {
+      "id": "deepseek-v4-flash",
+      "provider": "deepseek",
+      "tier": 2,
+      "price": null
+    },
+    {
+      "id": "deepseek-v4-pro",
+      "provider": "deepseek",
+      "tier": 3,
+      "price": null
+    },
+    {
       "id": "deepseek-chat",
       "provider": "deepseek",
       "tier": 1,
@@ -902,7 +916,7 @@
     {
       "id": "deepseek-reasoner",
       "provider": "deepseek",
-      "tier": 2,
+      "tier": 1,
       "price": null
     },
     {

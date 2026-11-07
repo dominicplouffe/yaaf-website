@@ -6,29 +6,28 @@ import manifest from "../content/manifest.json";
 
 const roles = await getCollection("roles");
 const critics = roles.filter((r) => r.data.category === "challenge");
-const F = "/docs/features/#";
 
 const GROUPS = [
   {
     id: "work",
     title: "Work that gets finished",
     items: [
-      ["Verified completion", "Only the platform can mark work done. It runs the tests and checks the evidence.", `${F}6-done-means-verified`],
-      ["Goals with an end", "Every task serves a requirement: something that must be true when you're done.", `${F}2-work-that-has-a-terminus`],
-      ["No busywork", "Only the CEO creates work, and every task needs a test that can fail.", `${F}5-work-that-cant-be-invented`],
-      ["Honest deadlines", "The date comes from measured pace. If it slips, new scope freezes.", `${F}3-a-delivery-date-the-project-cannot-quietly-break`],
-      ["Regular reviews", "A review opens on schedule, with the numbers and six levers for you.", `${F}4-a-rhythm-and-a-standing-meeting`],
-      ["Spot checks", "A random sample of finished work is sent to you to check.", `${F}6-done-means-verified`],
+      ["Verified completion", "Only the platform can mark work done. It runs the tests and checks the evidence.", null],
+      ["Goals with an end", "Every task serves a requirement: something that must be true when you're done.", null],
+      ["No busywork", "Only the CEO creates work, and every task needs a test that can fail.", null],
+      ["Honest deadlines", "The date comes from measured pace. If it slips, new scope freezes.", null],
+      ["Regular reviews", "A review opens on schedule, with the numbers and six levers for you.", null],
+      ["Spot checks", "A random sample of finished work is sent to you to check.", null],
     ],
   },
   {
     id: "money",
     title: "Money and limits",
     items: [
-      ["Metered runs", "Every run is priced, including failed ones.", `${F}7-money-that-cant-run-away`],
+      ["Metered runs", "Every run is priced, including failed ones.", "/docs/providers/#prices"],
       ["Budget and wall", "A budget the CEO plans against, and a hard limit that pauses the project.", "/how-it-works/#money"],
-      ["Loop brakes", "Caps on wakes and runs. Two agents talking in circles get frozen.", `${F}8-loops-that-cant-burn-a-night`],
-      ["Approvals with a clock", "Big spends wait for you. Unanswered ones expire as a no.", `${F}7-money-that-cant-run-away`],
+      ["Loop brakes", "Caps on wakes and runs. Two agents talking in circles get frozen.", null],
+      ["Approvals with a clock", "Big spends wait for you. Unanswered ones expire as a no.", null],
     ],
   },
   {
@@ -37,37 +36,37 @@ const GROUPS = [
     items: [
       ["Role library", `${roles.length} roles with their own prompt, model class and tools. Edits never change a running project.`, "/org/"],
       ["Built-in critics", `${critics.length} roles exist to disagree. The CEO can't remove the last one.`, "/org/#challenge"],
-      ["The CEO hires", "It adds and removes teams as the work changes, within your limits, and says why on the chart.", `${F}1-the-org`],
-      ["Solo mode", "One agent under the same rules, if you just want the guardrails.", `${F}1-the-org`],
-      ["Co-chairs", "Invite people as co-chairs or observers. Every action is recorded as theirs.", "/docs/auth/"],
-      ["Autonomy dial", "Five switches decide what you approve and what the CEO handles.", "/docs/autonomy/"],
+      ["The CEO hires", "It adds and removes teams as the work changes, within your limits, and says why on the chart.", null],
+      ["Solo mode", "One agent under the same rules, if you just want the guardrails.", null],
+      ["Co-chairs", "Invite people as co-chairs or observers. Every action is recorded as theirs.", null],
+      ["Autonomy dial", "Five switches decide what you approve and what the CEO handles.", null],
     ],
   },
   {
     id: "start",
     title: "Getting started safely",
     items: [
-      ["Describe it", "Write a paragraph. The Founder interviews you until nothing is assumed, with its own answer already picked.", `${F}18-the-founding-conversation`],
-      ["Goal grading", "Your goal is checked against ten things a good goal needs.", "/docs/goal-grammar/"],
-      ["A $0 rehearsal", "Run the full company on scripted agents before any model is called.", `${F}13-a-fire-drill-before-you-spend-a-cent`],
-      ["Health checks", "Bad keys and broken setups are flagged before the first run.", `${F}16-setup-that-cant-silently-fail`],
-      ["A setup checklist", "A new project's Inbox lists what's left to connect, each ticked off by the project's own state.", "/docs/dashboard/#finishing-setup"],
+      ["Describe it", "Write a paragraph. The Founder interviews you until nothing is assumed, with its own answer already picked.", null],
+      ["Goal grading", "Your goal is checked against ten things a good goal needs.", null],
+      ["A $0 rehearsal", "Run the full company on scripted agents before any model is called.", "/docs/cli/#projects"],
+      ["Health checks", "Bad keys and broken setups are flagged before the first run.", "/docs/install/#if-something-goes-wrong"],
+      ["A setup checklist", "A new project's Inbox lists what's left to connect, each ticked off by the project's own state.", null],
     ],
   },
   {
     id: "surfaces",
     title: "Where you work",
     items: [
-      ["The Inbox", "A project opens on what waits on you, soonest consequence first. Decide in one click, snooze, or undo.", "/docs/dashboard/#inbox--the-projects-home"],
-      ["The Team page", "A live org chart: what each person is doing, the model they run on and their cost this month.", "/docs/dashboard/#team--who-is-doing-the-work"],
-      ["Results", "Every deliverable with who made it and who checked it, and the chain back to your goal.", "/docs/dashboard/#results--what-the-team-delivered-and-who-checked-it"],
+      ["The Inbox", "A project opens on what waits on you, soonest consequence first. Decide in one click, snooze, or undo.", null],
+      ["The Team page", "A live org chart: what each person is doing, the model they run on and their cost this month.", null],
+      ["Results", "Every deliverable with who made it and who checked it, and the chain back to your goal.", null],
       ["A status sentence", "Every project says in one line whether it's fine, and which page fixes it if not.", "/docs/cli/"],
-      ["Claude via MCP", "32 tools in four scopes. Irreversible actions need a confirm.", "/docs/mcp-server/"],
-      ["Chat with the CEO", "In the app or in Slack. Every answer shows what the team did to get there.", `${F}14-talking-to-your-project`],
-      ["Daily letter", "What waits on you, then what happened, in your own time zone. Costs no tokens.", `${F}12-three-tenses-not-one`],
-      ["Deliverables", "Every file the agents make, by day, with previews.", `${F}15-deliverables-and-files`],
-      ["Full record", "Every message, run, cost, decision and refusal.", `${F}11-everything-on-the-record`],
-      ["Pins", "Pin the pages you open every day under the project's five. Deliverables comes pinned.", "/docs/dashboard/#finding-your-way-around"],
+      ["Claude via MCP", "32 tools in four scopes. Irreversible actions need a confirm.", "/docs/install/#after-you-install"],
+      ["Chat with the CEO", "In the app or in Slack. Every answer shows what the team did to get there.", null],
+      ["Daily letter", "What waits on you, then what happened, in your own time zone. Costs no tokens.", null],
+      ["Deliverables", "Every file the agents make, by day, with previews.", null],
+      ["Full record", "Every message, run, cost, decision and refusal.", null],
+      ["Pins", "Pin the pages you open every day under the project's five. Deliverables comes pinned.", null],
     ],
   },
   {
@@ -75,11 +74,11 @@ const GROUPS = [
     title: "Running it",
     items: [
       ["Any harness, any model", `${manifest.harnesses} harnesses and ${manifest.providers} providers, under one budget. Roles name a class, not a vendor.`, "/runtimes/"],
-      ["One command to start", "<code>yaaf up</code> takes a checkout to a running dashboard on your own machine.", "/docs/deployment/"],
+      ["One command to start", "<code>yaaf up</code> takes a checkout to a running dashboard on your own machine.", "/docs/install/"],
       ["The terminal", "<code>yaaf status</code> says every project in sentences, and what waits on you.", "/docs/cli/"],
-      ["Sandboxed runs", "A fresh container per run, with only that role's secrets.", `${F}9-containment`],
-      ["Integrations", "Slack, GitHub, webhooks, email, S3 and any MCP server.", "/docs/integrations/"],
-      ["Tested rules", `${manifest.tests.toLocaleString("en-US")} tests attack the rules the way an agent would.`, `${F}17-proving-it-works`],
+      ["Sandboxed runs", "A fresh container per run, with only that role's secrets.", "/docs/architecture/#sandboxes"],
+      ["Integrations", "Slack, GitHub, webhooks, email, S3 and any MCP server.", null],
+      ["Tested rules", `${manifest.tests.toLocaleString("en-US")} tests attack the rules the way an agent would.`, null],
     ],
   },
 ];
@@ -108,12 +107,17 @@ const total = GROUPS.reduce((n, g) => n + g.items.length, 0);
   {GROUPS.map((g) => (
     <Section id={g.id} eyebrow={`${g.items.length} features`} title={g.title}>
       <div class:list={["cells", "hued", { c3: g.items.length % 4 !== 0 && g.items.length % 3 === 0 }]}>
-        {g.items.map(([k, v, href]) => (
+        {g.items.map(([k, v, href]) => href ? (
           <a class="cell" href={href}>
             <h3>{k}</h3>
             <p set:html={v} />
             <span class="go">Learn more →</span>
           </a>
+        ) : (
+          <div class="cell">
+            <h3>{k}</h3>
+            <p set:html={v} />
+          </div>
         ))}
       </div>
     </Section>
@@ -128,6 +132,5 @@ const total = GROUPS.reduce((n, g) => n + g.items.length, 0);
         </div>
       ))}
     </div>
-    <p class="note"><a href="/docs/plan/#deliberately-not-built">The reasons, in the plan →</a></p>
   </Section>
 </BaseLayout>

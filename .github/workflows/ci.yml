@@ -42,7 +42,10 @@ jobs:
           test -f dist/og.png
           test -f dist/sitemap-index.xml
           docs=$(ls src/content/docs/*.md | wc -l)
-          examples=$(ls src/content/examples/*.md | wc -l)
-          test "$(find dist/docs     -name index.html | wc -l)" -eq $((docs + 1))     # each doc + hub
-          test "$(find dist/examples -name index.html | wc -l)" -eq $((examples + 1)) # each example + hub
-          test "$(ls public/setups/*.json | wc -l)" -eq "$examples"
+          # Retired doc URLs build as redirect pages beside the real ones, so
+          # count only pages that are not a redirect: each doc + the hub.
+          pages=$(find dist/docs -name index.html -exec grep -L 'http-equiv="refresh"' {} + | wc -l)
+          test "$pages" -eq $((docs + 1))
+          # The use-case pages are gone; their old URLs must still land somewhere.
+          grep -q 'http-equiv="refresh"' dist/examples/index.html
+          grep -q 'http-equiv="refresh"' dist/examples/01-your-first-hour/index.html

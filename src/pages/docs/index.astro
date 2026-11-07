@@ -8,23 +8,14 @@ const bySlug = new Map(all.map((d) => [d.data.slug, d]));
 
 /** One line each, written for someone deciding what to open. */
 const BLURB: Record<string, string> = {
-  plan: "What yaaf is betting on, what would prove it wrong, and what's built.",
-  features: "Every feature, grouped by the problem it solves.",
-  "creating-a-project": "Your first project, step by step.",
-  governance: "Every rule and its default.",
-  autonomy: "How much the CEO decides without you.",
-  "goal-grammar": "The ten things a good goal needs.",
-  "mcp-server": "Run yaaf from Claude or any MCP client.",
-  dashboard: "Every screen and what it's for.",
-  cli: "Every yaaf command.",
-  "agent-api": "What agents can do, and how to write a role.",
-  deployment: "Install, configure, back up and upgrade.",
-  integrations: "Billing, Slack, GitHub, data sources, webhooks and storage.",
-  runtimes: "Any harness, any provider, the same rules: the design.",
-  providers: "Model classes, every provider's own API, prices and failover.",
-  auth: "Accounts, co-chairs, observers and permissions.",
+  install: "Get yaaf running: Docker, native, or from source.",
+  configuration: "Every environment variable, and which ones you must set.",
+  deployment: "Run it on a server: access, updates, backups, scaling.",
+  architecture: "How the server, runner, database and sandboxes fit together.",
+  providers: "Which models it runs on: keys, subscriptions, prices, local models.",
+  cli: "Every yaaf command, by task.",
   security: "What contains an agent, and what doesn't.",
-};
+}
 
 const groups = DOCS_GROUPS.map((g) => ({
   title: g.title,
@@ -34,11 +25,11 @@ const groups = DOCS_GROUPS.map((g) => ({
 <DocsLayout
   title="Documentation"
   subtitle="Synced from the yaaf repository."
-  description="yaaf documentation: the plan, the feature reference, the constitution, the autonomy dial, the MCP server, runtimes and providers, people and roles, the CLI and the agent API."
+  description="yaaf documentation: install it with Docker or natively, configure it, deploy it to a server, how it is built, model providers, the CLI and the security model."
 >
   <p>
     New here? Start with{" "}
-    <a href="/docs/creating-a-project/">Creating a project</a>.
+    <a href="/docs/install/">Install</a>.
   </p>
 
   {groups.map((g) => (
