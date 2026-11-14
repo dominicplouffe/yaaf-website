@@ -59,65 +59,29 @@ if (rest.length) grouped.push({ title: "More", items: rest });
 </BaseLayout>
 
 <style>
-  .wrap {
-    display: grid;
-    grid-template-columns: 220px minmax(0, 1fr);
-    gap: 56px;
-    align-items: start;
-    padding: 56px calc(var(--gutter) + var(--inset)) 64px;
-  }
-  .side { position: sticky; top: 74px; max-height: calc(100vh - 90px); overflow-y: auto; padding-right: 4px; }
-  .home {
-    display: block;
-    font-size: 13px;
-    color: var(--color-ink-2);
-    text-decoration: none;
-    padding: 6px 9px;
-    border-radius: var(--radius-control);
-  }
-  .home:hover, .side a:hover { background: rgba(255, 255, 255, 0.04); color: var(--color-ink); }
-  .group { margin-top: 20px; }
-  .gt { margin: 0 0 7px 9px; }
+  /* Docs stay fast and plain: a mono-labelled sidebar, a Brygada title, prose. */
+  .wrap { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 64px; align-items: start; padding-block: 56px 80px; }
+  .side { position: sticky; top: 88px; max-height: calc(100vh - 104px); overflow-y: auto; padding-right: 4px; }
+  .home { display: block; font-size: 14px; color: var(--yaaf-ink-2); text-decoration: none; padding: 6px 10px; border-left: 2px solid transparent; }
+  .home:hover, .side li a:hover { color: var(--yaaf-accent); text-decoration: underline; text-underline-offset: 3px; }
+  .home.on { color: var(--yaaf-ink); font-weight: 600; border-left-color: var(--yaaf-ink); }
+  .group { margin-top: 22px; }
+  .gt { margin: 0 0 6px 12px; }
   .side ul { list-style: none; margin: 0; padding: 0; }
-  .side li a {
-    display: block;
-    font-size: 13.5px;
-    color: var(--color-ink-2);
-    text-decoration: none;
-    padding: 5px 9px;
-    border-radius: var(--radius-control);
-    border-left: 2px solid transparent;
-  }
-  .side li a.on {
-    color: var(--color-ink);
-    background: var(--color-surface-2);
-    border-left-color: var(--color-ink);
-  }
-  .doc-head { margin-bottom: 32px; }
-  .doc-head h1 {
-    font-size: var(--text-h1);
-    line-height: 1.1;
-    letter-spacing: -0.045em;
-    font-weight: 500;
-    margin: 14px 0 0;
-    text-wrap: balance;
-  }
-  .sub { color: var(--color-ink-2); font-size: 1.05rem; margin: 10px 0 0; max-width: 60ch; }
-  .src { margin: 14px 0 0; font-family: var(--font-mono); font-size: 11.5px; overflow-wrap: anywhere; }
-  .src a { color: var(--color-muted); text-decoration: none; }
-  .src a:hover { color: var(--color-accent-hi); }
+  .side li a { display: block; font-size: 14.5px; color: var(--yaaf-ink-2); text-decoration: none; padding: 6px 10px; border-left: 2px solid transparent; }
+  .side li a.on { color: var(--yaaf-ink); font-weight: 600; border-left-color: var(--yaaf-ink); }
+  .doc-head { margin-bottom: 36px; padding-bottom: 24px; border-bottom: 2px solid var(--yaaf-ink); max-width: 46rem; }
+  .doc-head .eyebrow { margin: 0; }
+  .doc-head h1 { font-size: var(--text-h1); line-height: 1.06; margin: 14px 0 0; text-wrap: balance; }
+  .sub { color: var(--yaaf-ink-2); font-size: 18px; margin: 12px 0 0; max-width: var(--measure); }
+  .src { margin: 14px 0 0; font-family: var(--font-mono); font-size: 12.5px; overflow-wrap: anywhere; }
+  .src a { color: var(--yaaf-accent); text-decoration: none; }
+  .src a:hover { color: var(--yaaf-accent-hover); text-decoration: underline; text-underline-offset: 3px; }
 
   @media (max-width: 900px) {
-    .wrap { grid-template-columns: minmax(0, 1fr); gap: 24px; }
-    .side {
-      position: static;
-      max-height: none;
-      border: 1px solid var(--color-line);
-      border-radius: var(--radius-card);
-      padding: 14px;
-      background: var(--color-surface);
-    }
-    .side ul { display: flex; flex-wrap: wrap; gap: 4px; }
-    .side li a { border-left: 0; border: 1px solid var(--color-line); }
+    .wrap { grid-template-columns: minmax(0, 1fr); gap: 28px; padding-block: 32px 64px; }
+    .side { position: static; max-height: none; border: 1px solid var(--yaaf-border-strong); padding: 12px; background: var(--yaaf-surface); }
+    .group { margin-top: 12px; }
+    .side ul { display: flex; flex-wrap: wrap; gap: 2px 4px; }
   }
 </style>

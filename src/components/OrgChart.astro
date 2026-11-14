@@ -1,6 +1,6 @@
 ---
 /**
- * The thesis, drawn. Chairman on top, CEO under them, desks under the CEO.
+ * The thesis, drawn. The chair on top, CEO under them, desks under the CEO.
  * CSS connectors rather than SVG so the boxes can hold real, variable-length
  * role names without anything overflowing.
  */
@@ -21,7 +21,7 @@ interface Props {
   compact?: boolean;
   ceoRunsOn?: string;
 }
-const { ceo, ceoRole, teams, chairman = "You — the chairman", compact = false, ceoRunsOn } = Astro.props;
+const { ceo, ceoRole, teams, chairman = "You, the chair", compact = false, ceoRunsOn } = Astro.props;
 ---
 <div class:list={["org", { compact }]}>
   {chairman && (
@@ -78,92 +78,44 @@ const { ceo, ceoRole, teams, chairman = "You — the chairman", compact = false,
 </div>
 
 <style>
+  /* Seats by role, joined with ink lines. No faces. */
   .org { display: flex; flex-direction: column; align-items: center; width: 100%; }
   .row { display: flex; justify-content: center; width: 100%; }
 
   .node {
-    background: var(--color-surface);
-    border: 1px solid var(--color-line);
-    border-radius: var(--radius-card);
-    padding: 11px 14px;
+    background: var(--yaaf-surface);
+    border: 1px solid var(--yaaf-ink);
+    padding: 12px 14px;
     text-align: center;
     min-width: 0;
     display: flex;
     flex-direction: column;
     gap: 3px;
   }
-  .node strong { font-size: 14px; font-weight: 640; letter-spacing: -0.01em; color: var(--color-ink); }
-  .node .sub { font-family: var(--font-mono); font-size: 10.5px; color: var(--color-muted); }
-  .node .on {
-    align-self: center;
-    font-family: var(--font-mono);
-    font-size: 9.5px;
-    letter-spacing: 0.3px;
-    color: var(--color-accent-hi);
-    border: 1px solid color-mix(in srgb, var(--color-accent) 35%, transparent);
-    border-radius: 0;
-    padding: 1px 7px;
-    margin-top: 2px;
-    max-width: 100%;
-  }
+  .node strong { font-family: var(--font-display); font-size: 1.125rem; font-weight: 600; line-height: 1.2; color: var(--yaaf-ink); }
+  .node .sub { font-family: var(--font-mono); font-size: 12px; color: var(--yaaf-muted); }
+  .node .on { align-self: center; font-family: var(--font-mono); font-size: 12px; color: var(--yaaf-ink-2); border: 1px solid var(--yaaf-border-strong); padding: 0 7px; margin-top: 3px; max-width: 100%; }
 
-  .chair {
-    border-color: color-mix(in srgb, var(--color-accent-2) 50%, transparent);
-    background: color-mix(in srgb, var(--color-accent-2) 10%, var(--color-surface));
-  }
-  .chair :global(.eyebrow) { color: var(--color-accent-2); }
+  .chair { border-width: 2px; }
+  .ceo { min-width: min(100%, 220px); }
+  /* A critic's seat is drawn dashed: it sits on the team and answers past it. */
+  .team.challenge { border-style: dashed; }
 
-  .ceo {
-    border-color: color-mix(in srgb, var(--color-accent) 55%, transparent);
-    background: color-mix(in srgb, var(--color-accent) 12%, var(--color-surface));
-  }
-  .ceo :global(.eyebrow) { color: var(--color-accent-hi); }
+  .people { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; font-size: 13px; color: var(--yaaf-muted); margin-top: 2px; }
+  .people .lead { color: var(--yaaf-ink-2); font-weight: 600; }
 
-  .team.challenge { border-color: color-mix(in srgb, var(--color-accent-2) 42%, transparent); }
-  .team.challenge :global(.eyebrow) { color: var(--color-accent-2); }
-
-  .people { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; font-size: 11.5px; color: var(--color-muted); margin-top: 2px; }
-  .people .lead { color: var(--color-ink-2); font-weight: 600; }
-  .people .sep { opacity: 0.5; }
-
-  .stem { width: 1px; height: 20px; background: var(--color-line-strong); }
+  .stem { width: 1px; height: 20px; background: var(--yaaf-ink); }
 
   /* One horizontal rail with a drop into each team box. */
-  .branch {
-    display: grid;
-    grid-template-columns: repeat(var(--n), minmax(0, 1fr));
-    width: 100%;
-    height: 20px;
-  }
+  .branch { display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); width: 100%; height: 20px; }
   .branch span { position: relative; }
-  .branch span::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 50%;
-    width: 1px;
-    height: 100%;
-    background: var(--color-line-strong);
-  }
-  .branch span::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    height: 1px;
-    background: var(--color-line-strong);
-    left: 50%;
-    right: 0;
-  }
+  .branch span::before { content: ""; position: absolute; top: 0; left: 50%; width: 1px; height: 100%; background: var(--yaaf-ink); }
+  .branch span::after { content: ""; position: absolute; top: 0; height: 1px; background: var(--yaaf-ink); left: 50%; right: 0; }
   .branch span:last-child::after { right: 50%; left: 0; }
   .branch span:not(:first-child):not(:last-child)::after { left: 0; right: 0; }
   .branch span:first-child::after { left: 50%; right: 0; }
 
-  .teams {
-    display: grid;
-    grid-template-columns: repeat(var(--n), minmax(0, 1fr));
-    gap: 10px;
-    width: 100%;
-  }
+  .teams { display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: 10px; width: 100%; }
 
   @media (max-width: 700px) {
     .branch { display: none; }
