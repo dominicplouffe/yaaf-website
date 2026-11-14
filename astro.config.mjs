@@ -49,7 +49,8 @@ export default defineConfig({
   vite: { plugins: [tailwindcss()] },
   markdown: {
     shikiConfig: {
-      theme: "github-dark-default",
+      // One theme per scheme; global.css switches on prefers-color-scheme.
+      themes: { light: "github-light-high-contrast", dark: "github-dark-high-contrast" },
       // DEPLOYMENT.md has one ```caddy fence and shiki has no caddy grammar.
       langAlias: { caddy: "nginx" },
       wrap: false,

@@ -1,85 +1,68 @@
 @import "tailwindcss";
+@import "./fonts.css";
+@import "./tokens.css";
 
 /* ---------------------------------------------------------------------------
-   Yesterday was black and white. The page starts from a deep night and lets
-   the dawn in: one gradient (gold → orange → rose → violet → sky) carries the
-   new way of working, and five named hues give each idea its own colour.
-   Hairlines instead of boxes and medium-weight type set tight stay; the
-   greys are kept for one job only — drawing the old way of doing things.
+   A public register: registry paper, registrar's ink, and one seal.
+
+   Colour, type and motion come from tokens.css (--yaaf-*), which is generated
+   by the brand's build and copied here unedited. Light is the default; dark
+   follows prefers-color-scheme and sits on neutral Carbon.
+
+   Three rules this stylesheet exists to keep:
+   1. Seal (--yaaf-seal) is the checker's signature and nothing else. It is on
+      the logo, on "checked" in the home page's first line, and on the name of
+      whoever checked a result (.signed). Never a button, a link, a status.
+   2. Emphasis in a headline is an ink italic (h1 em, h2 em), not a colour.
+   3. Numbers, IDs and code are IBM Plex Mono.
    --------------------------------------------------------------------------- */
 @theme {
-  --color-page: #0b0918;
-  --color-surface: #131027;
-  --color-surface-2: #1c1836;
-  --color-grid: rgba(190, 170, 255, 0.09);
+  --color-page: var(--yaaf-page);
+  --color-surface: var(--yaaf-surface);
+  --color-surface-2: var(--yaaf-surface-2);
+  --color-sunken: var(--yaaf-sunken);
+  --color-ink: var(--yaaf-ink);
+  --color-ink-2: var(--yaaf-ink-2);
+  --color-muted: var(--yaaf-muted);
+  --color-line: var(--yaaf-border);
+  --color-line-2: var(--yaaf-border);
+  --color-line-strong: var(--yaaf-border-strong);
+  --color-accent: var(--yaaf-accent);
+  --color-good: var(--yaaf-good);
+  --color-warning: var(--yaaf-warning);
+  --color-serious: var(--yaaf-serious);
+  --color-critical: var(--yaaf-critical);
 
-  --color-ink: #ffffff;
-  --color-ink-2: #cbc6e2;
-  --color-muted: #9690b4;
-
-  /* yaaf's own blue, kept as the link colour and the sky end of the dawn. */
-  --color-accent: #3987e5;
-  --color-accent-lo: #2f78d4;
-  --color-accent-hi: #7cb8ff;
-  --color-accent-2: #ff8a4c;
-
-  /* The dawn. */
-  --color-gold: #ffd23f;
-  --color-sun: #ff8a3d;
-  --color-rose: #ff4f9a;
-  --color-violet: #9b6bff;
-  --color-sky: #4cc3ff;
-  --color-mint: #3fe0a5;
-  --color-lime: #c6f24a;
-
-  --color-good: #3fe0a5;
-  --color-warning: #ffc53d;
-  --color-serious: #ff8a4c;
-  --color-critical: #ff7a8a;
-
-  --color-line: rgba(200, 185, 255, 0.15);
-  --color-line-2: rgba(200, 185, 255, 0.08);
-  --color-line-strong: rgba(220, 210, 255, 0.32);
-
-  /* The old way: what the page looked like before, kept for drawing it. */
-  --color-old: #8a8a8a;
-  --color-old-bg: #111111;
-
-  --font-sans: "Geist Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-mono: "Geist Mono Variable", ui-monospace, "SF Mono", Menlo, monospace;
+  --font-display: "Brygada 1918", "Brygada Fallback", "Iowan Old Style", Georgia, serif;
+  --font-sans: "Public Sans", "Public Sans Fallback", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
 
   --radius-card: 0px;
   --radius-control: 0px;
 
-  --text-hero: clamp(2.9rem, 1.1rem + 5.6vw, 6.6rem);
-  --text-h1: clamp(2.5rem, 1.2rem + 3.8vw, 4.6rem);
-  --text-h2: clamp(2rem, 1.25rem + 2.4vw, 3.4rem);
+  /* The brand scale (96 / 60 / 48), let down gently on small screens. */
+  --text-hero: clamp(3.1rem, 1.2rem + 7.4vw, 6rem);
+  --text-h1: clamp(2.5rem, 1.6rem + 3.2vw, 3.75rem);
+  --text-h2: clamp(2rem, 1.45rem + 2vw, 3rem);
+  --text-h3: clamp(1.5rem, 1.3rem + 0.8vw, 1.875rem);
 }
 
 :root {
-  color-scheme: dark;
-  --shell: 1360px;
+  --shell: 1280px;
   --gutter: 20px;
-  /* How far text sits inside the gridlines, so a line never runs through a
-     first letter. Boxes, tables and screenshots sit on the lines; words
-     don't. It matches a cell's own padding, so text inside and outside a
-     cell starts at the same x. */
-  --inset: 16px;
-  --ease: cubic-bezier(0.165, 0.84, 0.44, 1);
-  --dawn: linear-gradient(100deg, var(--color-gold) 0%, var(--color-sun) 22%, var(--color-rose) 48%, var(--color-violet) 74%, var(--color-sky) 100%);
+  /* Padding inside a ruled box, so words never touch its border. */
+  --inset: 20px;
+  --ease: var(--yaaf-motion-ease);
+  --fast: var(--yaaf-motion-fast);
+  --base: var(--yaaf-motion-base);
 }
-@media (min-width: 768px) {
-  :root { --gutter: 40px; --inset: 1.6rem; }
-}
-
-/* Text that sits directly on the page, not in a box. */
-.head, .note, .page-hero .shell > :not(.toc), .inset { padding-inline: var(--inset); }
-.page-hero .toc { margin-left: var(--inset); }
+@media (min-width: 768px) { :root { --gutter: 40px; --inset: 24px; } }
+@media (min-width: 1280px) { :root { --gutter: 80px; } }
 
 html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
-  background: var(--color-page);
+  background: var(--yaaf-page);
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -92,23 +75,23 @@ html {
 
 body {
   margin: 0;
-  background: var(--color-page);
-  color: var(--color-ink);
+  background: var(--yaaf-page);
+  color: var(--yaaf-ink);
   font-family: var(--font-sans);
-  font-size: 17px;
+  font-size: 16px;
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
-::selection { background: color-mix(in srgb, var(--color-rose) 60%, transparent); color: #fff; }
+::selection { background: var(--yaaf-selection); color: var(--yaaf-ink); }
 
 :focus-visible {
-  outline: 2px solid var(--color-accent-hi);
+  outline: 2px solid var(--yaaf-focus);
   outline-offset: 2px;
 }
 
-/* --- the shell and the background grid ----------------------------------- */
+/* --- the shell -------------------------------------------------------------- */
 @utility shell {
   width: 100%;
   max-width: calc(var(--shell) + var(--gutter) * 2);
@@ -116,262 +99,216 @@ body {
   padding-inline: var(--gutter);
 }
 
-/* Hairlines the full height of the page, on the quarters of the shell.
-   Content that sits on a .cells grid lands on them. Not ".bg-grid": with
-   --color-grid in the theme, Tailwind owns that name as a background colour. */
-.page-lines {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-}
-.page-lines .shell { height: 100%; }
-.page-lines .lines {
-  height: 100%;
-  border-left: 1px solid var(--color-grid);
-  border-right: 1px solid var(--color-grid);
-  background-image: linear-gradient(to right, var(--color-grid) 1px, transparent 1px);
-  background-size: 25% 100%;
-  background-position: -1px 0;
-}
-@media (max-width: 1024px) { .page-lines .lines { background-size: 50% 100%; } }
-@media (max-width: 640px) { .page-lines .lines { background-image: none; } }
-
-/* Everything the page draws sits above the grid. */
-.layer { position: relative; z-index: 1; }
-
 /* --- type ------------------------------------------------------------------ */
+/* The micro label: mono, uppercase, +8% tracking. 12px is the floor. */
 @utility eyebrow {
   font-family: var(--font-mono);
-  font-size: 11.5px;
-  font-weight: 450;
-  letter-spacing: 0.18em;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--color-muted);
+  color: var(--yaaf-muted);
 }
 @utility balance { text-wrap: balance; }
 @utility pretty { text-wrap: pretty; }
 
-h1, h2, h3, h4 { font-weight: 500; letter-spacing: -0.035em; }
-
-/* Kept for the docs and the pages that still draw one. */
-@utility card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-line);
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.015em;
 }
-@utility blueprint {
-  background-image:
-    linear-gradient(to right, var(--color-grid) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--color-grid) 1px, transparent 1px);
-  background-size: 44px 44px;
-  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 0%, transparent 75%);
+h4, h5, h6 { font-family: var(--font-sans); font-weight: 600; letter-spacing: 0; }
+/* Headline emphasis: an ink italic. */
+:is(h1, h2, h3) em { font-style: italic; color: inherit; }
+
+/* Every number, ID and count. */
+.mono, .num, code, kbd, samp, pre {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* The checker's signature: the one place Seal is used in running copy. */
+.signed { font-family: var(--font-display); font-style: italic; font-weight: 600; color: var(--yaaf-seal); }
+
+/* The double rule: final, checked. Use only where something was. */
+.double-rule {
+  display: block;
+  border: 0;
+  margin: 0;
+  height: 6px;
+  color: var(--yaaf-ink);
+  background:
+    linear-gradient(currentColor 0 0) top / 100% 2px no-repeat,
+    linear-gradient(currentColor 0 0) bottom / 100% 2px no-repeat;
+}
+.double-rule.thin { height: 5px; background-size: 100% 1.5px, 100% 1.5px; }
+
+/* The section mark. */
+.sect { font-family: var(--font-mono); font-size: 12px; font-weight: 500; letter-spacing: 0.04em; color: var(--yaaf-muted); }
+
+@utility card {
+  background: var(--yaaf-surface);
+  border: 1px solid var(--yaaf-border);
 }
 
 /* --- buttons ---------------------------------------------------------------
-   A sharp rectangle with the arrow pushed to the far edge. On hover a fill
-   rises from the bottom and the text inverts. */
+   Primary is ink. Secondary is an ink outline. Nothing is red. */
 .btn {
-  --fill: #ffffff;
-  --on-fill: #000000;
-  position: relative;
   display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 2.5rem;
-  min-width: 12.5rem;
-  padding: 0.95rem 1.1rem;
-  font-size: 15px;
-  font-weight: 500;
-  letter-spacing: -0.01em;
-  line-height: 1.2;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.8rem 1.3rem;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.25;
   text-decoration: none;
-  color: var(--color-ink);
-  border: 1px solid var(--color-line-strong);
-  background: linear-gradient(var(--fill), var(--fill)) no-repeat bottom / 100% 0%;
-  transition: background-size 0.45s var(--ease), color 0.3s var(--ease), border-color 0.3s;
+  color: var(--yaaf-ink);
+  background: transparent;
+  border: 1px solid var(--yaaf-ink);
+  transition: background var(--fast) var(--ease), color var(--fast) var(--ease), border-color var(--fast) var(--ease);
   white-space: nowrap;
 }
-.btn:hover { background-size: 100% 100%; color: var(--on-fill); border-color: var(--fill); }
-.btn svg { width: 15px; height: 15px; flex: none; transition: transform 0.45s var(--ease); }
-.btn:hover svg { transform: translateX(3px); }
-.btn.primary {
-  --fill: #ffffff;
-  color: #14051f;
-  border-color: transparent;
-  background:
-    linear-gradient(var(--fill), var(--fill)) no-repeat bottom / 100% 0%,
-    linear-gradient(100deg, var(--color-gold), var(--color-sun) 45%, var(--color-rose));
-  box-shadow: 0 10px 40px -12px color-mix(in srgb, var(--color-rose) 70%, transparent);
-}
-.btn.primary:hover { background-size: 100% 100%, 100% 100%; border-color: transparent; color: #14051f; }
-.btn.small { min-width: 0; gap: 0.9rem; padding: 0.55rem 0.8rem; font-size: 13.5px; }
-.btns { display: flex; flex-wrap: wrap; gap: 10px; }
+.btn:hover { background: var(--yaaf-sunken); }
+.btn svg { width: 14px; height: 14px; flex: none; }
+.btn.primary { background: var(--yaaf-ink); color: var(--yaaf-page); }
+.btn.primary:hover { background: var(--yaaf-ink-2); border-color: var(--yaaf-ink-2); }
+.btn.small { padding: 0.55rem 0.95rem; font-size: 14px; }
+.btns { display: flex; flex-wrap: wrap; gap: 14px; }
 @media (max-width: 520px) {
   .btns .btn { flex: 1 1 100%; }
 }
 
+/* --- links ------------------------------------------------------------------ */
+.link, .note a, .go {
+  color: var(--yaaf-accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  text-decoration-color: color-mix(in srgb, var(--yaaf-accent) 35%, transparent);
+  transition: color var(--fast) var(--ease), text-decoration-color var(--fast) var(--ease);
+}
+.link:hover, .note a:hover, .go:hover { color: var(--yaaf-accent-hover); text-decoration-color: currentColor; }
+
 /* --- sections -------------------------------------------------------------- */
 .sec { position: relative; }
-.sec-in { border-top: 1px solid var(--color-line); padding-block: 6.5rem; }
+.sec-in { border-top: 1px solid var(--yaaf-border); padding-block: var(--yaaf-space-11); }
 .sec.first .sec-in { border-top: 0; }
-@media (max-width: 760px) { .sec-in { padding-block: 4rem; } }
+/* A band on the raised surface, edge to edge. */
+.sec.raised { background: var(--yaaf-surface); border-block: 1px solid var(--yaaf-border); }
+.sec.raised .sec-in, .sec.raised + .sec .sec-in { border-top: 0; }
+@media (max-width: 760px) { .sec-in { padding-block: var(--yaaf-space-10); } }
 
-.head { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0 24px; margin-bottom: 3.25rem; }
-.head > .eyebrow { grid-column: 1 / -1; margin: 0 0 1.4rem; width: fit-content; background: var(--dawn); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.head { margin-bottom: var(--yaaf-space-9); max-width: 60rem; }
+.head > .eyebrow { margin: 0 0 var(--yaaf-space-4); text-transform: none; letter-spacing: 0.04em; }
 .head > h2 {
-  grid-column: 1 / span 3;
   margin: 0;
   font-size: var(--text-h2);
-  line-height: 1;
-  letter-spacing: -0.045em;
+  line-height: 1.08;
+  max-width: 22ch;
   text-wrap: balance;
 }
-.head > .lede { grid-column: 1 / span 2; margin: 1.25rem 0 0; font-size: 1.15rem; line-height: 1.5; color: var(--color-ink-2); text-wrap: pretty; }
-.head > .lede strong { color: var(--color-ink); font-weight: 500; }
-@media (max-width: 1024px) {
-  .head > h2, .head > .lede { grid-column: 1 / -1; }
-}
+.head > .lede { margin: var(--yaaf-space-5) 0 0; font-size: 18px; line-height: 1.55; color: var(--yaaf-ink-2); max-width: 62ch; text-wrap: pretty; }
+.head > .lede strong { color: var(--yaaf-ink); font-weight: 600; }
 
-/* --- cells: a grid of hairline-divided boxes on the page's quarters --------
+/* --- cells: a grid of ruled boxes -------------------------------------------
    Borders on the cells rather than a gap over a coloured background, so a
-   last row that is not full just ends, instead of showing grey holes. */
+   last row that is not full just ends. */
 .cells {
   display: grid;
   grid-template-columns: repeat(var(--cols, 4), minmax(0, 1fr));
-  border-top: 1px solid var(--color-line);
-  border-left: 1px solid var(--color-line);
+  border-top: 1px solid var(--yaaf-border);
+  border-left: 1px solid var(--yaaf-border);
 }
 .cells.c2 { --cols: 2; }
 .cells.c3 { --cols: 3; }
 .cells > * {
-  background: var(--color-page);
-  padding: 1.75rem var(--inset) 1.9rem;
+  background: var(--yaaf-surface);
+  padding: var(--inset) var(--inset) calc(var(--inset) + 4px);
   min-width: 0;
-  border-right: 1px solid var(--color-line);
-  border-bottom: 1px solid var(--color-line);
+  border-right: 1px solid var(--yaaf-border);
+  border-bottom: 1px solid var(--yaaf-border);
 }
 .cells > .span2 { grid-column: span 2; }
 .cells > .span4 { grid-column: 1 / -1; }
 @media (max-width: 1024px) { .cells.cells { --cols: 2; } .cells > .span4 { grid-column: span 2; } }
 @media (max-width: 640px) { .cells.cells { --cols: 1; } .cells > .span2, .cells > .span4 { grid-column: auto; } }
 
-.cell h3 { margin: 0; font-size: 1.15rem; line-height: 1.25; letter-spacing: -0.02em; }
-.cell p { margin: 0.6rem 0 0; font-size: 15px; line-height: 1.55; color: var(--color-ink-2); }
-.cell p strong { color: var(--color-ink); font-weight: 500; }
-.cell .eyebrow { display: block; margin-bottom: 1.1rem; }
+.cell h3 { margin: 0; font-size: 1.375rem; line-height: 1.2; }
+.cell p { margin: 0.6rem 0 0; font-size: 15px; line-height: 1.55; color: var(--yaaf-ink-2); }
+.cell p strong { color: var(--yaaf-ink); font-weight: 600; }
+.cell .eyebrow { display: block; margin-bottom: 0.9rem; }
 .cell ul { margin: 0.8rem 0 0; padding: 0; list-style: none; display: grid; gap: 6px; }
-.cell li { position: relative; padding-left: 14px; font-size: 14.5px; line-height: 1.5; color: var(--color-ink-2); }
-.cell li::before { content: ""; position: absolute; left: 0; top: 0.62em; width: 5px; height: 1px; background: var(--color-muted); }
-.cell .go { display: inline-block; margin-top: 1rem; font-size: 14px; color: var(--color-accent-hi); text-decoration: none; }
-.cell .go:hover { text-decoration: underline; text-underline-offset: 3px; }
-a.cell { color: inherit; text-decoration: none; transition: background 0.25s; }
-a.cell:hover { background: var(--color-surface-2); }
-.cell.warm h3 { color: var(--color-accent-2); }
-.cell.blue h3 { color: var(--color-accent-hi); }
+.cell li { position: relative; padding-left: 16px; font-size: 15px; line-height: 1.5; color: var(--yaaf-ink-2); }
+.cell li::before { content: ""; position: absolute; left: 0; top: 0.72em; width: 7px; height: 1px; background: var(--yaaf-muted); }
+.cell .go { display: inline-block; margin-top: 1rem; font-size: 14px; }
+a.cell { color: inherit; text-decoration: none; transition: background var(--fast) var(--ease); }
+a.cell:hover { background: var(--yaaf-surface-2); }
 
-/* --- hues ---------------------------------------------------------------------
-   Each idea gets its own colour. .hued cycles the five through a grid's cells:
-   a bar of colour along the top edge, the eyebrow and the hover wash in it. */
-.h-gold { --hue: var(--color-gold); }
-.h-sun { --hue: var(--color-sun); }
-.h-rose { --hue: var(--color-rose); }
-.h-violet { --hue: var(--color-violet); }
-.h-sky { --hue: var(--color-sky); }
-.h-mint { --hue: var(--color-mint); }
-.h-lime { --hue: var(--color-lime); }
-.hued > :nth-child(6n + 1) { --hue: var(--color-gold); }
-.hued > :nth-child(6n + 2) { --hue: var(--color-rose); }
-.hued > :nth-child(6n + 3) { --hue: var(--color-sky); }
-.hued > :nth-child(6n + 4) { --hue: var(--color-mint); }
-.hued > :nth-child(6n + 5) { --hue: var(--color-violet); }
-.hued > :nth-child(6n + 6) { --hue: var(--color-sun); }
-.hued > * { position: relative; background: color-mix(in srgb, var(--hue) 5%, var(--color-page)) !important; }
-.hued > *::before {
-  content: "";
-  position: absolute;
-  left: -1px;
-  right: 0;
-  top: -1px;
-  height: 3px;
-  background: var(--hue);
-}
-.hued > * .eyebrow, .hued > * .go, .hued > * .num { color: var(--hue); }
-.hued > a:hover { background: color-mix(in srgb, var(--hue) 12%, var(--color-page)) !important; }
+/* A card ruled along the top in ink, the way an entry starts in a register. */
+.ruled { border-top: 2px solid var(--yaaf-ink); padding-top: var(--yaaf-space-5); }
 
-/* Text in the dawn. */
-.dawn-text {
-  background: var(--dawn);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-.num, .cell .num { font-size: clamp(2.6rem, 1.6rem + 2.4vw, 4rem); font-weight: 500; letter-spacing: -0.05em; line-height: 1; margin: 0 0 1.2rem; color: var(--color-ink); }
-.cell.warm .num { color: var(--color-accent-2); }
+.num, .cell .num { font-size: clamp(2rem, 1.5rem + 1.6vw, 3rem); font-weight: 500; letter-spacing: -0.02em; line-height: 1; margin: 0 0 1rem; color: var(--yaaf-ink); }
 
 /* --- small things ----------------------------------------------------------- */
-.note { margin: 1.6rem 0 0; font-size: 14.5px; line-height: 1.6; color: var(--color-muted); max-width: 70ch; }
-.note a, .link { color: var(--color-accent-hi); text-decoration: none; }
-.note a:hover, .link:hover { text-decoration: underline; text-underline-offset: 3px; }
-.note strong { color: var(--color-ink-2); font-weight: 500; }
+.note { margin: var(--yaaf-space-6) 0 0; font-size: 15px; line-height: 1.6; color: var(--yaaf-muted); max-width: 70ch; }
+.note strong { color: var(--yaaf-ink-2); font-weight: 600; }
 
 .pill {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.08em;
+  font-size: 12px;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--color-ink-2);
-  border: 1px solid var(--color-line);
-  padding: 4px 9px;
+  color: var(--yaaf-ink-2);
+  border: 1px solid var(--yaaf-border-strong);
+  padding: 3px 8px;
   white-space: nowrap;
 }
-.pill.blue { color: var(--color-accent-hi); border-color: color-mix(in srgb, var(--color-accent) 50%, transparent); }
-.pill.warm { color: var(--color-accent-2); border-color: color-mix(in srgb, var(--color-accent-2) 50%, transparent); }
-.pill.dim { color: var(--color-muted); }
+.pill.dim { color: var(--yaaf-muted); border-color: var(--yaaf-border); }
 .pills { display: flex; flex-wrap: wrap; gap: 6px; }
 
 code.inline, .cell code, .note code, .head code, .kit-table code {
-  font-family: var(--font-mono);
-  font-size: 0.86em;
-  background: var(--color-surface-2);
-  border: 1px solid var(--color-line);
-  padding: 0.05em 0.35em;
+  font-size: 0.875em;
+  background: var(--yaaf-sunken);
+  padding: 0.08em 0.35em;
 }
 
-/* --- tables ------------------------------------------------------------------ */
-.kit-table { overflow-x: auto; border: 1px solid var(--color-line); }
-.kit-table table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+/* --- tables ------------------------------------------------------------------
+   Ink rules between rows; labels in mono. */
+.kit-table { overflow-x: auto; border-top: 2px solid var(--yaaf-ink); border-bottom: 1px solid var(--yaaf-ink); }
+.kit-table table { width: 100%; border-collapse: collapse; font-size: 15px; }
 .kit-table thead th {
   text-align: left;
-  padding: 14px 16px;
+  padding: 12px 16px 12px 0;
   font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 450;
-  letter-spacing: 0.14em;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--color-muted);
-  border-bottom: 1px solid var(--color-line);
+  color: var(--yaaf-muted);
+  border-bottom: 1px solid var(--yaaf-ink);
   white-space: nowrap;
 }
-.kit-table thead th.me { color: var(--color-ink); }
-.kit-table tbody th { text-align: left; font-weight: 500; color: var(--color-ink); padding: 14px 16px; border-bottom: 1px solid var(--color-line-2); vertical-align: top; }
-.kit-table tbody td { padding: 14px 16px; border-bottom: 1px solid var(--color-line-2); color: var(--color-ink-2); vertical-align: top; line-height: 1.5; }
-.kit-table tbody td.me { color: var(--color-ink); background: var(--color-surface); }
+.kit-table thead th.me { color: var(--yaaf-ink); }
+.kit-table tbody th { text-align: left; font-weight: 600; color: var(--yaaf-ink); padding: 14px 16px 14px 0; border-bottom: 1px solid var(--yaaf-border-strong); vertical-align: top; }
+.kit-table tbody td { padding: 14px 16px 14px 0; border-bottom: 1px solid var(--yaaf-border-strong); color: var(--yaaf-ink-2); vertical-align: top; line-height: 1.5; }
+.kit-table tbody td.me { color: var(--yaaf-ink); }
 .kit-table tbody tr:last-child > * { border-bottom: 0; }
-.kit-table .mono { font-family: var(--font-mono); font-size: 13px; }
-.kit-table .yes { color: var(--color-good); }
-.kit-table .no { color: var(--color-muted); }
+.kit-table .mono { font-family: var(--font-mono); font-size: 14px; color: var(--yaaf-ink); }
+.kit-table .yes { color: var(--yaaf-good); }
+.kit-table .no { color: var(--yaaf-muted); }
 
 /* A wide table on a phone: each row becomes a card, each cell carries its
-   column's name from data-label, so nobody scrolls sideways to reach yaaf's. */
+   column's name from data-label, so nobody scrolls sideways. */
 @media (max-width: 720px) {
   .kit-table.stack { overflow: visible; }
   .kit-table.stack table { min-width: 0 !important; }
   .kit-table.stack thead { display: none; }
-  .kit-table.stack tr { display: block; padding: 16px; border-bottom: 1px solid var(--color-line); }
+  .kit-table.stack tr { display: block; padding: 16px 0; border-bottom: 1px solid var(--yaaf-ink); }
   .kit-table.stack tbody tr:last-child { border-bottom: 0; }
   .kit-table.stack tbody th,
   .kit-table.stack tbody td { display: block; padding: 0; border: 0; width: auto !important; white-space: normal !important; background: none; }
@@ -381,136 +318,162 @@ code.inline, .cell code, .note code, .head code, .kit-table code {
     display: block;
     margin-bottom: 3px;
     font-family: var(--font-mono);
-    font-size: 10.5px;
-    letter-spacing: 0.12em;
+    font-size: 12px;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--color-muted);
+    color: var(--yaaf-muted);
   }
-  .kit-table.stack tbody td.me { border-left: 1px solid var(--color-ink); padding-left: 12px; }
 }
 
 /* --- a page's own top ------------------------------------------------------- */
-.page-hero { position: relative; padding-block: 7rem 4.5rem; overflow: hidden; }
-/* Every page opens at first light: the same sunrise as the home page, lower. */
-.page-hero::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(45% 70% at 88% 85%, color-mix(in srgb, var(--color-sun) 30%, transparent), transparent 70%),
-    radial-gradient(40% 60% at 70% 80%, color-mix(in srgb, var(--color-rose) 24%, transparent), transparent 70%),
-    radial-gradient(50% 70% at 15% 0%, color-mix(in srgb, var(--color-violet) 24%, transparent), transparent 70%),
-    radial-gradient(35% 50% at 98% 10%, color-mix(in srgb, var(--color-sky) 16%, transparent), transparent 70%);
-  -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent);
-  mask-image: linear-gradient(to bottom, #000 55%, transparent);
-}
-.page-hero .shell { position: relative; }
-.page-hero .eyebrow { margin: 0; width: fit-content; background: var(--dawn); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.page-hero { position: relative; padding-block: var(--yaaf-space-11) var(--yaaf-space-10); }
+.page-hero .eyebrow { margin: 0; }
 .page-hero h1 {
-  margin: 1.4rem 0 0;
+  margin: var(--yaaf-space-5) 0 0;
   font-size: var(--text-h1);
-  line-height: 0.98;
-  letter-spacing: -0.05em;
-  max-width: 16ch;
+  line-height: 1.04;
+  max-width: 18ch;
   text-wrap: balance;
 }
-.page-hero .lede { margin: 1.6rem 0 0; font-size: 1.2rem; line-height: 1.5; color: var(--color-ink-2); max-width: 46ch; text-wrap: pretty; }
-.page-hero .lede strong { color: var(--color-ink); font-weight: 500; }
-.page-hero .btns { margin-top: 2.2rem; }
-@media (max-width: 760px) { .page-hero { padding-block: 4.5rem 3rem; } }
+.page-hero .lede { margin: var(--yaaf-space-6) 0 0; font-size: 18px; line-height: 1.55; color: var(--yaaf-ink-2); max-width: 60ch; text-wrap: pretty; }
+.page-hero .lede strong { color: var(--yaaf-ink); font-weight: 600; }
+.page-hero .btns { margin-top: var(--yaaf-space-7); }
+@media (max-width: 760px) { .page-hero { padding-block: var(--yaaf-space-10) var(--yaaf-space-9); } }
 
-.toc { display: flex; flex-wrap: wrap; gap: 0; margin-top: 2.6rem; border: 1px solid var(--color-line); width: fit-content; max-width: 100%; }
+/* On-page contents: a mono list on a rule. */
+.toc { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: var(--yaaf-space-8); padding-top: var(--yaaf-space-4); border-top: 1px solid var(--yaaf-ink); max-width: 100%; }
 .toc a {
-  font-size: 13.5px;
-  color: var(--color-ink-2);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--yaaf-ink-2);
   text-decoration: none;
-  padding: 9px 14px;
-  border-right: 1px solid var(--color-line);
-  transition: color 0.2s, background 0.2s;
+  padding: 4px 0;
+  transition: color var(--fast) var(--ease);
 }
-.toc a:last-child { border-right: 0; }
-.toc a:hover { color: #14051f; background: var(--color-gold); }
-@media (max-width: 760px) {
-  .toc { width: auto; }
-  .toc a { flex: 1 1 auto; border-bottom: 1px solid var(--color-line); text-align: center; }
-}
+.toc a:hover { color: var(--yaaf-accent); text-decoration: underline; text-underline-offset: 3px; }
 
 section[id], [id].anchor { scroll-margin-top: 84px; }
 
 /* --- prose (docs) ------------------------------------------------------------ */
 .prose {
-  color: var(--color-ink-2);
-  font-size: 16.5px;
-  line-height: 1.7;
-  max-width: 74ch;
+  color: var(--yaaf-ink-2);
+  font-size: 16px;
+  line-height: 1.65;
+  max-width: 70ch;
 }
 .prose > * + * { margin-top: 1.1em; }
 .prose h1, .prose h2, .prose h3, .prose h4 {
-  color: var(--color-ink);
-  font-weight: 500;
-  letter-spacing: -0.025em;
+  color: var(--yaaf-ink);
   line-height: 1.2;
   text-wrap: balance;
 }
 .prose h1 { font-size: 2rem; margin-top: 0; }
-.prose h2 { font-size: 1.6rem; margin-top: 2.6em; padding-top: 1.2em; border-top: 1px solid var(--color-line); }
-.prose h3 { font-size: 1.2rem; margin-top: 2em; }
-.prose h4 { font-size: 1rem; margin-top: 1.6em; color: var(--color-ink-2); }
+.prose h2 { font-size: 1.75rem; margin-top: 2.4em; padding-top: 1.1em; border-top: 1px solid var(--yaaf-border-strong); }
+.prose h3 { font-size: 1.3rem; margin-top: 2em; }
+.prose h4 { font-size: 1rem; margin-top: 1.6em; }
 .prose a {
-  color: var(--color-accent-hi);
+  color: var(--yaaf-accent);
   text-decoration: underline;
   text-underline-offset: 3px;
   text-decoration-thickness: 1px;
-  text-decoration-color: color-mix(in srgb, var(--color-accent-hi) 40%, transparent);
+  text-decoration-color: color-mix(in srgb, var(--yaaf-accent) 40%, transparent);
 }
-.prose a:hover { text-decoration-color: currentColor; }
-.prose strong { color: var(--color-ink); font-weight: 600; }
+.prose a:hover { color: var(--yaaf-accent-hover); text-decoration-color: currentColor; }
+.prose strong { color: var(--yaaf-ink); font-weight: 600; }
 .prose ul, .prose ol { padding-left: 1.3em; }
 .prose li + li { margin-top: 0.4em; }
 .prose ul { list-style: disc; }
 .prose ol { list-style: decimal; }
-.prose li::marker { color: var(--color-muted); }
+.prose li::marker { color: var(--yaaf-muted); }
+/* A callout is a left border in ink. */
 .prose blockquote {
-  border-left: 1px solid var(--color-ink);
-  padding: 0.2em 0 0.2em 1.2em;
-  color: var(--color-ink-2);
+  border-left: 2px solid var(--yaaf-ink);
+  padding: 0.2em 0 0.2em 1.1em;
+  color: var(--yaaf-ink-2);
 }
 .prose blockquote > * + * { margin-top: 0.7em; }
 .prose code {
-  font-family: var(--font-mono);
-  font-size: 0.86em;
-  background: var(--color-surface-2);
-  border: 1px solid var(--color-line);
+  font-size: 0.875em;
+  background: var(--yaaf-sunken);
+  color: var(--yaaf-ink);
   padding: 0.1em 0.35em;
 }
 /* Inline code in the synced docs holds long identifiers (test names, env
    vars) that would otherwise push a phone-width page sideways. */
 .prose :not(pre) > code { overflow-wrap: anywhere; }
 .prose pre {
-  background: var(--color-surface) !important;
-  border: 1px solid var(--color-line);
+  background: var(--yaaf-sunken) !important;
   padding: 16px 18px;
   overflow-x: auto;
-  font-size: 13px;
+  font-size: 13.5px;
   line-height: 1.65;
 }
-.prose pre code { background: none; border: 0; padding: 0; font-size: inherit; }
-.prose img { border: 1px solid var(--color-line); }
-.prose hr { border: 0; border-top: 1px solid var(--color-line); margin: 2.4em 0; }
-.prose table { width: 100%; border-collapse: collapse; font-size: 14px; display: block; overflow-x: auto; }
+.prose pre code { background: none; padding: 0; font-size: inherit; }
+.prose img { border: 1px solid var(--yaaf-border-strong); }
+.prose hr { border: 0; border-top: 1px solid var(--yaaf-border-strong); margin: 2.4em 0; }
+.prose table { width: 100%; border-collapse: collapse; font-size: 14.5px; display: block; overflow-x: auto; }
 .prose thead th {
   text-align: left;
-  color: var(--color-muted);
+  color: var(--yaaf-muted);
   font-family: var(--font-mono);
-  font-size: 10.5px;
-  font-weight: 450;
-  letter-spacing: 0.14em;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  padding: 10px;
-  border-bottom: 1px solid var(--color-line);
+  padding: 10px 14px 10px 0;
+  border-bottom: 1px solid var(--yaaf-ink);
   white-space: nowrap;
 }
-.prose tbody td { padding: 10px; border-bottom: 1px solid var(--color-line-2); vertical-align: top; }
-.prose tbody tr:hover { background: rgba(200, 185, 255, 0.04); }
+.prose tbody td { padding: 10px 14px 10px 0; border-bottom: 1px solid var(--yaaf-border); vertical-align: top; }
 .prose :is(h2, h3, h4) { scroll-margin-top: 90px; }
+
+/* Code blocks carry a light and a dark theme (astro.config.mjs); pick by scheme. */
+@media (prefers-color-scheme: dark) {
+  .astro-code, .astro-code span { color: var(--shiki-dark) !important; font-style: var(--shiki-dark-font-style) !important; }
+}
+
+/* ---------------------------------------------------------------------------
+   TRANSITIONAL: the old theme's names, kept only until every page is moved to
+   the tokens above. Each hue the old design used now resolves to ink or a
+   neutral, so nothing renders in a colour the brand does not have. The pull
+   request that restyles the last page deletes this block.
+   --------------------------------------------------------------------------- */
+:root {
+  --color-grid: transparent;
+  --color-accent-lo: var(--yaaf-accent);
+  --color-accent-hi: var(--yaaf-accent);
+  --color-accent-2: var(--yaaf-ink);
+  --color-gold: var(--yaaf-ink);
+  --color-sun: var(--yaaf-ink);
+  --color-rose: var(--yaaf-ink);
+  --color-violet: var(--yaaf-ink);
+  --color-sky: var(--yaaf-ink);
+  --color-mint: var(--yaaf-ink);
+  --color-lime: var(--yaaf-ink);
+  --color-old: var(--yaaf-muted);
+  --color-old-bg: var(--yaaf-sunken);
+  --dawn: linear-gradient(var(--yaaf-ink), var(--yaaf-ink));
+}
+.dawn-text { color: var(--yaaf-ink); }
+.cell.warm h3, .cell.blue h3 { color: var(--yaaf-ink); }
+.pill.blue, .pill.warm { color: var(--yaaf-ink); border-color: var(--yaaf-ink); }
+
+/* --- Carbon ------------------------------------------------------------------
+   A band that is dark in both themes (the install band). It re-declares the
+   dark theme's tokens, so everything inside reads from the same names. */
+.carbon {
+  color-scheme: dark;
+  --yaaf-page: #121316;
+  --yaaf-surface: #1B1C20;
+  --yaaf-surface-2: #222328;
+  --yaaf-sunken: #0E0F11;
+  --yaaf-ink: #ECECE7;
+  --yaaf-ink-2: #B4B6BC;
+  --yaaf-muted: #9A9DA6;
+  --yaaf-border: #2C2D33;
+  --yaaf-border-strong: #3A3B42;
+  --yaaf-accent: #8FA4F0;
+  --yaaf-accent-hover: #A9B9F4;
+  --yaaf-focus: #8FA4F0;
+  --yaaf-selection: #2A3352;
+}

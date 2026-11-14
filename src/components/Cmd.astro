@@ -16,8 +16,8 @@ const { cmd, class: cls = "" } = Astro.props;
     display: flex;
     align-items: center;
     gap: 12px;
-    border: 1px solid var(--color-line-strong);
-    background: var(--color-surface);
+    border: 1px solid var(--yaaf-border-strong);
+    background: var(--yaaf-sunken);
     padding: 0.55rem 0.55rem 0.55rem 1rem;
     max-width: 100%;
     min-width: 0;
@@ -46,7 +46,7 @@ const { cmd, class: cls = "" } = Astro.props;
     cursor: pointer;
     transition: color 0.2s, background 0.2s;
   }
-  button:hover { color: var(--color-ink); background: var(--color-surface-2); }
+  button:hover { color: var(--yaaf-ink); background: var(--yaaf-surface); }
   svg { width: 16px; height: 16px; }
   .i-ok { display: none; color: var(--color-good); }
   button[data-done] .i-copy { display: none; }

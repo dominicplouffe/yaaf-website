@@ -1,6 +1,4 @@
 ---
-import "@fontsource-variable/geist";
-import "@fontsource-variable/geist-mono";
 import "../styles/global.css";
 import Nav from "../components/Nav.astro";
 import Foot from "../components/Foot.astro";
@@ -14,9 +12,11 @@ interface Props {
   ogImage?: string;
   /** The closing call to action above the footer. Off on reference pages. */
   cta?: boolean;
+  /** Home page only: the closing band is the install section and owns #start. */
+  install?: boolean;
 }
 
-const { title, description = SITE.description, bare = false, ogImage = "/og.png", cta = true } = Astro.props;
+const { title, description = SITE.description, bare = false, ogImage = "/og.png", cta = true, install = false } = Astro.props;
 const fullTitle = bare ? title : `${title} · ${SITE.name}`;
 const canonical = new URL(Astro.url.pathname, SITE_URL).href;
 const og = new URL(ogImage, SITE_URL).href;
@@ -42,8 +42,16 @@ const jsonLd = {
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <meta name="theme-color" content={SITE.themeColor} />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content={SITE.themeColor.light} media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content={SITE.themeColor.dark} media="(prefers-color-scheme: dark)" />
+    <meta name="color-scheme" content="light dark" />
+    <!-- The two faces above the fold. Everything else waits for first use. -->
+    <link rel="preload" href="/fonts/brygada-1918/brygada-1918-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/public-sans/public-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
     <meta name="generator" content={Astro.generator} />
 
     <meta property="og:type" content="website" />
@@ -52,6 +60,8 @@ const jsonLd = {
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={og} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
@@ -63,14 +73,11 @@ const jsonLd = {
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
-    <div class="page-lines" aria-hidden="true"><div class="shell"><div class="lines"></div></div></div>
-    <div class="layer">
-      <Nav />
-      <main id="main">
-        <slot />
-      </main>
-      <Foot cta={cta} />
-    </div>
+    <Nav />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <Foot cta={cta} install={install} />
     <script is:inline>
       // Copy buttons on command lines. Inline and tiny: the site loads no scripts.
       document.addEventListener("click", function (e) {
@@ -87,14 +94,15 @@ const jsonLd = {
         position: absolute;
         left: -9999px;
         top: 8px;
-        background: var(--color-gold);
-        color: #14051f;
-        padding: 8px 14px;
-        border-radius: var(--radius-control);
+        background: var(--yaaf-ink);
+        color: var(--yaaf-page);
+        padding: 10px 16px;
         z-index: 100;
-        font-size: 14px;
+        font-size: 15px;
+        font-weight: 600;
       }
       .skip:focus { left: 12px; }
+      main:focus { outline: none; }
     </style>
   </body>
 </html>
