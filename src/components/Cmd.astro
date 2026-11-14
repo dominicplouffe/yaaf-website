@@ -27,13 +27,13 @@ const { cmd, class: cls = "" } = Astro.props;
     min-width: 0;
     font-family: var(--font-mono);
     font-size: 14px;
-    color: var(--color-ink);
+    color: var(--yaaf-ink);
     white-space: nowrap;
     overflow-x: auto;
     scrollbar-width: none;
   }
   code::-webkit-scrollbar { display: none; }
-  .p { color: var(--color-muted); margin-right: 0.6rem; user-select: none; }
+  .p { color: var(--yaaf-muted); margin-right: 0.6rem; user-select: none; }
   button {
     flex: none;
     display: grid;
@@ -42,13 +42,13 @@ const { cmd, class: cls = "" } = Astro.props;
     height: 32px;
     background: none;
     border: 0;
-    color: var(--color-muted);
+    color: var(--yaaf-muted);
     cursor: pointer;
     transition: color 0.2s, background 0.2s;
   }
   button:hover { color: var(--yaaf-ink); background: var(--yaaf-surface); }
   svg { width: 16px; height: 16px; }
-  .i-ok { display: none; color: var(--color-good); }
+  .i-ok { display: none; color: var(--yaaf-good); }
   button[data-done] .i-copy { display: none; }
   button[data-done] .i-ok { display: block; }
 </style>

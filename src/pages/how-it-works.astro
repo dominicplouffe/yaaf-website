@@ -9,7 +9,7 @@ const WHO = [
   { door: "/admin", k: "You", v: "Sign in with a password. Each project has a chair, co-chairs and observers." },
   { door: "/mcp", k: "Claude", v: "Its own scoped key. Never your login. Every write is marked as Claude's." },
   { door: "/agent/*", k: "An agent", v: "A key that lives for one run. Too many refusals and it's revoked." },
-  { door: "—", k: "Everything agents read", v: "Web pages, docs, other agents' output. Treated as data, never as orders.", warm: true },
+  { door: "—", k: "Everything agents read", v: "Web pages, docs, other agents' output. Treated as data, never as orders." },
 ];
 
 const STEPS = [
@@ -70,7 +70,7 @@ const MONEY = [
   <Section id="who" eyebrow="Who can do what" title="Four kinds of caller. One set of rules.">
     <div class="cells">
       {WHO.map((w) => (
-        <div class:list={["cell", { warm: w.warm }]}>
+        <div class="cell">
           <span class="eyebrow">{w.door}</span>
           <h3>{w.k}</h3>
           <p>{w.v}</p>
@@ -89,7 +89,7 @@ const MONEY = [
   </Section>
 
   <Section id="steps" eyebrow="The steps" title="Founding day, step by step." lede="The first three steps cost nothing: no key, no model calls.">
-    <div class="cells hued">
+    <div class="cells">
       {STEPS.map(([k, v], i) => (
         <div class:list={["cell", { free: i < 3 }]}>
           <span class="eyebrow">{String(i + 1).padStart(2, "0")}{i < 3 && " · $0"}</span>
@@ -131,14 +131,14 @@ const MONEY = [
     </div>
     <div class="cells c2 waits">
       <div class="cell"><p class="num">0</p><p>Times it waited for you, <strong>autonomous</strong></p></div>
-      <div class="cell warm"><p class="num">7</p><p>Times it waited for you, <strong>supervised</strong></p></div>
+      <div class="cell"><p class="num">7</p><p>Times it waited for you, <strong>supervised</strong></p></div>
     </div>
     <Drill report={supervised} only={["It stopped"]} label="Supervised · real output" />
     <p class="note">Same team, rehearsed twice. Spending over your limit, legal questions and anything only a human can do always come to you.</p>
   </Section>
 
   <Section id="money" eyebrow="Money" title="A budget you plan with. A wall you can't pass.">
-    <div class="cells c3 hued">
+    <div class="cells c3">
       {MONEY.map(([k, v]) => (
         <div class="cell">
           <h3>{k}</h3>
@@ -159,7 +159,7 @@ const MONEY = [
           <li>An API where every rule is a refusal</li>
         </ul>
       </div>
-      <div class="cell warm">
+      <div class="cell">
         <h3>Doesn't contain it</h3>
         <ul>
           <li>The network. Agents can reach the internet.</li>
@@ -172,7 +172,7 @@ const MONEY = [
   </Section>
 
   <Section eyebrow="What you run" title="One machine. Yours." lede="On a laptop, <code>yaaf up</code> starts everything in one command. On a server, one script sets up Docker and Postgres.">
-    <div class="cells hued">
+    <div class="cells">
       <div class="cell"><span class="eyebrow">api</span><h3>Control plane</h3><p>Python and FastAPI. The rules, the dashboard API and the MCP server.</p></div>
       <div class="cell"><span class="eyebrow">runner</span><h3>Runner</h3><p>Starts a sandbox container for each run.</p></div>
       <div class="cell"><span class="eyebrow">sandbox</span><h3>Sandbox image</h3><p>Python, Node, Chromium and every agent harness: Claude Code, Codex, Gemini CLI, OpenCode.</p></div>
@@ -182,9 +182,8 @@ const MONEY = [
 </BaseLayout>
 
 <style>
-  .engine { background: var(--color-surface) !important; }
-  .engine h3 { font-size: 1.4rem !important; }
-  .n { display: inline-block; width: 1.6rem; font-family: var(--font-mono); font-size: 12px; color: var(--color-muted); font-weight: 400; }
+  .engine h3 { font-size: 1.5rem !important; }
+  .n { display: inline-block; width: 2.2rem; font-family: var(--font-mono); font-size: 13px; color: var(--yaaf-muted); font-weight: 400; }
   .waits { margin-top: 24px; }
   .waits + :global(.drill) { border-top: 0; }
 </style>

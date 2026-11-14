@@ -10,4 +10,9 @@ page is too tall for WebP); the 1440px captures are stored at half size.
   changes every page through the shared styles; its `after` shows the pages
   where that is the whole change so far, and the rest follow in their own PRs.
 
-This folder is for review. The last pull request in the series deletes it.
+This folder is for review only and is not part of the site. Delete it before
+the last pull request merges:
+
+```bash
+git rm -r review
+```
