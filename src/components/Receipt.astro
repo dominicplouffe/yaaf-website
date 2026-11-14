@@ -1,0 +1,49 @@
+---
+/**
+ * The receipt: what a result is, who made it, who checked it, what it cost.
+ * Real text in a definition list, never an image. The checker's name is the
+ * one thing on it set in Seal, and it closes on the double rule because a
+ * receipt records a check that happened.
+ *
+ * Pass `example` when the figures are illustrative rather than synced.
+ */
+interface Props {
+  title: string;
+  rows: { k: string; v: string }[];
+  madeBy: string;
+  checkedBy: string;
+  example?: string;
+}
+const { title, rows, madeBy, checkedBy, example } = Astro.props;
+---
+<figure class="receipt">
+  <div class="card">
+    <p class="file">{title}</p>
+    <dl class="rows">
+      {rows.map((r) => (<div><dt>{r.k}</dt><dd>{r.v}</dd></div>))}
+    </dl>
+    <dl class="sign">
+      <div><dt>Made by</dt><dd class="made">{madeBy}</dd></div>
+      <div><dt>Checked by</dt><dd class="signed">{checkedBy}</dd></div>
+    </dl>
+    <hr class="double-rule thin" />
+  </div>
+  {example && <figcaption>{example}</figcaption>}
+</figure>
+
+<style>
+  .receipt { margin: 0; }
+  .card { background: var(--yaaf-surface); border: 1px solid var(--yaaf-border); padding: 24px 24px 22px; }
+  .file { margin: 0 0 12px; font-family: var(--font-mono); font-size: 15px; font-weight: 500; color: var(--yaaf-ink); overflow-wrap: anywhere; }
+  dl { margin: 0; }
+  .rows { display: grid; gap: 4px; font-family: var(--font-mono); font-size: 13px; font-variant-numeric: tabular-nums; }
+  .rows div { display: grid; grid-template-columns: 7.5em minmax(0, 1fr); gap: 12px; }
+  .rows dt { color: var(--yaaf-muted); }
+  .rows dd { margin: 0; color: var(--yaaf-ink); }
+  .sign { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--yaaf-border-strong); }
+  .sign dt { font-family: var(--font-mono); font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--yaaf-muted); }
+  .sign dd { margin: 2px 0 0; font-family: var(--font-display); font-size: 22px; line-height: 1.25; }
+  .made { font-weight: 600; color: var(--yaaf-ink); }
+  .double-rule { margin-top: 18px; }
+  figcaption { margin-top: 10px; font-family: var(--font-mono); font-size: 12px; color: var(--yaaf-muted); }
+</style>

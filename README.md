@@ -224,7 +224,7 @@ src/
   layouts/             BaseLayout, DocsLayout
   pages/               index, manifesto, how-it-works, features, runtimes (Harnesses), faq,
                        changelog, org, examples, docs, 404; _compare is hidden
-                       while SHOW_COMPARE is off, and /why/ redirects to /#why
+                       while SHOW_COMPARE is off, and /why/ redirects to /manifesto/
 scripts/
   sync-content.mjs     the content pipeline
   export-runtimes.py   yaaf's runtime registries -> src/content/runtimes.json

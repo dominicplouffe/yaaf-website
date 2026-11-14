@@ -1,37 +1,71 @@
 ---
-import { getCollection } from "astro:content";
+import { getCollection, getEntry } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Section from "../components/Section.astro";
 import Button from "../components/Button.astro";
 import Shot from "../components/Shot.astro";
-import Cmd from "../components/Cmd.astro";
-import CompanyChart from "../components/CompanyChart.astro";
-import TeamDiagram from "../components/TeamDiagram.astro";
+import Icon from "../components/Icon.astro";
+import Receipt from "../components/Receipt.astro";
+import Meter from "../components/Meter.astro";
 import AutonomyDial from "../components/AutonomyDial.astro";
 import { SITE, REPO_URL, SHOW_COMPARE } from "../site.config.mjs";
 import manifest from "../content/manifest.json";
 import runtimes from "../content/runtimes.json";
 
-import inbox from "../assets/screenshots/cockpit-overview.png";
-import team from "../assets/screenshots/team.png";
-import chat from "../assets/screenshots/boardroom.png";
-import results from "../assets/screenshots/results.png";
-import person from "../assets/screenshots/person.png";
-import roadmap from "../assets/screenshots/plan-and-promise.png";
+import teamLight from "../assets/brand/screens/team-light.png";
+import teamDark from "../assets/brand/screens/team-dark.png";
+import homeLight from "../assets/brand/screens/home-light.png";
+import homeDark from "../assets/brand/screens/home-dark.png";
+import chatLight from "../assets/brand/screens/chat-light.png";
+import chatDark from "../assets/brand/screens/chat-dark.png";
+import resultsLight from "../assets/brand/screens/results-light.png";
+import resultsDark from "../assets/brand/screens/results-dark.png";
 
 const roles = await getCollection("roles");
 const crews = await getCollection("crews");
+const challengers = roles.filter((r) => r.data.category === "challenge").length;
+const tests = manifest.tests.toLocaleString("en-US");
 
 const providers = runtimes.providers.map((p) => p.label.replace(/ \(.*\)$/, ""));
 const harnesses = runtimes.harnesses.map((h) => h.label.replace(/ \(.*\)$/, ""));
-const SHOWN = 12;
 
-const SHIFT = [
-  { k: "Models", v: "Answer questions." },
-  { k: "Agents", v: "Complete tasks." },
-  { k: "Teams", v: "Pursue outcomes." },
+/** A seat is a real role from the library; fail the build if one is renamed away. */
+const role = async (slug: string) => {
+  const r = await getEntry("roles", slug);
+  if (!r) throw new Error(`home: no role “${slug}” in the library`);
+  return r.data.name;
+};
+const [ceoRole, researchRole, buildRole, criticRole] = await Promise.all(["ceo", "researcher", "engineer", "adversary"].map(role));
+
+/** The four rules. `proof` is the mono line: a count from the sync, or the refusal itself. */
+const RULES = [
+  {
+    icon: "verified",
+    k: "Done means verified",
+    v: "Nothing counts as finished until yaaf checks it. The platform runs the test itself. An agent saying so isn't enough.",
+    proof: `${tests} tests · “done” alone is refused`,
+  },
+  {
+    icon: "budget-wall",
+    k: "A budget that stops itself",
+    v: "Every run is metered, killed ones included. At the wall you set, the company pauses and tells you.",
+    proof: "at the wall · the project pauses",
+  },
+  {
+    icon: "honest-date",
+    k: "An honest date",
+    v: "The finish date comes from measured pace. If it slips, you know, and new scope waits until you decide.",
+    proof: "date slips · new scope frozen",
+  },
+  {
+    icon: "veto",
+    k: "Critics with a veto",
+    v: "Risk and review seats can veto the work they check. The CEO can't fire the last one.",
+    proof: `${challengers} critic roles · the last one stays`,
+  },
 ];
 
+/** The evidence trail behind every result. */
 const TRAIL = [
   { k: "Source", q: "Where did it come from?", v: "External evidence is fetched, hashed and snapshotted by the server, never taken at the agent's word." },
   { k: "Work", q: "How was it used?", v: "Nothing closes without observed evidence. “Done” on its own is refused." },
@@ -39,43 +73,14 @@ const TRAIL = [
   { k: "Decision", q: "What can we defend?", v: "Every decision, yours or the CEO's, is on the record with its reason and can be reversed." },
 ];
 
-const HORIZON = [
-  { k: "A task", v: "A project that delivers one result and stops: a question answered with sources, a fix, a report.", when: "Today" },
-  { k: "An operation", v: "A project that keeps running: woken by the world at 3am, a standup each morning, a register that stays current.", when: "Today" },
-  { k: "A business", v: "Today a crew can test one idea for thirty days. Organizations that run a business with extensive autonomy, inside the boundaries their owner sets, are where this is going. We aren't there yet.", when: "The long view" },
-];
-
-const YESTERDAY = [
-  "You type, it answers, you check. You are the loop.",
-  "It says “done”. You find out it isn't.",
-  "Two agents argue in circles all night, at full price.",
-  "Nobody can tell you when it will be finished.",
-  "Every morning starts from an empty chat.",
-];
-const TODAY = [
-  "A CEO picks, prices and assigns the next piece of work while you sleep.",
-  "Only the platform marks work done. It runs the test itself.",
-  "Every run is metered live. At the wall, the company pauses itself.",
-  "The date comes from measured pace. If it slips, new scope freezes.",
-  "Each morning, a letter: what happened, and what waits on you.",
-];
-
-const LAYERS = [
-  {
-    k: "The model",
-    v: `The weights. Claude, GPT, Gemini, DeepSeek, Mistral, Kimi, a local model. ${providers.length} providers.`,
-    hue: "sky",
-  },
-  {
-    k: "The agent harness",
-    v: `Drives one model: its loop, its tools, its context. ${harnesses.join(", ")}. Every person on the chart runs in one.`,
-    hue: "violet",
-  },
-  {
-    k: "yaaf, the team harness",
-    v: "Drives the company: who's hired, what's next, what it costs, when it's due, and whether it's really done. The rules live in the server, not the prompt.",
-    hue: "dawn",
-  },
+/** Seats, by role. No names, no faces. `rule` is what the server enforces on the seat. */
+const SEATS = [
+  { tag: "Chair", name: "You", duty: "Set the goal, the budget and the date. Own the rules.", rule: "pause · stop · veto · amend", chair: true },
+  { tag: "CEO", name: "CEO", duty: "Plans the work, hires the teams, and kills what the evidence kills.", rule: "can't edit the rules or invent a date", role: ceoRole },
+  { tag: "Seat", name: "Research", duty: "Answers the question its task states, from what it actually read.", rule: "a claim needs fetched evidence", role: researchRole },
+  { tag: "Seat", name: "Build", duty: "Builds the smallest thing that makes the success test pass.", rule: "done when the platform ran the test", role: buildRole },
+  { tag: "Critic", name: "Red team", duty: "Tries to break the team's work before anyone outside does.", rule: "veto · the CEO can't fire the last critic", role: criticRole },
+  { tag: "Critic", name: "Review", duty: "Reads the work before it ships, and can say no.", rule: "veto on the work it checks" },
 ];
 
 const FOUND = [
@@ -87,54 +92,45 @@ const FOUND = [
 
 const TOUR = [
   {
-    k: "Your company, live.",
-    v: "The org chart shows who reports to whom, what each person is doing right now, the model they run on and what they've cost this month. When the work needs a new team, the CEO hires one and says why.",
-    src: team,
-    hue: "var(--color-gold)",
-    alt: "A project's Team page: the chairman at the top, the CEO beneath, and each team — a newly hired Risk team drawn dashed with the CEO's reason — with what every person is doing, the model they run on, and what they have cost",
-  },
-  {
-    k: "Your desk is the Inbox.",
-    v: "A project opens on what waits on you, soonest consequence first. Each item says what happens if you do nothing. Decide in one click, snooze it, or undo it.",
-    src: inbox,
-    hue: "var(--color-rose)",
-    alt: "A project's Inbox: the header with its status and a one-line scoreboard, then the three things waiting on the chairman with the selected one opened, and below it the CEO's latest word, what the CEO is watching and the calendar",
-  },
-  {
-    k: "One person to talk to: the CEO.",
-    v: "Ask why the date moved. Tell it to stop buying data and find the free route. Every answer shows what the team did to get there.",
-    src: chat,
-    hue: "var(--color-violet)",
-    alt: "Chat with the CEO: the chairman asks for the free route; the CEO answers that Ines can rebuild the vintages from filing dates and has still filed the licence as a decision — with What they did open under the answer",
-  },
-  {
     k: "Results, with the receipts.",
     v: "Every deliverable says who made it and who checked it. Verified by yaaf, not graded by the agent that wrote it, with the chain from your goal down to the task.",
-    src: results,
-    hue: "var(--color-mint)",
-    alt: "Results: each published deliverable with who made it and who checked it — verified by YAAF, read by Juno — and the selected one's evidence: the check, the goal-to-requirement-to-task chain, and what the run that made it did",
+    src: resultsLight,
+    dark: resultsDark,
+    alt: "The Results page of a demo project: two published files, each marked as judged, and for the selected one why you can trust it — the requirement it met, that Maya produced it in one run for $0.36, and the goal it serves",
   },
   {
-    k: "Every employee has a page.",
-    v: "What they're working on and the requirement it serves, their week, what they made and who read it, the model they run on and what they cost.",
-    src: person,
-    hue: "var(--color-sky)",
-    alt: "One person's page: what Maya is working on now and the requirement it serves, her run in flight, her week, what she has made and who read it, the model she runs on and her month's cost, and her recent runs",
+    k: "What waits on you, first.",
+    v: "The app opens on what needs you, soonest consequence first. Each item says what happens if you do nothing. Decide in one click, snooze it, or undo it.",
+    src: homeLight,
+    dark: homeDark,
+    alt: "The Home page: four decisions that need the chair, each with what happens if nothing is done and a button to decide, beside a summary of what every project did since the last visit",
   },
   {
-    k: "A date nobody can quietly move.",
-    v: "The date you signed sits next to the platform's own projection. Requirements are proven true one stage at a time.",
-    src: roadmap,
-    hue: "var(--color-sun)",
-    alt: "Details › Roadmap: the commitment with its pace and spend, the date you signed against the platform's projection, and requirements in stages — two proven true, two in progress, one waiting for you to accept",
+    k: "Your company, live.",
+    v: "The org chart shows who reports to whom, what each seat is doing right now, the model it runs on and what it has cost this month.",
+    src: teamLight,
+    dark: teamDark,
+    alt: "A project's Team page: you at the top as owner, the CIO beneath with its model and month's cost, then a Research team and a Review team, each seat showing whether it is working or idle",
+  },
+  {
+    k: "One seat to talk to: the CEO.",
+    v: "Ask why the date moved. Tell it to stop buying data and find the free route. Every answer shows what the team did to get there.",
+    src: chatLight,
+    dark: chatDark,
+    alt: "Chat with the project's CEO seat: it asks which fiscal year should be the baseline, lists the options and its recommendation, and says what it will do if there is no answer; a side panel shows the open question and a spend decision",
   },
 ];
 
-const WHY = [
-  { k: "Work that's really done", v: "Nothing counts as finished until yaaf checks it. An agent saying so isn't enough." },
-  { k: "Money that stops itself", v: "Every run is metered, killed ones included. At the wall you set, the company pauses and tells you." },
-  { k: "A date you can trust", v: "The finish date comes from real progress. If it slips, you know, and new scope waits." },
-  { k: "Critics with teeth", v: "Risk and review seats can veto the work they check. The CEO can't fire the last one." },
+const LAYERS = [
+  { k: "yaaf, the team harness", v: "Drives the company: who's hired, what's next, what it costs, when it's due, and whether it's really done. The rules live in the server, not the prompt." },
+  { k: "The agent harness", v: `Drives one model: its loop, its tools, its context. ${harnesses.join(", ")}. Every seat on the chart runs in one.` },
+  { k: "The model", v: `The weights. Claude, GPT, Gemini, DeepSeek, Mistral, Kimi, a local model. ${providers.length} providers.` },
+];
+
+const HORIZON = [
+  { k: "A task", v: "A project that delivers one result and stops: a question answered with sources, a fix, a report.", when: "Today" },
+  { k: "An operation", v: "A project that keeps running: woken by the world at 3am, a standup each morning, a register that stays current.", when: "Today" },
+  { k: "A business", v: "Today a crew can test one idea for thirty days. Organizations that run a business with extensive autonomy, inside the boundaries their owner sets, are where this is going. We aren't there yet.", when: "The long view" },
 ];
 
 const USES = [
@@ -147,10 +143,9 @@ const USES = [
 ];
 
 const OPEN = [
-  { k: "Apache-2.0", v: "Read every line. Fork it. Change anything." },
-  { k: "Your machine", v: "One command starts it on your laptop; one script puts it on a server. Projects, files and keys stay with you." },
-  { k: "Your model keys", v: "Agents pay your provider directly, at their prices. yaaf has nothing to sell you." },
-  { k: "Nobody watching", v: "No account to make, no hosted version, no telemetry." },
+  { tag: "Open source", k: "Apache-2.0. Read every line.", v: "Fork it. Change anything. No account to make, no hosted version, no telemetry." },
+  { tag: "Your machine", k: "Your laptop or your server.", v: "One command starts it on your laptop; one script puts it on a server. Projects, files and keys stay with you, and agents pay your provider directly." },
+  { tag: "Honest about cost", k: "Rehearse a project for $0 first.", v: "Scripted agents show where it would stall and what it would cost. It is not for quick tasks." },
 ];
 
 const VS = [
@@ -159,213 +154,200 @@ const VS = [
   { who: "An agent framework", v: "You write the code that runs the agents. Great if you're building a product." },
   { who: "yaaf", v: "You found a company. A CEO runs the team; the platform checks the work, the money and the date.", us: true },
 ];
+
+const since = new Date(manifest.history.firstCommit).toLocaleDateString("en-US", { month: "long", day: "numeric", timeZone: "UTC" });
 ---
-<BaseLayout title={`yaaf — ${SITE.tagline}`} bare={true} description={SITE.description}>
-  <!-- ============ HERO ============ -->
+<BaseLayout title={`yaaf — ${SITE.tagline}`} bare={true} description={SITE.description} install={true}>
+  <!-- ============ 1. HERO: the answer, then the receipt ============ -->
   <section class="hero">
-    <div class="sky" aria-hidden="true"><div class="sun"></div></div>
     <div class="shell">
-      <p class="tags">
-        <span class="t1">Open source</span><span class="t2">Apache-2.0</span><span class="t3">Runs on your machine</span><span class="t4">Any model</span>
-      </p>
-      <p class="belief">Great ideas deserve <span class="dawn-text">great teams.</span></p>
-      <h1>
-        <span class="l1">Build a company.</span>
-        <span class="l2">Hire a CEO.</span>
-        <span class="l3 dawn-text">Let the team work.</span>
-      </h1>
-      <div class="hero-row">
-        <div class="sub">
-          <p>
-            Tell yaaf what you want to accomplish. An AI CEO assembles specialists and manages the work, the platform
-            checks every result, and the company remembers what it learns. <strong>You decide how much control to keep.</strong>
+      <div class="hero-grid">
+        <div class="hero-l">
+          <p class="eyebrow">Open source · Apache-2.0 · your machine · your keys</p>
+          <h1>Nothing counts until it’s <em class="signed">checked.</em></h1>
+          <p class="sub">
+            yaaf runs a team of AI agents like a company you chair. The platform runs the tests, meters every dollar
+            and holds the date. The rules live in the server, not the prompt, so you can close the laptop.
           </p>
-          <p class="sub-2">
-            yaaf is <strong>the harness for teams of harnesses</strong>. Claude Code, Codex and Gemini CLI each drive one
-            agent; yaaf gives each of them a job, a CEO to answer to, a budget and a deadline, under rules no agent can
-            talk its way around.
-          </p>
-        </div>
-        <div class="hero-act">
           <div class="btns">
-            <Button href="#how" primary>See how it works</Button>
-            <Button href="#start">Rehearse a company for $0</Button>
+            <Button href="#start" primary>Rehearse a company for $0</Button>
+            <Button href="#rules">Read the rules</Button>
           </div>
-          <p class="hint"><a href={REPO_URL}>Get yaaf on GitHub</a>. Apache-2.0. No account, no hosted tier, no telemetry. Your agents pay your model provider, at their prices.</p>
+        </div>
+        <div class="hero-r">
+          <Receipt
+            title="restatements.csv"
+            rows={[
+              { k: "for", v: "R-02" },
+              { k: "cost", v: "$0.36 · 1 run" },
+            ]}
+            madeBy="Research · Maya"
+            checkedBy="Compliance · Juno"
+          />
+          <Meter label="Budget" value={412} max={500} />
+          <p class="eg">Example receipt and budget, drawn the way the app shows them.</p>
         </div>
       </div>
-    </div>
-    <div class="shell chartwrap">
-      <CompanyChart />
+      <hr class="double-rule" />
     </div>
   </section>
 
-  <!-- ============ WORKS WITH ============ -->
-  <section class="runs">
+  <!-- ============ 2. THE RULES ============ -->
+  <section class="sec first" id="rules">
+    <span id="trust" class="anchor"></span>
     <div class="shell">
-      <div class="runs-in">
-        <p class="eyebrow">Each seat on its own model</p>
-        <ul>
-          {providers.slice(0, SHOWN).map((p) => <li>{p}</li>)}
-          <li class="more"><a href="/runtimes/">+ {providers.length - SHOWN} more →</a></li>
+      <div class="sec-in split">
+        <header class="split-h">
+          <p class="eyebrow sect-mark">§ The rules</p>
+          <h2>Four rules agents <em>can’t</em> talk around.</h2>
+          <p class="lede">
+            A confident answer is not a correct one, and one agent agreeing with another proves nothing. Each rule is a
+            refusal enforced by the server. Break one and an agent gets a 403, not a stern reminder.
+          </p>
+        </header>
+        <ol class="rules">
+          {RULES.map((r, i) => (
+            <li class="rule ruled">
+              <p class="rule-top"><Icon name={r.icon} /><span class="sect">§ 0{i + 1}</span></p>
+              <h3>{r.k}</h3>
+              <p>{r.v}</p>
+              <p class="proof mono">{r.proof}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+      <div class="trail">
+        <p class="eyebrow">The record behind every result</p>
+        <ol>
+          {TRAIL.map((t, i) => (
+            <li>
+              <span class="sect">0{i + 1} · {t.k}</span>
+              <h3>{t.q}</h3>
+              <p>{t.v}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 3. THE COMPANY ============ -->
+  <section class="sec raised" id="company">
+    <div class="shell">
+      <div class="sec-in split even">
+        <header class="split-h">
+          <p class="eyebrow sect-mark">§ The company</p>
+          <h2>You chair. <em>They work.</em></h2>
+          <p class="lede">
+            Describe the goal. yaaf argues with it until it’s testable, then hires a CEO and the seats it needs, each on
+            its own model and harness. No single seat needs to know everything.
+          </p>
+          <p class="counts mono">
+            <span>{roles.length} roles</span><span>{crews.length} ready-made teams</span><span>{manifest.harnesses} harnesses</span><span>{manifest.providers} providers</span>
+          </p>
+          <p class="note"><a href="/org/">The role library</a> · <a href="/runtimes/">Every harness and provider</a> · <a href="/manifesto/">Why we built it</a></p>
+        </header>
+        <ul class="seats">
+          {SEATS.map((s) => (
+            <li class:list={["seat", { chair: s.chair }]}>
+              <p class="eyebrow">{s.tag}</p>
+              <h3>{s.name}</h3>
+              <p class="duty">{s.duty}</p>
+              <p class="bound mono">{s.rule}</p>
+            </li>
+          ))}
         </ul>
       </div>
     </div>
   </section>
 
-  <!-- ============ 1. WHY YAAF EXISTS ============ -->
-  <Section id="why" eyebrow="Why yaaf exists" title="Great ideas deserve great teams."
-    lede="The world is full of people with ideas they cannot pursue. Not because the ideas aren't good enough, but because bringing one to life takes specialists, leadership and coordination. <strong>Building that team has always been the barrier.</strong>">
-    <div class="shift">
-      {SHIFT.map((x, i) => (
-        <div class:list={["step", { last: i === SHIFT.length - 1 }]}>
-          <span class="eyebrow">0{i + 1}</span>
-          <h3>{x.k}</h3>
-          <p>{x.v}</p>
-        </div>
-      ))}
-    </div>
-    <div class="belief-2">
-      <p class="b-l">Intelligence is not enough.<br /><span class="dawn-text">Organization makes it useful.</span></p>
-      <p class="b-r">
-        A researcher finds evidence. A builder executes. A critic challenges the result. A CEO brings it together, and
-        you decide what success means. No single seat needs to know everything. Click a seat to see what it owns and
-        the rule that binds it.
-      </p>
-    </div>
-    <TeamDiagram />
-    <p class="note"><a href="/manifesto/">Why we built it: read the manifesto →</a></p>
-  </Section>
-
-  <!-- ============ YESTERDAY / TODAY ============ -->
-  <Section eyebrow="Yesterday → today" title="Yesterday you babysat an agent. Today you run a company.">
-    <div class="eras">
-      <div class="era old">
-        <p class="era-tag">Yesterday</p>
-        <h3>One agent, one chat, and you.</h3>
-        <ul>{YESTERDAY.map((x) => <li>{x}</li>)}</ul>
-      </div>
-      <div class="era new">
-        <p class="era-tag">Today, with yaaf</p>
-        <h3>A company that answers to you.</h3>
-        <ul>{TODAY.map((x) => <li>{x}</li>)}</ul>
-      </div>
-    </div>
-  </Section>
-
-  <!-- ============ FOUNDING ============ -->
-  <!-- ============ 2. HOW IT WORKS ============ -->
-  <Section id="how" eyebrow="How it works" title="From one paragraph to a staffed company."
+  <!-- ============ 4. HOW IT WORKS ============ -->
+  <Section id="how" class="first" eyebrow="How it works" title="From one paragraph to a staffed company."
     lede="Say it in the dashboard, or in the Claude window you already have open.">
-    <div class="cells hued">
+    <ol class="steps">
       {FOUND.map((s, i) => (
-        <div class="cell">
-          <span class="eyebrow">0{i + 1}</span>
+        <li class="ruled">
+          <span class="sect">§ 0{i + 1}</span>
           <h3>{s.k}</h3>
           <p>{s.v}</p>
-        </div>
+        </li>
       ))}
-    </div>
-    <p class="note"><a href="/how-it-works/">How it works, in detail →</a></p>
+    </ol>
+    <p class="note"><a href="/how-it-works/">How it works, in detail</a></p>
   </Section>
 
-  <!-- ============ THE HARNESS ============ -->
-  <Section id="harness" eyebrow="The harness, one level up" title="A harness drives one agent. yaaf harnesses the whole team."
-    lede="Claude Code, Codex, Gemini CLI and OpenCode give one model a loop and tools. yaaf is what's around them: <strong>the company they work for.</strong>">
-    <div class="layers">
-      {LAYERS.map((l, i) => (
-        <div class={`layer-row lv${i} h-${l.hue}`}>
-          <span class="lnum">0{i + 1}</span>
-          <h3>{l.k}</h3>
-          <p>{l.v}</p>
-        </div>
-      ))}
-    </div>
-    <div class="quote">
-      <blockquote>
-        <p>“A harness is transport. It decides how a model is driven, never what the model may do.”</p>
-      </blockquote>
-      <p class="qr">
-        That line is from yaaf's own design. What a model <em>may</em> do is decided in one place, the server, and
-        every rule is a refusal. Break one and an agent gets a 403, not a stern reminder.{" "}
-        <a href="/runtimes/">Every harness and provider →</a>
-      </p>
-    </div>
+  <!-- ============ 5. AUTHORITY ============ -->
+  <Section id="control" eyebrow="Your authority" title="You decide how much authority to <em>delegate.</em>"
+    lede="Some chairs approve every important decision. Others set a goal and a budget and let the CEO run. Both belong in yaaf.">
+    <AutonomyDial />
+    <p class="note">These are five real switches in the project's constitution, which no agent can edit. <a href="/how-it-works/#dial">How the switches work</a></p>
   </Section>
 
-  <!-- ============ TOUR ============ -->
-  <Section id="tour" eyebrow="The real thing" title="Then you chair the board."
+  <!-- ============ 6. THE REAL THING ============ -->
+  <Section id="tour" eyebrow="The real thing" title="Every result says who made it, who <em>checked it,</em> and what it cost."
     lede="Check in when you want. The company keeps working when you don't.">
     <div class="tour">
       {TOUR.map((t, i) => (
-        <div class:list={["row", { flip: i % 2 === 1 }]} style={`--hue:${t.hue}`}>
+        <article class="shot-row">
           <div class="copy">
-            <span class="eyebrow">0{i + 1}</span>
+            <span class="sect">§ 0{i + 1}</span>
             <h3>{t.k}</h3>
             <p>{t.v}</p>
           </div>
-          <div class="pic"><Shot src={t.src} ratio="16 / 10" alt={t.alt} glow={t.hue} priority={i === 0} /></div>
-        </div>
+          <Shot src={t.src} dark={t.dark} ratio="16 / 10" alt={t.alt} />
+        </article>
       ))}
     </div>
-    <p class="note">Check in from the app, the terminal (<code>yaaf status</code>), Slack, a daily letter, or <a href="/docs/install/#after-you-install">Claude over MCP</a>.</p>
+    <p class="note">The real product, on demo data. Check in from the app, the terminal (<code>yaaf status</code>), Slack, a daily letter, or <a href="/docs/install/#after-you-install">Claude over MCP</a>.</p>
   </Section>
 
-  <!-- ============ 3. YOUR LEVEL OF CONTROL ============ -->
-  <Section id="control" eyebrow="Your level of control" title="You decide how much authority to delegate."
-    lede="Some chairmen approve every important decision. Others set a goal and a budget and let the CEO run. Both belong in yaaf. <strong>Move the dial.</strong>">
-    <AutonomyDial />
-    <p class="note">The dial is five real switches in the project's constitution, which no agent can edit. <a href="/how-it-works/">How it works →</a></p>
-  </Section>
-
-  <!-- ============ 4. WHY TRUST YAAF ============ -->
-  <Section id="trust" eyebrow="Why trust yaaf" title="Trust is earned through evidence."
-    lede="A confident answer is not a correct one, and one agent agreeing with another proves nothing. Left alone, agents say they're done when they aren't. yaaf gives them checks and balances.">
-    <div class="trail">
-      {TRAIL.map((t, i) => (
-        <div class="tr">
-          <span class="eyebrow">0{i + 1} · {t.k}</span>
-          <h3>{t.q}</h3>
-          <p>{t.v}</p>
+  <!-- ============ 7. THE HARNESS, ONE LEVEL UP ============ -->
+  <Section id="harness" eyebrow="The harness, one level up" title="A harness drives one agent. yaaf harnesses the <em>team.</em>"
+    lede="Claude Code, Codex, Gemini CLI and OpenCode give one model a loop and tools. yaaf is what's around them: <strong>the company they work for.</strong>">
+    <div class="harness">
+      <div class="nest n0">
+        <p class="nl"><span class="sect">§ 03</span><b>{LAYERS[0].k}</b><span class="nv">{LAYERS[0].v}</span></p>
+        <div class="nest n1">
+          <p class="nl"><span class="sect">§ 02</span><b>{LAYERS[1].k}</b><span class="nv">{LAYERS[1].v}</span></p>
+          <div class="nest n2">
+            <p class="nl"><span class="sect">§ 01</span><b>{LAYERS[2].k}</b><span class="nv">{LAYERS[2].v}</span></p>
+          </div>
         </div>
-      ))}
-    </div>
-    <div class="cells hued">
-      {WHY.map((r, i) => (
-        <div class="cell">
-          <span class="eyebrow">0{i + 1}</span>
-          <h3>{r.k}</h3>
-          <p>{r.v}</p>
-        </div>
-      ))}
+      </div>
+      <div class="quote">
+        <blockquote>
+          <p>“A harness is transport. It decides how a model is driven, never what the model may do.”</p>
+        </blockquote>
+        <p class="qr">
+          That line is from yaaf's own design. What a model may do is decided in one place, the server, and every rule
+          is a refusal. <a class="link" href="/runtimes/">Every harness and provider</a>
+        </p>
+      </div>
     </div>
   </Section>
 
-  <!-- ============ USE CASES ============ -->
-  <!-- ============ 5. WHAT BECOMES POSSIBLE ============ -->
+  <!-- ============ 8. WHAT BECOMES POSSIBLE ============ -->
   <Section id="possible" eyebrow="What becomes possible" title="From a task, to an operation, to one day a business."
     lede="Some companies exist for an afternoon. Others run continuously. The last column is a direction, not a feature.">
-    <div class="horizon">
+    <ol class="horizon">
       {HORIZON.map((h, i) => (
-        <div class:list={["hz-c", { far: i === HORIZON.length - 1 }]}>
-          <span class="when">{h.when}</span>
+        <li class:list={["ruled", { far: i === HORIZON.length - 1 }]}>
+          <span class="pill">{h.when}</span>
           <h3>{h.k}</h3>
           <p>{h.v}</p>
-        </div>
+        </li>
       ))}
-    </div>
-    <h3 class="uses-h">What will your company do? Start from one of {crews.length} ready-made teams, or describe your own.</h3>
-    <div class="cells c3 hued">
+    </ol>
+    <h3 class="uses-h">What will your company do? Start from one of <span class="mono">{crews.length}</span> ready-made teams, or describe your own.</h3>
+    <ul class="uses">
       {USES.map((u) => (
-        <div class="cell">
-          <h3>{u.k}</h3>
+        <li>
+          <h4>{u.k}</h4>
           <p>{u.v}</p>
-        </div>
+        </li>
       ))}
-    </div>
-    <p class="note">
-      <a href="/org/">{roles.length} roles to hire from →</a>
-    </p>
+    </ul>
+    <p class="note"><a href="/org/"><span class="mono">{roles.length}</span> roles to hire from</a></p>
   </Section>
 
   <!-- ============ COMPARE (hidden while SHOW_COMPARE is off) ============ -->
@@ -378,343 +360,156 @@ const VS = [
         </div>
       ))}
     </div>
-    <p class="note">yaaf runs Claude Code and Codex. It doesn't replace them; it gives them a company. <a href="/compare/">Full comparison, including Paperclip →</a></p>
+    <p class="note">yaaf runs Claude Code and Codex. It doesn't replace them; it gives them a company. <a href="/compare/">Full comparison, including Paperclip</a></p>
   </Section>}
 
-  <!-- ============ OPEN SOURCE ============ -->
-  <Section id="start" eyebrow="Open source" title="Not a service. Software you own.">
-    <div class="cells hued">
-      {OPEN.map((k) => (
-        <div class="cell">
-          <h3>{k.k}</h3>
-          <p>{k.v}</p>
-        </div>
-      ))}
-    </div>
-    <div class="start">
-      <div class="start-l">
-        <h3>Run a whole company in three lines.</h3>
-        <p>The last one rehearses an example project end to end on scripted agents. No key, no Docker, $0. When you're ready for real agents, <code>yaaf up</code> starts everything and prints the address.</p>
-        <p class="note"><a href="/docs/install/">Install guide →</a><span class="sep">·</span><a href="/docs/providers/">Models and keys →</a></p>
-      </div>
-      <div class="start-r">
-        <Cmd cmd={`git clone ${REPO_URL} && cd yaaf`} />
-        <Cmd cmd="python3 -m venv .venv && .venv/bin/pip install -e ." />
-        <Cmd cmd=".venv/bin/yaaf rehearse examples/01-your-first-hour.json" />
+  <!-- ============ 9. OPEN SOURCE · YOUR MACHINE · HONEST ABOUT COST ============ -->
+  <section class="sec" id="open">
+    <div class="shell">
+      <div class="sec-in">
+        <ul class="open">
+          {OPEN.map((k) => (
+            <li>
+              <p class="eyebrow">{k.tag}</p>
+              <h3>{k.k}</h3>
+              <p>{k.v}</p>
+            </li>
+          ))}
+        </ul>
+        <p class="note">
+          Early days: pre-1.0, <span class="mono">{manifest.history.commits}</span> commits since {since}, built in the open with Claude Code.{" "}
+          <a href={REPO_URL}>Source on GitHub</a> · <a href="/docs/providers/">Models and keys</a>
+        </p>
       </div>
     </div>
-    <p class="note">
-      Early days: pre-1.0, {manifest.history.commits} commits since {new Date(manifest.history.firstCommit).toLocaleDateString("en-US", { month: "long", day: "numeric", timeZone: "UTC" })}, built in the open with Claude Code.
-    </p>
-  </Section>
+  </section>
+  <!-- 10. Install (#start) and 11. the footer are drawn by the layout. -->
 </BaseLayout>
 
 <style>
-  /* ---------- hero: the sun coming up ---------- */
-  .hero { position: relative; overflow: hidden; padding-top: 7rem; }
-  .sky {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background:
-      radial-gradient(60% 40% at 15% 10%, color-mix(in srgb, var(--color-violet) 30%, transparent), transparent 70%),
-      radial-gradient(50% 35% at 90% 15%, color-mix(in srgb, var(--color-sky) 22%, transparent), transparent 70%);
-  }
-  .sun {
-    position: absolute;
-    left: 50%;
-    top: 27rem;
-    width: min(1500px, 160vw);
-    aspect-ratio: 1;
-    transform: translateX(-50%);
-    border-radius: 50%;
-    background: radial-gradient(circle at 50% 50%,
-      color-mix(in srgb, var(--color-gold) 80%, transparent) 0%,
-      color-mix(in srgb, var(--color-sun) 65%, transparent) 13%,
-      color-mix(in srgb, var(--color-rose) 50%, transparent) 26%,
-      color-mix(in srgb, var(--color-violet) 34%, transparent) 40%,
-      transparent 60%);
-    filter: blur(30px);
-    animation: rise 2.4s var(--ease) both;
-  }
-  @keyframes rise {
-    from { transform: translate(-50%, 18%); opacity: 0; }
-    to { transform: translate(-50%, 0); opacity: 1; }
-  }
-  .hero .shell { position: relative; }
-  .tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 2.2rem var(--inset); }
-  .tags span {
-    font-family: var(--font-mono);
-    font-size: 11.5px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    padding: 6px 12px;
-    border: 1px solid;
-    background: color-mix(in srgb, var(--color-page) 60%, transparent);
-  }
-  .t1 { color: var(--color-gold); border-color: color-mix(in srgb, var(--color-gold) 50%, transparent); }
-  .t2 { color: var(--color-rose); border-color: color-mix(in srgb, var(--color-rose) 50%, transparent); }
-  .t3 { color: var(--color-sky); border-color: color-mix(in srgb, var(--color-sky) 50%, transparent); }
-  .t4 { color: var(--color-mint); border-color: color-mix(in srgb, var(--color-mint) 50%, transparent); }
+  /* ---------- 1. hero ---------- */
+  .hero { padding-top: var(--yaaf-space-11); }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 48px 64px; align-items: end; padding-bottom: var(--yaaf-space-10); }
+  .hero .eyebrow { margin: 0; }
   h1 {
-    margin: 0;
+    margin: var(--yaaf-space-5) 0 0;
     font-size: var(--text-hero);
-    line-height: 0.98;
-    letter-spacing: -0.055em;
-    font-weight: 550;
-    padding-left: var(--inset);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    max-width: 11ch;
   }
-  h1 span { display: block; }
-  .l3 { padding-bottom: 0.08em; }
-  .hero-row {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 24px 0;
-    margin-top: 2.6rem;
-    align-items: start;
-  }
-  .hero-row > * { padding-inline: var(--inset); }
-  .sub { grid-column: 1 / span 2; margin: 0; font-size: 1.25rem; line-height: 1.5; color: var(--color-ink-2); max-width: 40ch; }
-  .sub strong { color: var(--color-ink); font-weight: 550; }
-  .hero-act { grid-column: 3 / span 2; display: grid; gap: 14px; }
-  .hint { margin: 0; font-size: 13.5px; color: var(--color-ink-2); max-width: 46ch; }
-  .chartwrap { margin-top: 5.5rem; padding-bottom: 6rem; }
+  /* The one headline word set in Seal: the check itself. */
+  h1 .signed { font-weight: 600; }
+  .sub { margin: var(--yaaf-space-7) 0 0; font-size: clamp(1.125rem, 1rem + 0.5vw, 1.3125rem); line-height: 1.55; color: var(--yaaf-ink-2); max-width: 56ch; }
+  .hero .btns { margin-top: var(--yaaf-space-7); }
+  .hero-r { display: grid; gap: 28px; padding-bottom: 6px; }
+  .eg { margin: -8px 0 0; font-family: var(--font-mono); font-size: 12px; color: var(--yaaf-muted); }
 
-  .belief {
-    margin: 0 0 1.4rem;
-    padding-left: var(--inset);
-    font-size: clamp(1.25rem, 0.9rem + 1.2vw, 1.9rem);
-    line-height: 1.15;
-    letter-spacing: -0.03em;
-    font-weight: 450;
-    color: var(--color-ink);
-  }
-  .sub-2 { margin: 1rem 0 0; font-size: 15.5px; line-height: 1.55; color: var(--color-ink-2); }
-  .sub p:first-child { margin: 0; }
-  .hint a { color: var(--color-accent-hi); text-decoration: none; }
-  .hint a:hover { text-decoration: underline; text-underline-offset: 3px; }
+  /* ---------- the split section: headline left, evidence right ---------- */
+  .split { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: 48px 72px; align-items: start; }
+  .split.even { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+  .split-h .eyebrow { margin: 0 0 var(--yaaf-space-4); text-transform: none; letter-spacing: 0.04em; }
+  .split-h h2 { margin: 0; font-size: var(--text-h2); line-height: 1.08; text-wrap: balance; }
+  .split-h .lede { margin: var(--yaaf-space-5) 0 0; font-size: 17px; line-height: 1.6; color: var(--yaaf-ink-2); max-width: 46ch; }
 
-  /* ---------- why yaaf exists ---------- */
-  .shift { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid var(--color-line); }
-  .step { position: relative; padding: 1.6rem var(--inset) 1.8rem; border-right: 1px solid var(--color-line); background: var(--color-old-bg); }
-  .step:nth-child(2) { background: color-mix(in srgb, var(--color-old-bg) 50%, var(--color-page)); }
-  .step.last { border-right: 0; background: linear-gradient(125deg, var(--color-gold) 0%, var(--color-sun) 32%, var(--color-rose) 66%, var(--color-violet) 100%); }
-  .step:not(.last)::after { content: "→"; position: absolute; right: -0.65em; top: 50%; transform: translateY(-50%); z-index: 1; font-size: 1.2rem; color: var(--color-ink-2); background: var(--color-page); line-height: 1; padding: 4px 2px; }
-  .step .eyebrow { color: var(--color-old); }
-  .step h3 { margin: 0.8rem 0 0; font-size: 1.7rem; letter-spacing: -0.04em; color: #b0b0b0; }
-  .step p { margin: 0.4rem 0 0; color: #9a9a9a; }
-  .step.last .eyebrow, .step.last h3, .step.last p { color: var(--yaaf-page); }
-  .belief-2 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px 0; margin: 3.4rem 0 2.4rem; }
-  .belief-2 > * { padding-inline: var(--inset); margin: 0; }
-  .b-l { grid-column: 1 / span 2; font-size: clamp(1.6rem, 1rem + 1.8vw, 2.6rem); line-height: 1.05; letter-spacing: -0.045em; font-weight: 500; }
-  .b-r { grid-column: 3 / span 2; color: var(--color-ink-2); font-size: 16px; line-height: 1.6; align-self: end; }
+  /* ---------- 2. the rules ---------- */
+  .rules { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 48px 44px; }
+  .rule-top { margin: 0; display: flex; justify-content: space-between; align-items: center; color: var(--yaaf-ink); }
+  .rule h3 { margin: 18px 0 0; font-size: 1.625rem; line-height: 1.2; }
+  .rule p { margin: 10px 0 0; color: var(--yaaf-ink-2); max-width: 44ch; }
+  .rule .proof { margin-top: 16px; font-size: 13px; color: var(--yaaf-muted); }
 
-  /* ---------- why trust: the evidence trail ---------- */
-  .trail { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-bottom: 2.4rem; border: 1px solid var(--color-line); background: color-mix(in srgb, var(--color-sky) 4%, var(--color-page)); }
-  .tr { position: relative; padding: 1.6rem var(--inset) 1.8rem; border-right: 1px solid var(--color-line); }
-  .tr:last-child { border-right: 0; }
-  .tr:not(:last-child)::after { content: "→"; position: absolute; right: -0.65em; top: 1.5rem; z-index: 1; color: var(--color-sky); background: var(--color-page); line-height: 1; padding: 4px 2px; }
-  .tr .eyebrow { color: var(--color-sky); }
-  .tr h3 { margin: 0.8rem 0 0; font-size: 1.25rem; letter-spacing: -0.03em; }
-  .tr p { margin: 0.6rem 0 0; font-size: 15px; line-height: 1.55; color: var(--color-ink-2); }
+  .trail { padding-bottom: var(--yaaf-space-11); }
+  .trail > .eyebrow { margin: 0 0 var(--yaaf-space-5); padding-top: var(--yaaf-space-6); border-top: 1px solid var(--yaaf-border-strong); }
+  .trail ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 28px 32px; }
+  .trail h3 { margin: 8px 0 0; font-family: var(--font-sans); font-size: 17px; font-weight: 600; letter-spacing: 0; line-height: 1.3; }
+  .trail li p { margin: 6px 0 0; font-size: 15px; color: var(--yaaf-ink-2); }
 
-  /* ---------- what becomes possible ---------- */
-  .horizon { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid var(--color-line); }
-  .hz-c { position: relative; display: block; padding: 1.8rem var(--inset) 2rem; border-right: 1px solid var(--color-line); color: inherit; text-decoration: none; background: color-mix(in srgb, var(--color-mint) 6%, var(--color-page)); transition: background 0.25s; }
-  .hz-c:last-child { border-right: 0; }
-  .hz-c.far { background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--color-violet) 7%, var(--color-page)) 0 10px, var(--color-page) 10px 20px); }
-  .when { display: inline-block; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; padding: 3px 8px; color: var(--yaaf-page); background: var(--color-mint); }
-  .far .when { background: transparent; color: var(--color-violet); border: 1px dashed var(--color-violet); }
-  .hz-c h3 { margin: 1rem 0 0; font-size: 1.6rem; letter-spacing: -0.04em; }
-  .hz-c p { margin: 0.6rem 0 0; font-size: 15px; line-height: 1.55; color: var(--color-ink-2); }
-  .uses-h { margin: 3.4rem 0 1.4rem; padding-inline: var(--inset); font-size: 1.25rem; letter-spacing: -0.025em; font-weight: 500; color: var(--color-ink-2); max-width: 60ch; }
+  /* ---------- 3. the company ---------- */
+  .counts { margin: var(--yaaf-space-6) 0 0; display: flex; flex-wrap: wrap; gap: 4px 0; font-size: 14px; color: var(--yaaf-ink-2); }
+  .counts span:not(:last-child)::after { content: "·"; margin-inline: 12px; color: var(--yaaf-muted); }
+  .seats { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .seat { background: var(--yaaf-page); border: 1px solid var(--yaaf-border); padding: 18px 18px 16px; display: flex; flex-direction: column; }
+  .seat.chair { border-color: var(--yaaf-ink); }
+  .seat .eyebrow { margin: 0; }
+  .seat h3 { margin: 10px 0 0; font-size: 1.5rem; line-height: 1.15; }
+  .duty { margin: 6px 0 0; font-size: 15px; line-height: 1.5; color: var(--yaaf-ink-2); }
+  .bound { margin: auto 0 0; padding-top: 14px; font-size: 12.5px; line-height: 1.5; color: var(--yaaf-muted); }
 
-  /* ---------- works with ---------- */
-  .runs-in { border-top: 1px solid var(--color-line); padding-block: 2.2rem; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px 0; align-items: center; }
-  .runs-in > * { padding-inline: var(--inset); }
-  .runs-in .eyebrow { margin: 0; color: var(--color-mint); }
-  .runs-in ul { grid-column: 2 / span 3; list-style: none; margin: 0; padding-block: 0; display: flex; flex-wrap: wrap; gap: 10px 26px; }
-  .runs-in li { font-size: 1.1rem; letter-spacing: -0.02em; color: var(--color-ink); }
-  .runs-in li.more a { color: var(--color-mint); text-decoration: none; }
-  .runs-in li.more a:hover { text-decoration: underline; text-underline-offset: 4px; }
+  /* ---------- 4. how it works ---------- */
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 40px 32px; }
+  .steps h3 { margin: 14px 0 0; font-size: 1.5rem; line-height: 1.2; }
+  .steps p { margin: 10px 0 0; font-size: 15.5px; color: var(--yaaf-ink-2); }
 
-  /* ---------- yesterday / today ---------- */
-  .eras { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--color-line); }
-  .era { padding: 2.4rem var(--inset) 2.6rem; position: relative; overflow: hidden; }
-  .era h3 { margin: 0.6rem 0 1.4rem; font-size: 1.7rem; line-height: 1.1; letter-spacing: -0.035em; }
-  .era ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
-  .era li { position: relative; padding-left: 26px; font-size: 16px; line-height: 1.5; }
-  .era-tag { margin: 0; font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.18em; text-transform: uppercase; }
-  /* Yesterday is drawn the way this site used to look: black, grey, scanlines. */
-  .old { background: var(--color-old-bg); color: var(--color-old); filter: grayscale(1); }
-  .old::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background: repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0.35) 0 1px, transparent 1px 3px);
-  }
-  .old h3 { color: #a8a8a8; }
-  .old .era-tag { color: #8a8a8a; }
-  .old li { color: #9a9a9a; }
-  .old li::before { content: "—"; position: absolute; left: 0; color: #6f6f6f; }
-  /* Today is drawn in full daylight. */
-  .new {
-    color: var(--yaaf-page);
-    background:
-      radial-gradient(60% 80% at 100% 0%, rgba(255, 255, 255, 0.35), transparent 70%),
-      linear-gradient(125deg, var(--color-gold) 0%, var(--color-sun) 32%, var(--color-rose) 66%, var(--color-violet) 100%);
-  }
-  .new h3 { color: var(--yaaf-page); }
-  .new .era-tag { color: #3a0c2c; }
-  .new li { color: var(--yaaf-page); font-weight: 450; }
-  .new li::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0.42em;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: #fff;
-    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.35);
-  }
+  /* ---------- 6. the real thing ---------- */
+  :global(#tour .head > h2) { max-width: 30ch; }
+  .tour { display: grid; gap: var(--yaaf-space-10); }
+  .shot-row { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 9fr); gap: 24px 48px; align-items: start; }
+  .copy { border-top: 2px solid var(--yaaf-ink); padding-top: var(--yaaf-space-5); }
+  .copy h3 { margin: 14px 0 0; font-size: 1.625rem; line-height: 1.18; }
+  .copy p { margin: 10px 0 0; color: var(--yaaf-ink-2); font-size: 15.5px; }
 
-  /* ---------- the harness: three nested layers ---------- */
-  .layers { display: grid; }
-  .layer-row {
-    display: grid;
-    grid-template-columns: 4rem minmax(0, 1fr) minmax(0, 2fr);
-    gap: 8px 24px;
-    align-items: baseline;
-    padding: 1.6rem var(--inset);
-    border: 1px solid color-mix(in srgb, var(--hue) 55%, transparent);
-    background: color-mix(in srgb, var(--hue) 8%, var(--color-page));
-  }
-  .layer-row.lv0 { margin-inline: 12%; }
-  .layer-row.lv1 { margin-inline: 6%; border-top: 0; }
-  .layer-row.lv2 { border-top: 0; }
-  .layer-row.h-dawn {
-    --hue: var(--color-rose);
-    border: 0;
-    position: relative;
-    background:
-      linear-gradient(100deg, color-mix(in srgb, var(--color-gold) 16%, transparent), color-mix(in srgb, var(--color-rose) 16%, transparent), color-mix(in srgb, var(--color-violet) 16%, transparent)),
-      var(--color-page);
-  }
-  .layer-row.h-dawn::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    padding: 1.5px;
-    background: var(--dawn);
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    pointer-events: none;
-  }
-  .lnum { font-family: var(--font-mono); font-size: 12px; color: var(--hue); }
-  .layer-row h3 { margin: 0; font-size: 1.35rem; letter-spacing: -0.03em; color: var(--hue); }
-  .h-dawn h3 { background: var(--dawn); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .layer-row p { margin: 0; color: var(--color-ink-2); font-size: 15.5px; line-height: 1.55; }
-  .h-dawn p { color: var(--color-ink); }
-  .quote { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px 0; margin-top: 3rem; }
-  .quote > * { padding-inline: var(--inset); }
-  blockquote { grid-column: 1 / span 2; margin: 0; }
-  blockquote p { margin: 0; font-size: clamp(1.4rem, 1rem + 1.2vw, 2rem); line-height: 1.2; letter-spacing: -0.03em; color: var(--color-ink); }
-  .qr { grid-column: 3 / span 2; margin: 0; color: var(--color-ink-2); font-size: 15.5px; line-height: 1.6; }
-  .qr em { color: var(--color-gold); font-style: normal; }
-  .qr a { color: var(--color-accent-hi); text-decoration: none; }
-  .qr a:hover { text-decoration: underline; text-underline-offset: 3px; }
+  /* ---------- 7. the harness: three nested boxes in ink ---------- */
+  .nest { border: 1.5px solid var(--yaaf-ink); padding: 20px 24px 24px; }
+  .n0 { border-width: 2px; }
+  .n1, .n2 { margin-top: 18px; }
+  .n2 { background: var(--yaaf-surface); }
+  .nl { margin: 0; display: grid; grid-template-columns: 3.5rem minmax(0, 15rem) minmax(0, 1fr); gap: 4px 20px; align-items: baseline; }
+  .nl b { font-family: var(--font-display); font-weight: 600; font-size: 1.3rem; line-height: 1.25; }
+  .nv { color: var(--yaaf-ink-2); font-size: 15.5px; }
+  .quote { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 20px 56px; margin-top: var(--yaaf-space-9); align-items: end; }
+  blockquote { margin: 0; }
+  blockquote p { margin: 0; font-family: var(--font-display); font-style: italic; font-weight: 600; font-size: clamp(1.5rem, 1.1rem + 1.3vw, 2.125rem); line-height: 1.22; color: var(--yaaf-ink); max-width: 28ch; }
+  .qr { margin: 0; color: var(--yaaf-ink-2); }
 
-  /* ---------- tour ---------- */
-  .tour { border-top: 1px solid var(--color-line); }
-  .row {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    border-bottom: 1px solid var(--color-line);
-    align-items: center;
-  }
-  .copy { grid-column: 1; padding: 2.5rem var(--inset); }
-  .copy .eyebrow { color: var(--hue); }
-  .copy h3 { margin: 1rem 0 0; font-size: 1.6rem; line-height: 1.15; letter-spacing: -0.035em; font-weight: 500; }
-  .copy h3::after { content: ""; display: block; width: 36px; height: 3px; margin-top: 1rem; background: var(--hue); }
-  .copy p { margin: 0.9rem 0 0; color: var(--color-ink-2); font-size: 16px; line-height: 1.55; }
-  .pic { grid-column: 2 / span 3; padding: 2.5rem var(--inset); }
-  .flip .copy { grid-column: 4; grid-row: 1; }
-  .flip .pic { grid-column: 1 / span 3; grid-row: 1; }
-  .note code { font-family: var(--font-mono); }
+  /* ---------- 8. what becomes possible ---------- */
+  .horizon { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; }
+  .horizon .far { border-top-style: dashed; }
+  .horizon .far .pill { border-style: dashed; }
+  .horizon h3 { margin: 16px 0 0; font-size: 1.75rem; line-height: 1.15; }
+  .horizon p { margin: 10px 0 0; font-size: 15.5px; color: var(--yaaf-ink-2); }
+  .uses-h { margin: var(--yaaf-space-10) 0 var(--yaaf-space-6); font-size: 1.5rem; line-height: 1.25; max-width: 36ch; }
+  .uses-h .mono { font-size: 0.86em; font-weight: 500; }
+  .uses { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 32px; border-top: 1px solid var(--yaaf-border-strong); }
+  .uses li { padding: 18px 0 20px; border-bottom: 1px solid var(--yaaf-border-strong); }
+  .uses h4 { margin: 0; font-size: 17px; line-height: 1.3; }
+  .uses p { margin: 6px 0 0; font-size: 15px; color: var(--yaaf-ink-2); }
 
-  /* ---------- compare ---------- */
-  .vs { font-size: 1.1rem !important; color: var(--color-ink) !important; line-height: 1.45 !important; letter-spacing: -0.015em; }
-  .vsg .cell:not(.us) { background: var(--color-old-bg); }
-  .vsg .cell:not(.us) .eyebrow { color: var(--color-old); }
-  .vsg .cell:not(.us) .vs { color: #b0b0b0 !important; }
-  .us {
-    background:
-      radial-gradient(90% 80% at 100% 0%, color-mix(in srgb, var(--color-rose) 30%, transparent), transparent 70%),
-      radial-gradient(90% 80% at 0% 100%, color-mix(in srgb, var(--color-gold) 22%, transparent), transparent 70%),
-      var(--color-surface) !important;
-  }
-  .us .eyebrow { color: var(--color-gold); }
+  /* ---------- 9. open source ---------- */
+  #open .sec-in { border-top: 2px solid var(--yaaf-ink); }
+  .open { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 36px 48px; }
+  .open .eyebrow { margin: 0; }
+  .open h3 { margin: 12px 0 0; font-size: 1.625rem; line-height: 1.2; }
+  .open li > p:last-child { margin: 10px 0 0; color: var(--yaaf-ink-2); max-width: 40ch; }
 
-  /* ---------- start ---------- */
-  .start {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 24px 0;
-    margin-top: 2.5rem;
-    padding-block: 2.2rem;
-    border: 1px solid color-mix(in srgb, var(--color-mint) 45%, transparent);
-    background: color-mix(in srgb, var(--color-mint) 6%, var(--color-page));
-  }
-  .start > * { padding-inline: var(--inset); }
-  .start-l { grid-column: 1 / span 2; }
-  .start-l h3 { margin: 0; font-size: 1.5rem; letter-spacing: -0.03em; color: var(--color-mint); }
-  .start-l p { margin: 0.8rem 0 0; color: var(--color-ink-2); line-height: 1.55; max-width: 48ch; }
-  .start-l .note { margin-top: 1rem; padding-inline: 0; }
-  .start-l code { font-family: var(--font-mono); font-size: 0.9em; color: var(--color-ink); }
-  .start-r { grid-column: 3 / span 2; display: grid; gap: 8px; align-content: start; min-width: 0; }
+  .vs { font-size: 1.05rem !important; color: var(--yaaf-ink) !important; }
+  .us { border-top: 2px solid var(--yaaf-ink) !important; }
 
-  .sep { margin: 0 10px; color: var(--color-muted); }
-
-  @media (max-width: 1024px) {
-    .hero { padding-top: 5rem; }
-    .sun { top: 40rem; }
-    .sub, .hero-act { grid-column: 1 / -1; }
-    .runs-in .eyebrow, .runs-in ul { grid-column: 1 / -1; }
-    .row, .flip { grid-template-columns: 1fr; }
-    .copy, .pic, .flip .copy, .flip .pic { grid-column: 1; grid-row: auto; }
-    .copy { padding-bottom: 0; }
-    .eras { grid-template-columns: 1fr; }
-    .b-l, .b-r { grid-column: 1 / -1; }
-    .trail { grid-template-columns: 1fr 1fr; }
-    .tr:nth-child(2) { border-right: 0; }
-    .tr:nth-child(-n + 2) { border-bottom: 1px solid var(--color-line); }
-    .tr:nth-child(2)::after { display: none; }
-    .horizon { grid-template-columns: 1fr; }
-    .hz-c { border-right: 0; border-bottom: 1px solid var(--color-line); }
-    .hz-c:last-child { border-bottom: 0; }
-    .layer-row { grid-template-columns: 3rem minmax(0, 1fr); }
-    .layer-row p { grid-column: 2; }
-    .layer-row.lv0 { margin-inline: 8%; }
-    .layer-row.lv1 { margin-inline: 4%; }
-    blockquote, .qr, .start-l, .start-r { grid-column: 1 / -1; }
+  @media (max-width: 1100px) {
+    .hero-grid { grid-template-columns: 1fr; align-items: start; }
+    .hero-r { max-width: 34rem; }
+    .split, .split.even { grid-template-columns: 1fr; }
+    .split-h .lede { max-width: 62ch; }
+    .steps, .trail ol { grid-template-columns: 1fr 1fr; }
+    .shot-row { grid-template-columns: 1fr; }
+    .copy p { max-width: 62ch; }
+    .quote { grid-template-columns: 1fr; }
+    .nl { grid-template-columns: 3.5rem minmax(0, 1fr); }
+    .nv { grid-column: 2; }
   }
-  @media (max-width: 640px) {
-    .chartwrap { margin-top: 3.5rem; padding-bottom: 4rem; }
-    .copy { padding-top: 2rem; }
-    .pic { padding-block: 1.5rem 2rem; }
-    .layer-row { grid-template-columns: 1fr; }
-    .layer-row p { grid-column: 1; }
-    .layer-row.lv0, .layer-row.lv1 { margin-inline: 0; }
-    .sun { top: 46rem; }
-    .shift { grid-template-columns: 1fr; }
-    .step { border-right: 0; border-bottom: 1px solid var(--color-line); }
-    .step:not(.last)::after { content: "↓"; right: auto; left: 50%; top: auto; bottom: -0.75em; transform: translateX(-50%); }
-    .trail { grid-template-columns: 1fr; }
-    .tr { border-right: 0; border-bottom: 1px solid var(--color-line); }
-    .tr:last-child { border-bottom: 0; }
-    .tr:not(:last-child)::after { display: block; content: "↓"; right: auto; left: var(--inset); top: auto; bottom: -0.75em; }
+  @media (max-width: 760px) {
+    .hero { padding-top: var(--yaaf-space-9); }
+    .hero-grid { padding-bottom: var(--yaaf-space-9); }
+    .rules, .steps, .trail ol, .horizon, .uses, .open { grid-template-columns: 1fr; }
+    .rules { gap: 36px; }
+    .seats { grid-template-columns: 1fr 1fr; }
+    .trail { padding-bottom: var(--yaaf-space-10); }
+    .nest { padding: 16px 14px 16px; }
+    .nl { grid-template-columns: 1fr; }
+    .nv { grid-column: 1; }
+  }
+  @media (max-width: 420px) {
+    .seats { grid-template-columns: 1fr; }
   }
 </style>
