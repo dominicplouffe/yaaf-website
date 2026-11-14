@@ -1,6 +1,6 @@
 ---
 /**
- * The autonomy dial, drawn from the real one: yaaf's five authority switches
+ * The autonomy dial, drawn as what it is: yaaf's five authority switches
  * (docs/AUTONOMY.md). Position n hands the first n of them to the CEO. The two
  * ends are the two presets the New-project form offers, and the in-between
  * positions are what a constitution gets when you set the switches one by one.
@@ -84,7 +84,7 @@ const NEVER = [
   <fieldset class="track-set">
     <legend class="sr">How much authority the CEO holds</legend>
     <div class="ends" aria-hidden="true">
-      <span><b>Chairman-led</b>You approve the big calls</span>
+      <span><b>Chair-led</b>You approve the big calls</span>
       <span><b>CEO-led</b>It decides, then tells you</span>
     </div>
     <div class="track">
@@ -119,6 +119,7 @@ const NEVER = [
       {SWITCHES.map((s) => (
         <li class="sw">
           <code>{s.key}</code>
+          <span class="toggle" aria-hidden="true"><i></i></span>
           <p class="you"><span class="who">You</span>{s.you}</p>
           <p class="ceo"><span class="who">CEO</span>{s.ceo}</p>
         </li>
@@ -134,80 +135,76 @@ const NEVER = [
 </div>
 
 <style>
-  .dial {
-    --you: var(--color-gold);
-    --ceo: var(--color-rose);
-    border: 1px solid var(--color-line);
-    background: color-mix(in srgb, var(--color-violet) 5%, var(--color-page));
-  }
+  /* Ink only. A switch is a square knob in a ruled slot: left is yours, right is the CEO's. */
+  .dial { border: 1.5px solid var(--yaaf-ink); background: var(--yaaf-surface); }
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
   /* ---------- the track ---------- */
-  .track-set { margin: 0; padding: 2rem var(--inset) 1.4rem; border: 0; border-bottom: 1px solid var(--color-line); min-width: 0; }
-  .ends { display: flex; justify-content: space-between; gap: 16px; margin-bottom: 1.6rem; }
-  .ends span { font-size: 13.5px; color: var(--color-ink-2); line-height: 1.4; }
+  .track-set { margin: 0; padding: 28px var(--inset) 22px; border: 0; border-bottom: 1px solid var(--yaaf-ink); min-width: 0; }
+  .ends { display: flex; justify-content: space-between; gap: 16px; margin-bottom: 24px; }
+  .ends span { font-size: 14px; color: var(--yaaf-ink-2); line-height: 1.4; }
   .ends span:last-child { text-align: right; }
-  .ends b { display: block; font-family: var(--font-mono); font-size: 11.5px; font-weight: 450; letter-spacing: 0.16em; text-transform: uppercase; color: var(--you); }
-  .ends span:last-child b { color: var(--ceo); }
+  .ends b { display: block; font-family: var(--font-mono); font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--yaaf-ink); }
 
   .track { position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); }
-  .rail { position: absolute; left: calc(100% / 12); right: calc(100% / 12); top: 13px; height: 4px; background: var(--color-line); }
-  .rail i { display: block; height: 100%; width: var(--fill, 100%); background: linear-gradient(90deg, var(--you), var(--color-sun), var(--ceo)); transition: width 0.4s var(--ease); }
+  .rail { position: absolute; left: calc(100% / 12); right: calc(100% / 12); top: 13px; height: 2px; background: var(--yaaf-border-strong); }
+  .rail i { display: block; height: 100%; width: var(--fill, 100%); background: var(--yaaf-ink); transition: width var(--base) var(--ease); }
   .tick { position: relative; display: grid; justify-items: center; gap: 10px; cursor: pointer; text-align: center; }
-  .tick input { position: absolute; opacity: 0; width: 30px; height: 30px; margin: 0; cursor: pointer; }
+  .tick input { position: absolute; opacity: 0; width: 28px; height: 28px; margin: 0; cursor: pointer; }
   .knob {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    border: 2px solid var(--color-line-strong);
-    background: var(--color-page);
-    transition: transform 0.25s var(--ease), background 0.25s, border-color 0.25s;
+    width: 28px;
+    height: 28px;
+    border: 1.5px solid var(--yaaf-ink);
+    background: var(--yaaf-surface);
+    transition: background var(--fast) var(--ease);
   }
-  .tick:hover .knob { border-color: var(--color-ink); }
-  .tick input:focus-visible + .knob { outline: 2px solid var(--color-accent-hi); outline-offset: 3px; }
-  .tick input:checked + .knob { background: #fff; border-color: #fff; transform: scale(1.15); box-shadow: 0 0 0 6px color-mix(in srgb, var(--color-sun) 35%, transparent); }
-  .tl { font-size: 13px; color: var(--color-ink-2); }
-  .tick input:checked ~ .tl { color: var(--color-ink); font-weight: 550; }
+  .tick:hover .knob { background: var(--yaaf-sunken); }
+  .tick input:focus-visible + .knob { outline: 2px solid var(--yaaf-focus); outline-offset: 3px; }
+  .tick input:checked + .knob { background: var(--yaaf-ink); }
+  .tl { font-size: 14px; color: var(--yaaf-ink-2); }
+  .tick input:checked ~ .tl { color: var(--yaaf-ink); font-weight: 600; }
 
   /* ---------- the reading ---------- */
   .read { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); }
-  .state { padding: 1.8rem var(--inset); border-right: 1px solid var(--color-line); }
+  .state { padding: 28px var(--inset); border-right: 1px solid var(--yaaf-ink); }
   .st { display: none; }
-  .st .eyebrow { margin: 0; color: var(--color-sun); }
-  .big { margin: 0.8rem 0 0; font-size: clamp(2.6rem, 1.6rem + 2.4vw, 4rem); line-height: 1; letter-spacing: -0.05em; font-weight: 500; }
-  .big .n { background: var(--dawn); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .why { margin: 1rem 0 0; font-size: 15px; line-height: 1.55; color: var(--color-ink-2); }
+  .st .eyebrow { margin: 0; }
+  .big { margin: 14px 0 0; font-family: var(--font-display); font-weight: 600; font-size: clamp(2.2rem, 1.6rem + 1.8vw, 3rem); line-height: 1; }
+  .big .n { font-family: var(--font-mono); font-weight: 500; font-variant-numeric: tabular-nums; }
+  .why { margin: 14px 0 0; font-size: 15px; line-height: 1.55; color: var(--yaaf-ink-2); }
 
   .switches { list-style: none; margin: 0; padding: 0; }
-  .sw { padding: 1rem var(--inset); border-bottom: 1px solid var(--color-line-2); display: grid; grid-template-columns: 12.5rem minmax(0, 1fr); gap: 4px 18px; align-items: baseline; }
+  .sw { padding: 16px var(--inset); border-bottom: 1px solid var(--yaaf-border-strong); display: grid; grid-template-columns: 12.5rem 44px minmax(0, 1fr); gap: 4px 18px; align-items: center; }
   .sw:last-child { border-bottom: 0; }
-  .sw code { font-family: var(--font-mono); font-size: 12px; color: var(--color-muted); grid-row: 1; }
-  .sw p { margin: 0; grid-column: 2; grid-row: 1; font-size: 15px; line-height: 1.5; }
+  .sw code { font-size: 13px; color: var(--yaaf-ink-2); grid-row: 1; overflow-wrap: anywhere; }
+  .toggle { grid-row: 1; display: block; width: 44px; height: 22px; border: 1.5px solid var(--yaaf-ink); padding: 2px; }
+  .toggle i { display: block; width: 16px; height: 100%; background: var(--yaaf-ink); transition: transform var(--base) var(--ease); }
+  .sw p { margin: 0; grid-column: 3; grid-row: 1; font-size: 15px; line-height: 1.5; color: var(--yaaf-ink); }
   .who {
     display: inline-block;
     min-width: 3.4em;
     margin-right: 10px;
     font-family: var(--font-mono);
-    font-size: 10.5px;
-    letter-spacing: 0.14em;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     text-align: center;
-    padding: 2px 6px;
-    color: var(--yaaf-page);
-    vertical-align: 1px;
+    padding: 1px 6px;
+    border: 1px solid var(--yaaf-ink);
+    color: var(--yaaf-ink);
   }
-  .you .who { background: var(--you); }
-  .ceo .who { background: var(--ceo); }
+  .ceo .who { background: var(--yaaf-ink); color: var(--yaaf-surface); }
   /* Held by you unless the dial has reached this switch. */
   .sw .ceo { display: none; }
 
   /* ---------- what never moves ---------- */
-  .never { border-top: 1px solid var(--color-line); padding: 1.6rem var(--inset) 1.8rem; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 12px 24px; }
-  .never .eyebrow { margin: 0; color: var(--color-mint); }
+  .never { border-top: 1px solid var(--yaaf-ink); padding: 26px var(--inset) 28px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 12px 24px; }
+  .never .eyebrow { margin: 0; color: var(--yaaf-ink); }
   .never ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
-  .never li { position: relative; padding-left: 18px; font-size: 14.5px; line-height: 1.5; color: var(--color-ink-2); }
-  .never li::before { content: ""; position: absolute; left: 0; top: 0.55em; width: 8px; height: 8px; background: var(--color-mint); }
-  .motto { grid-column: 2; margin: 0.6rem 0 0; font-size: 1.15rem; line-height: 1.4; letter-spacing: -0.02em; color: var(--color-ink); }
+  .never li { position: relative; padding-left: 20px; font-size: 15px; line-height: 1.5; color: var(--yaaf-ink-2); }
+  .never li::before { content: ""; position: absolute; left: 0; top: 0.3em; bottom: 0.3em; width: 3px; background: var(--yaaf-ink); }
+  .motto { grid-column: 2; margin: 12px 0 0; font-family: var(--font-display); font-style: italic; font-weight: 600; font-size: 1.375rem; line-height: 1.3; color: var(--yaaf-ink); }
 
   /* ---------- position n: fill to n, first n switches are the CEO's ---------- */
   .dial:has(.t0 input:checked) { --fill: 0%; }
@@ -222,13 +219,11 @@ const NEVER = [
   .dial:has(.t3 input:checked) .s3,
   .dial:has(.t4 input:checked) .s4,
   .dial:has(.t5 input:checked) .s5 { display: block; }
-  .dial:has(.t1 input:checked) .sw:nth-child(-n + 1),
-  .dial:has(.t2 input:checked) .sw:nth-child(-n + 2),
-  .dial:has(.t3 input:checked) .sw:nth-child(-n + 3),
-  .dial:has(.t4 input:checked) .sw:nth-child(-n + 4),
-  .dial:has(.t5 input:checked) .sw:nth-child(-n + 5) {
-    background: color-mix(in srgb, var(--ceo) 6%, transparent);
-  }
+  .dial:has(.t1 input:checked) .sw:nth-child(-n + 1) .toggle i,
+  .dial:has(.t2 input:checked) .sw:nth-child(-n + 2) .toggle i,
+  .dial:has(.t3 input:checked) .sw:nth-child(-n + 3) .toggle i,
+  .dial:has(.t4 input:checked) .sw:nth-child(-n + 4) .toggle i,
+  .dial:has(.t5 input:checked) .sw:nth-child(-n + 5) .toggle i { transform: translateX(21px); }
   .dial:has(.t1 input:checked) .sw:nth-child(-n + 1) .you,
   .dial:has(.t2 input:checked) .sw:nth-child(-n + 2) .you,
   .dial:has(.t3 input:checked) .sw:nth-child(-n + 3) .you,
@@ -242,14 +237,16 @@ const NEVER = [
 
   @media (max-width: 900px) {
     .read, .never { grid-template-columns: 1fr; }
-    .state { border-right: 0; border-bottom: 1px solid var(--color-line); }
+    .state { border-right: 0; border-bottom: 1px solid var(--yaaf-ink); }
     .motto { grid-column: 1; }
-    .sw { grid-template-columns: 1fr; }
-    .sw p { grid-column: 1; grid-row: auto; }
+    .sw { grid-template-columns: 44px minmax(0, 1fr); }
+    .sw code { grid-column: 2; }
+    .toggle { grid-column: 1; }
+    .sw p { grid-column: 1 / -1; grid-row: auto; }
   }
   @media (max-width: 560px) {
-    .tl { font-size: 11px; letter-spacing: -0.01em; }
+    .tl { font-size: 12px; }
     .knob { width: 24px; height: 24px; }
-    .rail { top: 10px; }
+    .rail { top: 11px; }
   }
 </style>

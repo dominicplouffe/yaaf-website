@@ -1,0 +1,27 @@
+---
+/**
+ * The hard-stop meter: a limit that holds. An ink fill, and a heavy ink tick
+ * at the wall. For budgets and dates only, never as decoration.
+ */
+interface Props { label: string; value: number; max: number; unit?: string; example?: string }
+const { label, value, max, unit = "$", example } = Astro.props;
+const pct = Math.max(0, Math.min(100, (value / max) * 100));
+const fmt = (n: number) => `${unit}${n.toLocaleString("en-US")}`;
+---
+<div class="meter">
+  <p class="lab"><span class="k">{label}</span><span class="v">{fmt(value)} / {fmt(max)}</span>{example && <span class="ex">{example}</span>}</p>
+  <div class="bar" role="meter" aria-label={label} aria-valuemin="0" aria-valuemax={max} aria-valuenow={value} aria-valuetext={`${fmt(value)} of ${fmt(max)}`}>
+    <i style={`width:${pct}%`}></i>
+  </div>
+</div>
+
+<style>
+  .meter { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+  .lab { margin: 0 0 10px; display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 13px; color: var(--yaaf-ink); }
+  .k { font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--yaaf-muted); align-self: center; }
+  .ex { margin-left: auto; font-size: 12px; color: var(--yaaf-muted); }
+  .bar { position: relative; height: 6px; background: var(--yaaf-sunken); border-right: 4px solid var(--yaaf-ink); }
+  /* The wall: taller than the bar, so the limit reads before the fill does. */
+  .bar::after { content: ""; position: absolute; right: -4px; top: -7px; bottom: -7px; width: 4px; background: var(--yaaf-ink); }
+  .bar i { display: block; height: 100%; background: var(--yaaf-ink); }
+</style>

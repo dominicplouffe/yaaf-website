@@ -106,12 +106,12 @@ const total = GROUPS.reduce((n, g) => n + g.items.length, 0);
 
   {GROUPS.map((g) => (
     <Section id={g.id} eyebrow={`${g.items.length} features`} title={g.title}>
-      <div class:list={["cells", "hued", { c3: g.items.length % 4 !== 0 && g.items.length % 3 === 0 }]}>
+      <div class:list={["cells", { c3: g.items.length % 4 !== 0 && g.items.length % 3 === 0 }]}>
         {g.items.map(([k, v, href]) => href ? (
           <a class="cell" href={href}>
             <h3>{k}</h3>
             <p set:html={v} />
-            <span class="go">Learn more →</span>
+            <span class="go">Learn more</span>
           </a>
         ) : (
           <div class="cell">

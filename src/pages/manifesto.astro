@@ -34,9 +34,9 @@ const CHAPTERS = [
     figure: "flow",
     flowLabel: "From possibility to progress",
     flow: [
-      { k: "The idea", v: "Someone sees a possibility", hue: "sky" },
-      { k: "The team", v: "Specialists work together", hue: "mint" },
-      { k: "The result", v: "A meaningful outcome", hue: "sun" },
+      { k: "The idea", v: "Someone sees a possibility" },
+      { k: "The team", v: "Specialists work together" },
+      { k: "The result", v: "A meaningful outcome" },
     ],
     today: { v: "yaaf is Apache-2.0 and runs on your own machine. There is no account and no hosted tier; your agents pay your model provider directly.", href: "/#start", go: "Open source" },
   },
@@ -55,9 +55,9 @@ const CHAPTERS = [
     figure: "shift",
     flowLabel: "From individual intelligence to organized work",
     flow: [
-      { k: "Models", v: "Answer questions", hue: "old" },
-      { k: "Agents", v: "Complete tasks", hue: "sun" },
-      { k: "Teams", v: "Pursue outcomes", hue: "dawn" },
+      { k: "Models", v: "Answer questions" },
+      { k: "Agents", v: "Complete tasks" },
+      { k: "Teams", v: "Pursue outcomes" },
     ],
     pull: ["We believe the next great advancement in AI won’t simply be a smarter model.", "It will be how we organize intelligence to work together."],
     today: { v: `The role library holds ${roles.length} job descriptions, each with its own instructions, model class and tools. ${challengers} of them exist to disagree.`, href: "/org/", go: "The team" },
@@ -111,10 +111,10 @@ const CHAPTERS = [
     figure: "flow",
     flowLabel: "The evidence trail",
     flow: [
-      { k: "Source", v: "Where did it come from?", hue: "violet" },
-      { k: "Work", v: "How was it used?", hue: "mint" },
-      { k: "Review", v: "Was it challenged?", hue: "rose" },
-      { k: "Decision", v: "What can we defend?", hue: "gold" },
+      { k: "Source", v: "Where did it come from?" },
+      { k: "Work", v: "How was it used?" },
+      { k: "Review", v: "Was it challenged?" },
+      { k: "Decision", v: "What can we defend?" },
     ],
     pull: ["Trust should never require blind faith."],
     today: { v: "Nothing closes without observed evidence. External evidence is fetched, hashed and snapshotted by the server, and a random sample of finished work is dealt to you to check.", href: "/features/", go: "Features" },
@@ -135,9 +135,9 @@ const CHAPTERS = [
     figure: "flow",
     flowLabel: "What honest leadership looks like",
     flow: [
-      { k: "The ask", v: "An ambitious goal", hue: "sun" },
-      { k: "The challenge", v: "Test the assumptions", hue: "sky" },
-      { k: "The plan", v: "A credible next step", hue: "mint" },
+      { k: "The ask", v: "An ambitious goal" },
+      { k: "The challenge", v: "Test the assumptions" },
+      { k: "The plan", v: "A credible next step" },
     ],
     pull: ["The CEO should question its own conclusions, too."],
     today: { v: "Before anything exists, the Founder grades your goal against a written ten-point standard and argues with you. Critic seats can veto the work they check, and the CEO cannot remove the last one." },
@@ -194,21 +194,21 @@ const CHAPTERS = [
     figure: "flow",
     flowLabel: "Many forms of meaningful work",
     flow: [
-      { k: "A task", v: "Find the right printer", hue: "violet" },
-      { k: "An operation", v: "Run a virtual assistant", hue: "mint" },
-      { k: "A business", v: "Build and operate a product", hue: "sun" },
+      { k: "A task", v: "Find the right printer" },
+      { k: "An operation", v: "Run a virtual assistant" },
+      { k: "A business", v: "Build and operate a product" },
     ],
     today: { v: "A project can deliver a result and stop, or operate continuously, woken by the world. A company that runs a business on its own is the direction, not a feature." },
   },
 ];
 
 const PRINCIPLES = [
-  { k: "Teams for everyone", v: "Expertise should not depend on hiring power.", hue: "sky" },
-  { k: "Chairman in control", v: "Goals, authority and knowledge stay yours.", hue: "sun" },
-  { k: "CEO owns execution", v: "The leader organizes work and pursues results.", hue: "mint" },
-  { k: "Evidence over confidence", v: "Claims should withstand scrutiny.", hue: "violet" },
-  { k: "Structural accountability", v: "Budgets, reviews and approvals are enforced.", hue: "sky" },
-  { k: "Learning is work", v: "Preserve lessons; improve the next attempt.", hue: "mint" },
+  { k: "Teams for everyone", v: "Expertise should not depend on hiring power." },
+  { k: "Chairman in control", v: "Goals, authority and knowledge stay yours." },
+  { k: "CEO owns execution", v: "The leader organizes work and pursues results." },
+  { k: "Evidence over confidence", v: "Claims should withstand scrutiny." },
+  { k: "Structural accountability", v: "Budgets, reviews and approvals are enforced." },
+  { k: "Learning is work", v: "Preserve lessons; improve the next attempt." },
 ];
 const LAST = { k: "Truth matters more than agreement", v: "A trustworthy CEO has to be willing to disagree with its chairman." };
 
@@ -221,7 +221,7 @@ const pad = (n: number) => String(n).padStart(2, "0");
   <section class="page-hero mf-hero">
     <div class="shell">
       <p class="eyebrow">The manifesto · October 2026</p>
-      <h1>Great ideas deserve <span class="dawn-text">great teams.</span></h1>
+      <h1>Great ideas deserve <em>great teams.</em></h1>
       <p class="lede"><strong>Intelligence is not enough. Organization makes it useful.</strong> Why yaaf exists, what it believes, and where it is going, in ten chapters and seven principles.</p>
       <div class="btns">
         <Button href="#conviction" primary>Read the manifesto</Button>
@@ -238,8 +238,8 @@ const pad = (n: number) => String(n).padStart(2, "0");
     <section id={c.id} class="ch">
       <div class="shell">
         <div class="ch-in">
+          <p class="margin"><span class="sect">§ {pad(i + 1)}</span><span class="kicker">{c.kicker}</span></p>
           <header class="ch-head">
-            <p class="eyebrow">{pad(i + 1)} / {c.kicker}</p>
             <h2>{c.title[0]}<br />{c.title[1]}</h2>
           </header>
           <div class="ch-body">
@@ -252,7 +252,7 @@ const pad = (n: number) => String(n).padStart(2, "0");
                 <p class="fig-label">{c.flowLabel}</p>
                 <div class="flow-row">
                   {c.flow!.map((f) => (
-                    <div class={`fl fl-${f.hue}`}>
+                    <div class="fl">
                       <span class="dot"></span>
                       <b>{f.k}</b>
                       <span>{f.v}</span>
@@ -271,12 +271,12 @@ const pad = (n: number) => String(n).padStart(2, "0");
                 <span class="o-stem"></span>
                 <span class="o-rail"></span>
                 <div class="o-row">
-                  <span class="o h-sky">Research</span>
-                  <span class="o h-mint">Build</span>
-                  <span class="o h-sun">Marketing</span>
-                  <span class="o h-violet">Critic</span>
+                  <span class="o">Research</span>
+                  <span class="o">Build</span>
+                  <span class="o">Marketing</span>
+                  <span class="o">Critic</span>
                 </div>
-                <a class="o-more" href="/#why">Click through each seat on the home page →</a>
+                <a class="o-more link" href="/#company">The seats, on the home page</a>
               </div>
             )}
 
@@ -305,9 +305,9 @@ const pad = (n: number) => String(n).padStart(2, "0");
               <div class="mem">
                 <p class="fig-label">Knowledge remains with the organization</p>
                 <div class="mem-row">
-                  <div class="fl fl-sky"><span class="dot"></span><b>Project A</b><span>Decision + evidence</span></div>
-                  <div class="fl fl-sun"><span class="dot"></span><b>Project B</b><span>Process + lesson</span></div>
-                  <div class="fl fl-mint"><span class="dot"></span><b>Project C</b><span>Result + reflection</span></div>
+                  <div class="fl"><span class="dot"></span><b>Project A</b><span>Decision + evidence</span></div>
+                  <div class="fl"><span class="dot"></span><b>Project B</b><span>Process + lesson</span></div>
+                  <div class="fl"><span class="dot"></span><b>Project C</b><span>Result + reflection</span></div>
                 </div>
                 <div class="mem-rail" aria-hidden="true"><i></i><i></i></div>
                 <p class="mem-core">Chairman-owned memory</p>
@@ -319,7 +319,7 @@ const pad = (n: number) => String(n).padStart(2, "0");
             )}
           </div>
 
-          <p class="today"><span>In yaaf today</span>{c.today.v}{c.today.href && <> <a href={c.today.href}>{c.today.go} →</a></>}</p>
+          <p class="today"><span class="eyebrow">In yaaf today</span>{c.today.v}{c.today.href && <> <a class="link" href={c.today.href}>{c.today.go}</a></>}</p>
         </div>
       </div>
     </section>
@@ -328,37 +328,34 @@ const pad = (n: number) => String(n).padStart(2, "0");
   <section id="principles" class="ch">
     <div class="shell">
       <div class="ch-in">
+        <p class="margin"><span class="sect">§ 10</span><span class="kicker">The commitments</span></p>
         <header class="ch-head">
-          <p class="eyebrow">10 / The commitments</p>
           <h2>Seven principles.<br />One standard.</h2>
         </header>
         <div class="ch-body">
           <p>The ideas behind yaaf become meaningful only when they change how an organization behaves.</p>
         </div>
-        <div class="principles">
-          {PRINCIPLES.map((p, i) => (
-            <div class={`pr h-${p.hue}`}>
-              <span class="pn">{pad(i + 1)}</span>
-              <h3>{p.k}</h3>
-              <p>{p.v}</p>
-            </div>
-          ))}
-          <div class="pr last">
-            <span class="pn">07</span>
-            <h3>{LAST.k}</h3>
-            <p>{LAST.v}</p>
-          </div>
+        <div class="commit">
+          <ol class="principles">
+            {[...PRINCIPLES, LAST].map((p, i) => (
+              <li class="pr">
+                <span class="pn">{pad(i + 1)}</span>
+                <h3>{p.k}</h3>
+                <p>{p.v}</p>
+              </li>
+            ))}
+          </ol>
+          <hr class="double-rule" />
         </div>
       </div>
     </div>
   </section>
 
   <section id="promise" class="promise">
-    <div class="sky" aria-hidden="true"></div>
     <div class="shell">
       <div class="pm-in">
         <p class="eyebrow">The promise</p>
-        <h2>Great ideas deserve <span class="dawn-text">great teams.</span></h2>
+        <h2>Great ideas deserve <em>great teams.</em></h2>
         <div class="pm-body">
           <p>You shouldn’t have to abandon an idea because you cannot hire the people needed to pursue it.</p>
           <p>You shouldn’t need expertise in every discipline before attempting something ambitious.</p>
@@ -379,154 +376,106 @@ const pad = (n: number) => String(n).padStart(2, "0");
 </BaseLayout>
 
 <style>
-  .mf-hero h1 { max-width: 14ch; font-size: var(--text-hero); }
-  .mf-hero .lede { max-width: 52ch; }
+  /* The manifesto is set as a document: a mono margin carries the chapter
+     number, the text keeps a 72-character measure, and nothing is coloured. */
+  .mf-hero h1 { max-width: 14ch; }
+  .toc a { white-space: nowrap; }
 
-  /* ---------- a chapter ---------- */
-  .ch-in {
+  .ch-in, .pm-in {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 0;
-    border-top: 1px solid var(--color-line);
-    padding-block: 6rem;
+    grid-template-columns: 11rem minmax(0, 1fr);
+    gap: 0 48px;
+    border-top: 1px solid var(--yaaf-border-strong);
+    padding-block: var(--yaaf-space-11);
   }
-  .ch-head { grid-column: 1 / span 2; padding-inline: var(--inset); }
-  .ch-head .eyebrow { margin: 0 0 1.4rem; width: fit-content; background: var(--dawn); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .ch-head h2 { margin: 0; font-size: var(--text-h2); line-height: 1.02; letter-spacing: -0.045em; text-wrap: balance; }
-  .ch-head { position: sticky; top: 100px; align-self: start; }
-  .ch-body { grid-column: 3 / span 2; padding-inline: var(--inset); }
-  .ch-body p { margin: 0 0 0.9rem; font-size: 1.15rem; line-height: 1.55; color: var(--color-ink-2); text-wrap: pretty; }
-  .ch-body p:last-child { margin-bottom: 0; color: var(--color-ink); }
-  .fig { grid-column: 1 / -1; margin-top: 3.4rem; }
-  .fig-label { margin: 0 0 1rem; padding-inline: var(--inset); font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--color-accent-hi); }
-  .pull { margin: 1.6rem 0 0; padding-inline: var(--inset); font-size: clamp(1.25rem, 1rem + 0.8vw, 1.6rem); line-height: 1.3; letter-spacing: -0.025em; color: var(--color-ink-2); max-width: 48ch; }
-  .pull strong { color: var(--color-ink); font-weight: 500; }
-  .today {
-    grid-column: 1 / -1;
-    margin: 2.4rem 0 0;
-    padding: 1.1rem var(--inset);
-    border-left: 3px solid var(--color-mint);
-    background: color-mix(in srgb, var(--color-mint) 6%, var(--color-page));
-    font-size: 15px;
-    line-height: 1.55;
-    color: var(--color-ink-2);
-  }
-  .today span { display: block; margin-bottom: 4px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-mint); }
-  .today a { color: var(--color-accent-hi); text-decoration: none; white-space: nowrap; }
-  .today a:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .ch-in > :not(.margin), .pm-in > :not(.margin) { grid-column: 2; }
+  .margin { grid-column: 1; grid-row: 1 / span 4; margin: 0; padding-top: 0.55rem; display: grid; gap: 6px; align-content: start; }
+  .margin .sect { font-size: 14px; color: var(--yaaf-ink); }
+  .kicker { font-family: var(--font-mono); font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--yaaf-muted); }
 
-  /* ---------- figures ---------- */
-  .flow-row, .mem-row { display: grid; grid-template-columns: repeat(var(--n, 3), minmax(0, 1fr)); border: 1px solid var(--color-line); }
-  .mem-row { --n: 3; }
-  .fl { position: relative; padding: 1.4rem var(--inset) 1.6rem; border-right: 1px solid var(--color-line); background: color-mix(in srgb, var(--hue) 7%, var(--color-page)); }
-  .fl:last-child { border-right: 0; }
-  .flow-row .fl:not(:last-child)::after { content: "→"; position: absolute; right: -0.65em; top: 1.3rem; z-index: 1; color: var(--color-ink-2); background: var(--color-page); padding: 4px 2px; line-height: 1; }
-  .fl .dot { display: block; width: 14px; height: 14px; border-radius: 50%; background: var(--hue); margin-bottom: 0.9rem; }
-  .fl b { display: block; font-weight: 550; font-size: 1.15rem; letter-spacing: -0.02em; color: var(--color-ink); }
-  .fl > span:last-child { display: block; margin-top: 4px; font-size: 15px; color: var(--color-ink-2); }
-  .fl-sky { --hue: var(--color-sky); }
-  .fl-mint { --hue: var(--color-mint); }
-  .fl-sun { --hue: var(--color-sun); }
-  .fl-rose { --hue: var(--color-rose); }
-  .fl-gold { --hue: var(--color-gold); }
-  .fl-violet { --hue: var(--color-violet); }
-  .fl-old { --hue: var(--color-old); background: var(--color-old-bg); }
-  .fl-old b { color: #b0b0b0; }
-  .fl-old > span:last-child { color: #8a8a8a; }
-  .fl-dawn { --hue: #fff; background: linear-gradient(125deg, var(--color-gold) 0%, var(--color-sun) 32%, var(--color-rose) 66%, var(--color-violet) 100%); }
-  .fl-dawn b, .fl-dawn > span:last-child { color: var(--yaaf-page); }
-  .fl-dawn .dot { background: #fff; box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.35); }
+  .ch-head h2, .pm-in h2 { margin: 0; font-size: var(--text-h2); line-height: 1.08; }
+  .ch-body, .pm-body { margin-top: var(--yaaf-space-7); max-width: var(--measure); font-size: 18px; line-height: 1.65; color: var(--yaaf-ink); }
+  .ch-body p, .pm-body p { margin: 0; }
+  .ch-body p + p, .pm-body p + p { margin-top: 1em; }
 
-  .org { display: flex; flex-direction: column; align-items: center; padding: 2rem var(--inset) 1.6rem; border: 1px solid var(--color-line); background: radial-gradient(80% 60% at 50% 0%, color-mix(in srgb, var(--color-violet) 14%, transparent), transparent 70%); }
-  .org .fig-label { align-self: flex-start; padding-inline: 0; }
-  .o { display: block; width: min(100%, 260px); padding: 12px; text-align: center; font-weight: 550; letter-spacing: -0.01em; border: 1px solid color-mix(in srgb, var(--hue, var(--color-line-strong)) 55%, transparent); background: color-mix(in srgb, var(--hue, transparent) 9%, var(--color-page)); color: var(--hue, var(--color-ink)); }
-  .o.chair { --hue: var(--color-gold); }
-  .o.ceo { --hue: var(--color-rose); }
-  .o-stem { width: 1px; height: 22px; background: var(--color-line-strong); }
-  .o-rail { width: 75%; height: 1px; background: var(--color-line-strong); }
-  .o-row { width: 100%; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
-  .o-row .o { width: 100%; position: relative; margin-top: 22px; }
-  .o-row .o::before { content: ""; position: absolute; left: 50%; top: -23px; width: 1px; height: 22px; background: var(--color-line-strong); }
-  .o-more { margin-top: 1.2rem; font-size: 14px; color: var(--color-accent-hi); text-decoration: none; }
-  .o-more:hover { text-decoration: underline; text-underline-offset: 3px; }
+  /* ---------- figures: ruled, in ink ---------- */
+  .fig { margin-top: var(--yaaf-space-9); max-width: 56rem; }
+  .fig:empty { display: none; }
+  .fig-label { margin: 0 0 14px; font-family: var(--font-mono); font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--yaaf-muted); }
+  .flow-row, .mem-row { display: grid; grid-template-columns: repeat(var(--n, 3), minmax(0, 1fr)); border-top: 2px solid var(--yaaf-ink); border-bottom: 1px solid var(--yaaf-ink); }
+  .fl { position: relative; padding: 16px 20px 18px 0; display: grid; gap: 2px; align-content: start; }
+  .fl + .fl { padding-left: 20px; border-left: 1px solid var(--yaaf-border-strong); }
+  .fl .dot { display: none; }
+  .fl b { font-family: var(--font-display); font-weight: 600; font-size: 1.375rem; line-height: 1.2; }
+  .fl span:not(.dot) { font-size: 15px; color: var(--yaaf-ink-2); }
+  .flow-row .fl:not(:last-child)::after { content: "→"; position: absolute; right: -0.55em; top: 16px; z-index: 1; background: var(--yaaf-page); color: var(--yaaf-ink); line-height: 1.4; }
 
-  .gap { border: 1px solid var(--color-line); padding: 1.8rem var(--inset); background: color-mix(in srgb, var(--color-sky) 4%, var(--color-page)); }
-  .gap .fig-label { padding-inline: 0; }
-  .gap-nums { display: flex; gap: 0; }
-  .gap-nums > div { display: flex; align-items: baseline; gap: 14px; padding-right: 2.4rem; }
-  .gap-nums > div + div { padding-left: 2.4rem; border-left: 1px solid var(--color-line); }
-  .gn { font-size: clamp(3rem, 2rem + 3vw, 5rem); line-height: 1; letter-spacing: -0.05em; font-weight: 500; }
-  .gn.actual { color: var(--color-mint); }
-  .gl { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-ink-2); }
-  .gap-line { margin: 1.4rem 0 0; font-size: 1.15rem; color: var(--color-ink); }
-  .loop { list-style: none; margin: 1.4rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 26px; }
-  .loop li { position: relative; text-align: center; padding: 9px 6px; font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; border: 1px solid color-mix(in srgb, var(--color-sky) 50%, transparent); background: color-mix(in srgb, var(--color-sky) 10%, var(--color-page)); color: var(--color-sky); }
-  .loop li:not(:last-child)::after { content: "→"; position: absolute; right: -21px; top: 50%; transform: translateY(-50%); color: var(--color-sky); letter-spacing: 0; font-size: 15px; }
+  .org { display: flex; flex-direction: column; align-items: center; }
+  .org .fig-label { align-self: flex-start; }
+  .o { display: block; width: min(100%, 220px); padding: 10px 12px; text-align: center; font-weight: 600; border: 1.5px solid var(--yaaf-ink); background: var(--yaaf-surface); color: var(--yaaf-ink); }
+  .o.chair { border-width: 2px; }
+  .o-stem { width: 1.5px; height: 20px; background: var(--yaaf-ink); }
+  .o-rail { width: calc(75% + 9px); height: 1.5px; background: var(--yaaf-ink); }
+  .o-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; width: 100%; padding-top: 20px; position: relative; }
+  .o-row .o { width: 100%; position: relative; }
+  .o-row .o::before { content: ""; position: absolute; left: 50%; top: -21.5px; width: 1.5px; height: 20px; background: var(--yaaf-ink); }
+  .o-more { align-self: flex-start; margin-top: 18px; font-size: 15px; }
 
-  .mem { border: 1px solid var(--color-line); padding: 1.8rem var(--inset); background: color-mix(in srgb, var(--color-accent) 6%, var(--color-page)); }
-  .mem .fig-label { padding-inline: 0; }
-  .mem-rail { display: grid; grid-template-columns: 1fr 1fr; height: 26px; margin-inline: calc(100% / 6); border-bottom: 1px solid var(--color-line-strong); }
-  .mem-rail i { border-left: 1px solid var(--color-line-strong); }
-  .mem-rail i:last-child { border-right: 1px solid var(--color-line-strong); }
-  .mem-core { width: min(100%, 360px); margin: 26px auto 0; position: relative; padding: 14px; text-align: center; font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: #fff; background: var(--color-accent-lo); }
-  .mem-core::before { content: ""; position: absolute; left: 50%; top: -27px; width: 1px; height: 26px; background: var(--color-line-strong); }
+  .gap { border-top: 2px solid var(--yaaf-ink); border-bottom: 1px solid var(--yaaf-ink); padding: 20px 0 22px; }
+  .gap .fig-label { margin-bottom: 18px; }
+  .gap-nums { display: flex; gap: 56px; }
+  .gap-nums div { display: grid; gap: 6px; }
+  .gn { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: clamp(2.6rem, 2rem + 2vw, 3.75rem); font-weight: 500; line-height: 1; color: var(--yaaf-ink); }
+  .gn.actual { color: var(--yaaf-ink-2); }
+  .gl { font-family: var(--font-mono); font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--yaaf-muted); }
+  .gap-line { margin: 18px 0 0; color: var(--yaaf-ink-2); max-width: var(--measure); }
+  .loop { list-style: none; margin: 18px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; counter-reset: l; }
+  .loop li { font-family: var(--font-mono); font-size: 13px; padding: 4px 10px; border: 1px solid var(--yaaf-ink); }
+  .loop li:not(:last-child)::after { content: " →"; }
 
-  /* ---------- principles ---------- */
-  .principles { grid-column: 1 / -1; margin-top: 3rem; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--color-line); border-left: 1px solid var(--color-line); }
-  .pr { position: relative; padding: 1.6rem var(--inset) 1.8rem; border-right: 1px solid var(--color-line); border-bottom: 1px solid var(--color-line); background: color-mix(in srgb, var(--hue) 5%, var(--color-page)); }
-  .pr::before { content: ""; position: absolute; left: -1px; top: -1px; bottom: -1px; width: 3px; background: var(--hue); }
-  .pn { font-family: var(--font-mono); font-size: 12px; color: var(--hue); }
-  .pr h3 { margin: 0.7rem 0 0; font-size: 1.3rem; letter-spacing: -0.03em; }
-  .pr p { margin: 0.5rem 0 0; font-size: 15px; line-height: 1.5; color: var(--color-ink-2); }
-  .pr.last { grid-column: 1 / -1; --hue: var(--color-rose); background: linear-gradient(110deg, color-mix(in srgb, var(--color-gold) 16%, var(--color-page)), color-mix(in srgb, var(--color-rose) 16%, var(--color-page)), color-mix(in srgb, var(--color-violet) 16%, var(--color-page))); }
-  .pr.last::before { background: var(--dawn); width: 100%; height: 3px; bottom: auto; right: 0; }
-  .pr.last h3 { font-size: 1.7rem; }
+  .mem-rail { display: none; }
+  .mem-core { margin: 0; padding: 12px 0; text-align: center; font-weight: 600; border-bottom: 2px solid var(--yaaf-ink); background: var(--yaaf-surface); }
+
+  /* A pull quote is an ink italic, hung on a rule. */
+  .pull { margin: var(--yaaf-space-8) 0 0; padding-left: 20px; border-left: 2px solid var(--yaaf-ink); font-family: var(--font-display); font-style: italic; font-weight: 600; font-size: clamp(1.4rem, 1.15rem + 0.9vw, 1.875rem); line-height: 1.25; color: var(--yaaf-ink); max-width: 30em; }
+  .pull strong { font-weight: 600; }
+  .fig > .pull:first-child { margin-top: 0; }
+
+  /* The site's own annotation, kept visibly apart from the author's text. */
+  .today { margin: var(--yaaf-space-8) 0 0; padding: 14px 18px 16px; background: var(--yaaf-surface); border: 1px solid var(--yaaf-border); font-size: 15px; line-height: 1.6; color: var(--yaaf-ink-2); max-width: 38em; }
+  .today .eyebrow { display: block; margin-bottom: 6px; }
+
+  /* ---------- § 10: numbered cards, closed by the double rule ---------- */
+  .commit { margin-top: var(--yaaf-space-9); }
+  .principles { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 32px; }
+  .pr { border-top: 1px solid var(--yaaf-ink); padding: 16px 0 26px; }
+  .pr:last-child { grid-column: 1 / -1; border-top-width: 2px; }
+  .pn { font-family: var(--font-mono); font-size: 13px; color: var(--yaaf-muted); }
+  .pr h3 { margin: 10px 0 0; font-size: 1.5rem; line-height: 1.2; }
+  .pr:last-child h3 { font-size: var(--text-h3); }
+  .pr p { margin: 8px 0 0; font-size: 15.5px; color: var(--yaaf-ink-2); }
 
   /* ---------- the promise ---------- */
-  .promise { position: relative; overflow: hidden; }
-  .promise .sky {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background:
-      radial-gradient(50% 60% at 85% 100%, color-mix(in srgb, var(--color-sun) 30%, transparent), transparent 70%),
-      radial-gradient(45% 55% at 60% 100%, color-mix(in srgb, var(--color-rose) 24%, transparent), transparent 70%),
-      radial-gradient(40% 50% at 10% 10%, color-mix(in srgb, var(--color-violet) 22%, transparent), transparent 70%);
-  }
-  .promise .shell { position: relative; }
-  .pm-in { border-top: 1px solid var(--color-line); padding: 7rem var(--inset) 7rem; }
-  .pm-in > .eyebrow { margin: 0 0 1.4rem; width: fit-content; background: var(--dawn); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .pm-in h2 { margin: 0; font-size: var(--text-hero); line-height: 0.98; letter-spacing: -0.055em; font-weight: 550; max-width: 12ch; }
-  .pm-body { margin-top: 2.6rem; max-width: 62ch; }
-  .pm-body p { margin: 0 0 0.8rem; font-size: 1.15rem; line-height: 1.55; color: var(--color-ink-2); }
-  .pm-close { margin: 2.2rem 0 0; max-width: 52ch; font-size: clamp(1.3rem, 1rem + 1vw, 1.8rem); line-height: 1.3; letter-spacing: -0.025em; color: var(--color-ink-2); }
-  .pm-close strong { color: var(--color-ink); font-weight: 500; }
-  .pm-sign { margin: 2.4rem 0 0; padding-top: 1.2rem; border-top: 1px solid var(--color-line); font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--color-gold); }
-  .pm-in .btns { margin-top: 2rem; }
+  .pm-in > .eyebrow { grid-column: 1; grid-row: 1 / span 4; margin: 0; padding-top: 0.8rem; }
+  .pm-close { margin: var(--yaaf-space-8) 0 0; font-size: 18px; line-height: 1.65; max-width: var(--measure); color: var(--yaaf-ink); }
+  .pm-close strong { font-weight: 600; }
+  .pm-sign { margin: var(--yaaf-space-7) 0 0; font-family: var(--font-display); font-style: italic; font-weight: 600; font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem); line-height: 1.2; }
+  .pm-in .btns { margin-top: var(--yaaf-space-7); }
 
-  @media (max-width: 1024px) {
-    .ch-head, .ch-body { grid-column: 1 / -1; }
-    .ch-head { position: static; margin-bottom: 2rem; }
+  @media (max-width: 900px) {
+    .ch-in, .pm-in { grid-template-columns: 1fr; padding-block: var(--yaaf-space-10); }
+    .ch-in > :not(.margin), .pm-in > :not(.margin) { grid-column: 1; }
+    .margin, .pm-in > .eyebrow { grid-row: auto; display: flex; gap: 14px; align-items: baseline; padding: 0 0 var(--yaaf-space-4); }
     .principles { grid-template-columns: 1fr 1fr; }
   }
-  @media (max-width: 760px) {
-    .ch-in { padding-block: 4rem; }
-    .pm-in { padding-block: 4.5rem; }
+  @media (max-width: 620px) {
+    .ch-body, .pm-body, .pm-close { font-size: 17px; }
     .flow-row, .mem-row { grid-template-columns: 1fr; }
-    .fl { border-right: 0; border-bottom: 1px solid var(--color-line); }
-    .fl:last-child { border-bottom: 0; }
-    .flow-row .fl:not(:last-child)::after { content: "↓"; right: auto; left: var(--inset); top: auto; bottom: -0.75em; }
-    .mem-rail { display: none; }
-    .mem-core::before { display: none; }
-    .mem-core { margin-top: 12px; }
-    .o-row { grid-template-columns: 1fr 1fr; }
-    .o-rail { width: 50%; }
+    .fl + .fl { padding-left: 0; border-left: 0; border-top: 1px solid var(--yaaf-border-strong); }
+    .flow-row .fl:not(:last-child)::after { content: "↓"; right: auto; left: 0; top: auto; bottom: -0.8em; padding-right: 6px; }
+    .o-row { grid-template-columns: 1fr 1fr; row-gap: 12px; }
     .o-row .o:nth-child(n + 3)::before { display: none; }
     .principles { grid-template-columns: 1fr; }
-    .gap-nums > div { padding-right: 1.2rem; }
-    .gap-nums > div + div { padding-left: 1.2rem; }
-    .loop { gap: 18px; }
-    .loop li { font-size: 10px; letter-spacing: 0.04em; padding-inline: 2px; }
-    .loop li:not(:last-child)::after { right: -15px; font-size: 12px; }
+    .gap-nums { gap: 36px; }
   }
 </style>

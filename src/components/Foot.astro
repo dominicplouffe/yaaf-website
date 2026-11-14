@@ -90,7 +90,6 @@ const copy = shown.map((l) => l.cmd).join("\n");
     font-size: clamp(2.4rem, 1.2rem + 4.6vw, 4.75rem);
     line-height: 1.04;
     letter-spacing: -0.02em;
-    max-width: 16ch;
   }
   .band h2 em { display: block; }
   .code {
@@ -122,7 +121,7 @@ const copy = shown.map((l) => l.cmd).join("\n");
   .i-ok { display: none; }
   button[data-done] .i-copy { display: none; }
   button[data-done] .i-ok { display: inline; }
-  .after { margin: var(--yaaf-space-6) 0 0; max-width: 62ch; color: var(--yaaf-ink-2); }
+  .after { margin: var(--yaaf-space-6) 0 0; max-width: var(--measure); color: var(--yaaf-ink-2); }
   .after code { font-size: 0.9em; color: var(--yaaf-ink); }
   .band .btns { margin-top: var(--yaaf-space-7); }
   @media (max-width: 760px) {
