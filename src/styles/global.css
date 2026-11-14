@@ -52,6 +52,9 @@
   --gutter: 20px;
   /* Padding inside a ruled box, so words never touch its border. */
   --inset: 20px;
+  /* The reading measure: about 72 characters of Public Sans, whatever the size.
+     (ch is the width of a zero, which is a third wider than the average letter.) */
+  --measure: 34em;
   --ease: var(--yaaf-motion-ease);
   --fast: var(--yaaf-motion-fast);
   --base: var(--yaaf-motion-base);
@@ -209,7 +212,7 @@ h4, h5, h6 { font-family: var(--font-sans); font-weight: 600; letter-spacing: 0;
   max-width: 22ch;
   text-wrap: balance;
 }
-.head > .lede { margin: var(--yaaf-space-5) 0 0; font-size: 18px; line-height: 1.55; color: var(--yaaf-ink-2); max-width: 62ch; text-wrap: pretty; }
+.head > .lede { margin: var(--yaaf-space-5) 0 0; font-size: 18px; line-height: 1.55; color: var(--yaaf-ink-2); max-width: var(--measure); text-wrap: pretty; }
 .head > .lede strong { color: var(--yaaf-ink); font-weight: 600; }
 
 /* --- cells: a grid of ruled boxes -------------------------------------------
@@ -252,7 +255,7 @@ a.cell:hover { background: var(--yaaf-surface-2); }
 .num, .cell .num { font-size: clamp(2rem, 1.5rem + 1.6vw, 3rem); font-weight: 500; letter-spacing: -0.02em; line-height: 1; margin: 0 0 1rem; color: var(--yaaf-ink); }
 
 /* --- small things ----------------------------------------------------------- */
-.note { margin: var(--yaaf-space-6) 0 0; font-size: 15px; line-height: 1.6; color: var(--yaaf-muted); max-width: 70ch; }
+.note { margin: var(--yaaf-space-6) 0 0; font-size: 15px; line-height: 1.6; color: var(--yaaf-muted); max-width: var(--measure); }
 .note strong { color: var(--yaaf-ink-2); font-weight: 600; }
 
 .pill {
@@ -335,7 +338,7 @@ code.inline, .cell code, .note code, .head code, .kit-table code {
   max-width: 18ch;
   text-wrap: balance;
 }
-.page-hero .lede { margin: var(--yaaf-space-6) 0 0; font-size: 18px; line-height: 1.55; color: var(--yaaf-ink-2); max-width: 60ch; text-wrap: pretty; }
+.page-hero .lede { margin: var(--yaaf-space-6) 0 0; font-size: 18px; line-height: 1.55; color: var(--yaaf-ink-2); max-width: var(--measure); text-wrap: pretty; }
 .page-hero .lede strong { color: var(--yaaf-ink); font-weight: 600; }
 .page-hero .btns { margin-top: var(--yaaf-space-7); }
 @media (max-width: 760px) { .page-hero { padding-block: var(--yaaf-space-10) var(--yaaf-space-9); } }
@@ -359,7 +362,7 @@ section[id], [id].anchor { scroll-margin-top: 84px; }
   color: var(--yaaf-ink-2);
   font-size: 16px;
   line-height: 1.65;
-  max-width: 70ch;
+  max-width: var(--measure);
 }
 .prose > * + * { margin-top: 1.1em; }
 .prose h1, .prose h2, .prose h3, .prose h4 {

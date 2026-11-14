@@ -401,7 +401,7 @@ const since = new Date(manifest.history.firstCommit).toLocaleDateString("en-US",
   }
   /* The one headline word set in Seal: the check itself. */
   h1 .signed { font-weight: 600; }
-  .sub { margin: var(--yaaf-space-7) 0 0; font-size: clamp(1.125rem, 1rem + 0.5vw, 1.3125rem); line-height: 1.55; color: var(--yaaf-ink-2); max-width: 56ch; }
+  .sub { margin: var(--yaaf-space-7) 0 0; font-size: clamp(1.125rem, 1rem + 0.5vw, 1.3125rem); line-height: 1.55; color: var(--yaaf-ink-2); max-width: 32em; }
   .hero .btns { margin-top: var(--yaaf-space-7); }
   .hero-r { display: grid; gap: 28px; padding-bottom: 6px; }
   .eg { margin: -8px 0 0; font-family: var(--font-mono); font-size: 12px; color: var(--yaaf-muted); }
@@ -490,10 +490,10 @@ const since = new Date(manifest.history.firstCommit).toLocaleDateString("en-US",
     .hero-grid { grid-template-columns: 1fr; align-items: start; }
     .hero-r { max-width: 34rem; }
     .split, .split.even { grid-template-columns: 1fr; }
-    .split-h .lede { max-width: 62ch; }
+    .split-h .lede { max-width: var(--measure); }
     .steps, .trail ol { grid-template-columns: 1fr 1fr; }
     .shot-row { grid-template-columns: 1fr; }
-    .copy p { max-width: 62ch; }
+    .copy p { max-width: var(--measure); }
     .quote { grid-template-columns: 1fr; }
     .nl { grid-template-columns: 3.5rem minmax(0, 1fr); }
     .nv { grid-column: 2; }
