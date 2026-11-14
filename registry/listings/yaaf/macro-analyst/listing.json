@@ -1,0 +1,12 @@
+{
+  "id": "@yaaf/macro-analyst",
+  "kind": "role",
+  "name": "Macro Analyst",
+  "summary": "Rates, inflation, growth, currencies, commodities and central banks.",
+  "category": "research",
+  "domains": [
+    "markets"
+  ],
+  "license": "Apache-2.0",
+  "status": "active"
+}

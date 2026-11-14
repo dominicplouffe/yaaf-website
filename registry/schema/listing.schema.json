@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yaaf.dplouffe.ca/marketplace/schema/listing.schema.json",
+  "title": "yaaf listing",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "kind", "name", "summary", "category", "domains", "license", "status"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^@[a-z0-9][a-z0-9-]{0,38}/[a-z0-9-]{2,64}$" },
+    "kind": { "enum": ["role", "project"] },
+    "name": { "type": "string", "minLength": 2, "maxLength": 120 },
+    "summary": { "type": "string", "minLength": 10, "maxLength": 160 },
+    "category": { "enum": ["leadership", "research", "build", "content", "challenge", "growth"] },
+    "domains": { "type": "array", "items": { "type": "string", "pattern": "^[a-z0-9-]{2,32}$" }, "maxItems": 6, "uniqueItems": true },
+    "license": { "enum": ["CC-BY-4.0", "Apache-2.0"] },
+    "status": { "enum": ["active", "deprecated", "removed"] },
+    "status_reason": { "type": ["string", "null"], "maxLength": 500 },
+    "forked_from": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["id", "version"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^@[a-z0-9][a-z0-9-]{0,38}/[a-z0-9-]{2,64}$" },
+        "version": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "details": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "what_you_get": { "type": "string", "maxLength": 800 },
+        "what_it_costs": { "type": "string", "maxLength": 800 },
+        "what_you_need": { "type": "string", "maxLength": 800 }
+      }
+    }
+  },
+  "if": { "properties": { "status": { "enum": ["deprecated", "removed"] } } },
+  "then": { "required": ["status_reason"] }
+}

@@ -1,0 +1,49 @@
+name: Approvals
+
+# A required check. High-risk listings (a first-time publisher, a role that runs
+# commands while holding a key, an update that adds either) need two approvals
+# from moderators who are not the author. Everything else needs one, which branch
+# protection already asks for.
+on:
+  pull_request_review:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  approvals:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - id: risk
+        run: |
+          pip install jsonschema
+          python tools/review_card.py --base origin/${{ github.base_ref }} \
+            --author "${{ github.event.pull_request.user.login }}" > /dev/null || true
+      - uses: actions/github-script@v7
+        env:
+          HIGH_RISK: ${{ steps.risk.outputs.high_risk }}
+        with:
+          script: |
+            const fs = require('fs');
+            const mods = fs.readFileSync('MODERATORS', 'utf8').split('\n')
+              .map(l => l.trim().replace(/^@/, '').toLowerCase()).filter(l => l && !l.startsWith('#'));
+            const { owner, repo } = context.repo;
+            const pr = context.payload.pull_request;
+            const reviews = await github.paginate(github.rest.pulls.listReviews, { owner, repo, pull_number: pr.number });
+            const latest = {};
+            for (const r of reviews) latest[r.user.login.toLowerCase()] = r.state;
+            const approvers = Object.entries(latest)
+              .filter(([who, state]) => state === 'APPROVED' && mods.includes(who) && who !== pr.user.login.toLowerCase())
+              .map(([who]) => who);
+            const need = process.env.HIGH_RISK === 'true' ? 2 : 1;
+            core.info(`approved by ${approvers.join(', ') || 'nobody'}; ${need} needed`);
+            if (approvers.length < need) core.setFailed(`needs ${need} moderator approval(s), has ${approvers.length}`);

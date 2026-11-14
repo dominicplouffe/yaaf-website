@@ -1,0 +1,62 @@
+name: Check listings
+
+# Every pull request: the checks, the fire drill, and one review card.
+on:
+  pull_request:
+    paths: ["listings/**", "schema/**", "tools/**", "MODERATORS"]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: check-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      high_risk: ${{ steps.card.outputs.high_risk }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      # yaaf is pinned so a yaaf release can never change what was approved
+      # yesterday. Bump YAAF_REF deliberately, in its own PR.
+      - name: install yaaf and the checkers
+        env:
+          YAAF_REF: main
+        run: |
+          pip install jsonschema anthropic pytest
+          pip install "yaaf @ git+https://github.com/dominicplouffe/yaaf@${YAAF_REF}"
+      - name: the tools' own tests
+        run: python -m pytest -q tests
+      - name: fire drill
+        run: python tools/drill.py --base origin/${{ github.base_ref }} --out drill.json
+      - name: review card
+        id: card
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          set +e
+          python tools/review_card.py --base origin/${{ github.base_ref }} \
+            --author "${{ github.event.pull_request.user.login }}" --drill drill.json > card.md
+          echo "status=$?" >> "$GITHUB_OUTPUT"
+          cat card.md
+      - name: post the card
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = require('fs').readFileSync('card.md', 'utf8');
+            const { owner, repo } = context.repo;
+            const issue_number = context.payload.pull_request.number;
+            const comments = await github.paginate(github.rest.issues.listComments, { owner, repo, issue_number });
+            const mine = comments.find(c => c.body.startsWith('<!-- yaaf-review-card -->'));
+            if (mine) await github.rest.issues.updateComment({ owner, repo, comment_id: mine.id, body });
+            else await github.rest.issues.createComment({ owner, repo, issue_number, body });
+      - name: the checks pass
+        run: python tools/check.py --base origin/${{ github.base_ref }} --author "${{ github.event.pull_request.user.login }}"

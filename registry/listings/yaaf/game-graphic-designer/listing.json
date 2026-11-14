@@ -1,0 +1,12 @@
+{
+  "id": "@yaaf/game-graphic-designer",
+  "kind": "role",
+  "name": "Mobile Game Graphic Designer",
+  "summary": "Art director for AI-generated game art: defines the game's visual identity, then writes precise, reproducible image-generation prompts and asset specs so…",
+  "category": "content",
+  "domains": [
+    "games"
+  ],
+  "license": "Apache-2.0",
+  "status": "active"
+}

@@ -1,0 +1,12 @@
+{
+  "id": "@yaaf/compliance-officer",
+  "kind": "role",
+  "name": "Compliance Reviewer",
+  "summary": "Reviews anything the desk publishes or acts on for the lines that must not be crossed: advice, claims, licensing, non-public information, and market conduct.",
+  "category": "challenge",
+  "domains": [
+    "markets"
+  ],
+  "license": "Apache-2.0",
+  "status": "active"
+}

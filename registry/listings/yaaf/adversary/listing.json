@@ -1,0 +1,12 @@
+{
+  "id": "@yaaf/adversary",
+  "kind": "role",
+  "name": "Red Team / Adversarial Reviewer",
+  "summary": "Tries to break the team's own work before anyone outside does.",
+  "category": "challenge",
+  "domains": [
+    "general"
+  ],
+  "license": "Apache-2.0",
+  "status": "active"
+}

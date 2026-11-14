@@ -1,0 +1,12 @@
+{
+  "id": "@yaaf/writer",
+  "kind": "role",
+  "name": "Writer / Content",
+  "summary": "Produces publishable prose: docs, posts, landing copy, reports.",
+  "category": "content",
+  "domains": [
+    "general"
+  ],
+  "license": "Apache-2.0",
+  "status": "active"
+}

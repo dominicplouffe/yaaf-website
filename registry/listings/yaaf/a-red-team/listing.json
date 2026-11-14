@@ -1,0 +1,17 @@
+{
+  "id": "@yaaf/a-red-team",
+  "kind": "project",
+  "name": "A Red Team That Can Block",
+  "summary": "Builds one small tool, then a second team tries to break it until it cannot.",
+  "category": "challenge",
+  "domains": [
+    "general"
+  ],
+  "license": "Apache-2.0",
+  "status": "active",
+  "details": {
+    "what_you_get": "one small tool that has actually been attacked, and a written record of what was tried and what held.",
+    "what_it_costs": "capped at $90 — attacking costs more than building, which is the correct ratio and rarely the one people budget for.",
+    "what_you_need": "your Anthropic API key."
+  }
+}

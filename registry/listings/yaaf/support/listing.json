@@ -1,0 +1,12 @@
+{
+  "id": "@yaaf/support",
+  "kind": "role",
+  "name": "Customer Support",
+  "summary": "Answers real users, reproduces their problems, and routes what they reveal back into the plan.",
+  "category": "growth",
+  "domains": [
+    "general"
+  ],
+  "license": "Apache-2.0",
+  "status": "active"
+}

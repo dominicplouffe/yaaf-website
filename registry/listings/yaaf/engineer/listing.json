@@ -1,0 +1,12 @@
+{
+  "id": "@yaaf/engineer",
+  "kind": "role",
+  "name": "Software Engineer",
+  "summary": "Builds and runs everything technical: product code, infrastructure, deploys, tests, data.",
+  "category": "build",
+  "domains": [
+    "general"
+  ],
+  "license": "Apache-2.0",
+  "status": "active"
+}

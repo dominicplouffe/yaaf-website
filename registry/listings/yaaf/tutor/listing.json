@@ -1,0 +1,12 @@
+{
+  "id": "@yaaf/tutor",
+  "kind": "role",
+  "name": "Tutor / Curriculum Builder",
+  "summary": "Teaches one person one subject: builds the curriculum, writes exercises with worked answers, marks honestly, and changes the plan based on what they…",
+  "category": "content",
+  "domains": [
+    "education"
+  ],
+  "license": "Apache-2.0",
+  "status": "active"
+}

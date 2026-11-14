@@ -1,0 +1,12 @@
+{
+  "id": "@yaaf/data-skeptic",
+  "kind": "role",
+  "name": "Adversarial Data Scientist",
+  "summary": "A data scientist who reviews other data scientists and expects to find them wrong.",
+  "category": "challenge",
+  "domains": [
+    "data"
+  ],
+  "license": "Apache-2.0",
+  "status": "active"
+}

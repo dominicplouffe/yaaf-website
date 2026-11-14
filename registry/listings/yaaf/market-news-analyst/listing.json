@@ -1,0 +1,12 @@
+{
+  "id": "@yaaf/market-news-analyst",
+  "kind": "role",
+  "name": "Market News Analyst",
+  "summary": "Watches the tape: filings, earnings, guidance, central-bank and macro releases.",
+  "category": "research",
+  "domains": [
+    "markets"
+  ],
+  "license": "Apache-2.0",
+  "status": "active"
+}

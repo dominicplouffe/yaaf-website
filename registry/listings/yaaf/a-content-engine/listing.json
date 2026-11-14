@@ -1,0 +1,17 @@
+{
+  "id": "@yaaf/a-content-engine",
+  "kind": "project",
+  "name": "A Content Engine",
+  "summary": "Blog posts on your subject, drafted to WordPress, graded by whether real readers respond.",
+  "category": "content",
+  "domains": [
+    "general"
+  ],
+  "license": "Apache-2.0",
+  "status": "active",
+  "details": {
+    "what_you_get": "posts published as WordPress drafts for you to approve, each answering one question a real person asks — and an honest account of whether anybody outside responded.",
+    "what_it_costs": "capped at $150/month on purpose, and the goal says why. The drill reports it fits if a run costs under $12.50 — check that against a bill you have seen.",
+    "what_you_need": "your Anthropic API key, and a WordPress site with an application password. Without the WordPress credential the desk still runs — the posts land in the workspace as drafts and nothing reaches the world."
+  }
+}

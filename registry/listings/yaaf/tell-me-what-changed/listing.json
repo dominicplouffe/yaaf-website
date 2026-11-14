@@ -1,0 +1,17 @@
+{
+  "id": "@yaaf/tell-me-what-changed",
+  "kind": "project",
+  "name": "Tell Me What Changed",
+  "summary": "A weekly note on what changed in the things you depend on, and only what matters to you.",
+  "category": "research",
+  "domains": [
+    "general"
+  ],
+  "license": "Apache-2.0",
+  "status": "active",
+  "details": {
+    "what_you_get": "a weekly brief on something you depend on, containing only what actually changed and what it means for you.",
+    "what_it_costs": "capped at $50/month.",
+    "what_you_need": "your Anthropic API key. Everything it reads is public."
+  }
+}

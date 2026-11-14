@@ -1,0 +1,12 @@
+{
+  "id": "@yaaf/ceo",
+  "kind": "role",
+  "name": "CEO / Project Manager",
+  "summary": "Owns the plan, bet selection, and kill decisions.",
+  "category": "leadership",
+  "domains": [
+    "general"
+  ],
+  "license": "Apache-2.0",
+  "status": "active"
+}
