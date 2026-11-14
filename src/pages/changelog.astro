@@ -52,7 +52,9 @@ const NEXT = [
 
 const months = [...new Set(ENTRIES.map((e) => e.date.slice(0, 7)))];
 const monthName = (ym: string) => new Date(`${ym}-01T00:00:00Z`).toLocaleDateString("en-US", { month: "long", year: "numeric", timeZone: "UTC" });
-const dayName = (d: string) => new Date(`${d}T00:00:00Z`).toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
+/** The ledger is kept by day: every date that shipped, newest first, and what shipped on it. */
+const daysIn = (ym: string) => [...new Set(ENTRIES.filter((e) => e.date.startsWith(ym)).map((e) => e.date))];
+const onDay = (d: string) => ENTRIES.filter((e) => e.date === d);
 ---
 <BaseLayout title="What's new" description="What changed in yaaf, newest first: any provider everywhere, the Inbox and the four project pages, yaaf up, people and co-chairs, the MCP server, the $0 rehearsal, and what's next.">
   <section class="page-hero">
@@ -63,48 +65,71 @@ const dayName = (d: string) => new Date(`${d}T00:00:00Z`).toLocaleDateString("en
     </div>
   </section>
 
-  <div class="shell">
+  <div class="shell ledger">
     {months.map((m) => (
-      <section class="month">
+      <section class="month" aria-label={monthName(m)}>
         <h2 class="eyebrow">{monthName(m)}</h2>
-        {ENTRIES.filter((e) => e.date.startsWith(m)).map((e) => (
-          <article class="entry">
-            <time datetime={e.date}>{dayName(e.date)}</time>
-            <h3>{e.href ? <a href={e.href}>{e.title}</a> : e.title}</h3>
-            <p>
-              {e.body}
-              {e.prs?.map((n) => <a class="pr" href={`${REPO_URL}/pull/${n}`} rel="noopener">#{n}</a>)}
+        {daysIn(m).map((d) => (
+          <div class="day">
+            <p class="stamp">
+              <time datetime={d}>{d}</time>
+              <span class="count">{onDay(d).length} {onDay(d).length === 1 ? "change" : "changes"}</span>
             </p>
-          </article>
+            <div class="entries">
+              {onDay(d).map((e) => (
+                <article class="entry">
+                  <h3>{e.href ? <a href={e.href}>{e.title}</a> : e.title}</h3>
+                  <p>
+                    {e.body}
+                    {e.prs?.map((n) => <a class="pr" href={`${REPO_URL}/pull/${n}`} rel="noopener">#{n}</a>)}
+                  </p>
+                </article>
+              ))}
+              {/* Shipped is final: every day in the ledger closes on the double rule. */}
+              <hr class="double-rule thin" />
+            </div>
+          </div>
         ))}
       </section>
     ))}
   </div>
 
   <Section eyebrow="Next" title="What's coming.">
-    <div class="cells c3 hued">
-      {NEXT.map(([k, v]) => <div class="cell"><h3>{k}</h3><p>{v}</p></div>)}
-    </div>
+    <ul class="next">
+      {NEXT.map(([k, v]) => <li><h3>{k}</h3><p>{v}</p></li>)}
+    </ul>
   </Section>
 </BaseLayout>
 
 <style>
-  .month { border-top: 1px solid var(--color-line); padding: 2.5rem 0 1rem; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .month > h2 { grid-column: 1 / -1; margin: 0 0 1rem; padding-inline: var(--inset); }
-  .entry { grid-column: 1 / -1; display: grid; grid-template-columns: subgrid; padding-block: 1.1rem; border-top: 1px solid var(--color-line-2); align-items: baseline; }
-  time, .entry h3, .entry p { padding-inline: var(--inset); }
-  time { grid-column: 1; font-family: var(--font-mono); font-size: 13px; color: var(--color-muted); }
-  .entry h3 { grid-column: 2; margin: 0; font-size: 1.15rem; letter-spacing: -0.02em; }
-  .entry h3 a { color: var(--color-ink); text-decoration: none; }
-  .month > h2 { color: var(--color-gold); }
-  .month:nth-of-type(2) > h2 { color: var(--color-rose); }
-  .month:nth-of-type(3) > h2 { color: var(--color-sky); }
-  .entry h3 a:hover { color: var(--color-accent-hi); }
-  .entry p { grid-column: 3 / span 2; margin: 0; font-size: 15.5px; color: var(--color-ink-2); }
-  .pr { margin-left: 10px; font-family: var(--font-mono); font-size: 13px; color: var(--color-muted); text-decoration: none; }
-  .pr:hover { color: var(--color-accent-hi); }
+  /* A ledger: the date and the count in mono, each change in Brygada, and a
+     double rule under every day that shipped. */
+  .ledger { padding-bottom: var(--yaaf-space-10); }
+  .month { padding-top: var(--yaaf-space-8); }
+  .month > h2 { margin: 0 0 var(--yaaf-space-5); padding-bottom: 12px; border-bottom: 2px solid var(--yaaf-ink); color: var(--yaaf-ink); }
+  .day { display: grid; grid-template-columns: 11rem minmax(0, 1fr); gap: 0 48px; padding-top: var(--yaaf-space-6); }
+  .stamp { margin: 0; padding-top: 4px; display: grid; gap: 2px; align-content: start; font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+  .stamp time { font-size: 14px; font-weight: 500; color: var(--yaaf-ink); }
+  .count { font-size: 12.5px; color: var(--yaaf-muted); }
+  .entry { padding-bottom: 18px; }
+  .entry + .entry { padding-top: 18px; border-top: 1px solid var(--yaaf-border); }
+  .entry h3 { margin: 0; font-size: 1.5rem; line-height: 1.2; }
+  .entry h3 a { color: var(--yaaf-ink); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; text-decoration-color: var(--yaaf-border-strong); transition: color var(--fast) var(--ease); }
+  .entry h3 a:hover { color: var(--yaaf-accent); text-decoration-color: currentColor; }
+  .entry p { margin: 6px 0 0; color: var(--yaaf-ink-2); max-width: var(--measure); }
+  .pr { margin-left: 10px; font-family: var(--font-mono); font-size: 13px; color: var(--yaaf-accent); text-decoration: none; }
+  .pr:hover { color: var(--yaaf-accent-hover); text-decoration: underline; text-underline-offset: 3px; }
+  .double-rule { margin-top: 6px; }
+
+  .next { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 32px; }
+  .next li { border-top: 1px dashed var(--yaaf-ink); padding-top: var(--yaaf-space-4); }
+  .next h3 { margin: 0; font-size: 1.375rem; line-height: 1.2; }
+  .next p { margin: 8px 0 0; font-size: 15px; color: var(--yaaf-ink-2); }
+
   @media (max-width: 900px) {
-    .entry { grid-template-columns: 1fr; gap: 4px; }
-    time, .entry h3, .entry p { grid-column: 1; }
+    .day { grid-template-columns: 1fr; }
+    .stamp { display: flex; gap: 14px; align-items: baseline; padding: 0 0 10px; }
+    .next { grid-template-columns: 1fr 1fr; }
   }
+  @media (max-width: 560px) { .next { grid-template-columns: 1fr; } }
 </style>

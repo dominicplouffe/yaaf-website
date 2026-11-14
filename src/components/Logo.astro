@@ -1,0 +1,24 @@
+---
+/**
+ * The yaaf logo, drawn from the brand's own artwork in src/assets/brand/logo.
+ * The wordmark is never typed: these are the outlined paths, inlined so they
+ * cost no request and take their two colours from the tokens (ink, and Seal
+ * for the italic a), which is what makes one file right in both themes.
+ *
+ *   wordmark   the four letters, for the nav
+ *   signature  the wordmark over the double rule, for closing a page
+ */
+import wordmark from "../assets/brand/logo/yaaf-wordmark-small.svg?raw";
+import signature from "../assets/brand/logo/yaaf-signature-on-light.svg?raw";
+
+interface Props { variant?: "wordmark" | "signature"; height?: number; class?: string }
+const { variant = "wordmark", height = 28, class: cls = "" } = Astro.props;
+
+const src = variant === "signature" ? signature : wordmark;
+const [, , , w, h] = src.match(/viewBox="(\S+) (\S+) (\S+) (\S+)"/)!;
+const svg = src
+  .replace(/ width="\d+" height="\d+"/, ` width="${Math.round((height * Number(w)) / Number(h))}" height="${height}" class="logo ${cls}" focusable="false"`)
+  .replaceAll('fill="#161A2E"', 'style="fill:var(--yaaf-ink)"')
+  .replaceAll('fill="#B8203A"', 'style="fill:var(--yaaf-seal)"');
+---
+<Fragment set:html={svg} />

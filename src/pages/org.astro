@@ -37,11 +37,11 @@ const headcount = (c: (typeof crews)[number]) =>
   </section>
 
   <Section first={true}>
-    <div class="cells hued">
+    <div class="cells">
       <a class="cell" href="#roles"><p class="num">{roles.length}</p><p>Roles</p></a>
       <a class="cell" href="#crews"><p class="num">{crews.length}</p><p>Ready-made teams</p></a>
       <div class="cell"><p class="num">{execs.length}</p><p>Can run as CEO</p></div>
-      <a class="cell warm" href="#challenge"><p class="num">{challengers.length}</p><p>Paid to disagree</p></a>
+      <a class="cell" href="#challenge"><p class="num">{challengers.length}</p><p>Paid to disagree</p></a>
     </div>
   </Section>
 
@@ -49,7 +49,7 @@ const headcount = (c: (typeof crews)[number]) =>
     lede="One agent checking its own work has the same blind spots twice. These roles attack the rest.">
     <div class="cells c3">
       {challengers.map((r) => (
-        <div class="cell warm">
+        <div class="cell">
           <h3>{r.name}</h3>
           <p>{r.description}</p>
         </div>
@@ -109,49 +109,37 @@ const headcount = (c: (typeof crews)[number]) =>
 </BaseLayout>
 
 <style>
-  .execs { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 12px; }
+  .execs { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; }
 
   .filters { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
   .f {
     font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.9px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--color-ink-2);
+    color: var(--yaaf-ink);
     background: transparent;
-    border: 1px solid var(--color-line);
-    padding: 7px 13px;
+    border: 1px solid var(--yaaf-ink);
+    padding: 8px 13px;
     cursor: pointer;
-    transition: background 0.15s, border-color 0.15s, color 0.15s;
+    transition: background var(--fast) var(--ease), color var(--fast) var(--ease);
   }
-  .f span { color: var(--color-muted); margin-left: 4px; }
-  .f:hover { border-color: var(--color-line-strong); color: var(--color-ink); }
-  .f.on { color: #14051f; border-color: var(--color-gold); background: var(--color-gold); }
-  .f.on span { color: #555; }
+  .f span { color: var(--yaaf-muted); margin-left: 4px; }
+  .f:hover { background: var(--yaaf-sunken); }
+  .f.on { color: var(--yaaf-page); background: var(--yaaf-ink); }
+  .f.on span { color: var(--yaaf-page); }
 
-  .roles { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; align-items: start; }
+  .roles { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; align-items: start; }
   .roles :global(article[hidden]) { display: none; }
 
-  .crews { display: grid; gap: 14px; }
-  .crew {
-    background: var(--color-page);
-    border: 1px solid var(--color-line);
-    padding: 24px;
-  }
+  .crews { display: grid; gap: 16px; }
+  .crew { background: var(--yaaf-surface); border: 1px solid var(--yaaf-border); border-top: 2px solid var(--yaaf-ink); padding: 24px; min-width: 0; }
   .crew header { display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: start; margin-bottom: 22px; }
-  .crew h3 { margin: 0; font-size: 1.2rem; font-weight: 500; letter-spacing: -0.02em; }
-  .out { margin: 5px 0 0; font-size: 13.5px; color: var(--color-ink-2); max-width: 56ch; }
+  .crew h3 { margin: 0; font-size: 1.5rem; line-height: 1.2; }
+  .out { margin: 6px 0 0; font-size: 15px; color: var(--yaaf-ink-2); max-width: 34em; }
   .stat { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; }
-  .stat span {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.9px;
-    text-transform: uppercase;
-    color: var(--color-muted);
-    border: 1px solid var(--color-line);
-    padding: 3px 9px;
-  }
-  .stat .dom { color: var(--color-accent-hi); border-color: color-mix(in srgb, var(--color-accent) 40%, transparent); }
+  .stat span { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--yaaf-ink-2); border: 1px solid var(--yaaf-border-strong); padding: 2px 8px; }
 
   @media (min-width: 1000px) { .crews { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 </style>

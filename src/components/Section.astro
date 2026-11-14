@@ -1,7 +1,8 @@
 ---
 /**
- * A block of a page: a hairline across the shell, then an eyebrow, a big
- * title and at most one short sentence. Content goes in the slot.
+ * A block of a page: a hairline across the shell, then a section mark
+ * ("§ The rules"), a headline and at most one short intro. Content goes in
+ * the slot. A title may carry <em> for the one ink-italic word.
  */
 interface Props {
   eyebrow?: string;
@@ -18,8 +19,8 @@ const { eyebrow, title, lede, id, first = false, class: cls = "" } = Astro.props
     <div class="sec-in">
       {(eyebrow || title) && (
         <header class="head">
-          {eyebrow && <p class="eyebrow">{eyebrow}</p>}
-          {title && <h2>{title}</h2>}
+          {eyebrow && <p class="eyebrow">§ {eyebrow}</p>}
+          {title && <h2 set:html={title} />}
           {lede && <p class="lede" set:html={lede} />}
         </header>
       )}

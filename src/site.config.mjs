@@ -31,11 +31,13 @@ export const PRIMARY_CTA = SOURCE_IS_PUBLIC
 
 export const SITE = {
   name: "yaaf",
-  /** Used in <title> and og:site_name. */
-  tagline: "Build a company. Hire a CEO. Let the team work.",
+  /** The brand's primary tagline. Used in the home page's <title> and the footer. */
+  tagline: "Rules agents can't talk their way out of.",
+  /** The messaging kit's short description (160 characters or fewer). */
   description:
-    "yaaf is the open-source harness for teams of harnesses. Build a company of AI agents — a CEO, teams on Claude Code, Codex, Gemini CLI or any model — and chair it from your own machine, with work the platform verifies, money that stops itself and a date nobody can quietly move.",
-  themeColor: "#0b0918",
+    "yaaf runs a team of AI agents like a company you chair. The rules live in the server, not the prompt. Open source, on your machine.",
+  /** Registry paper and Carbon: the browser chrome follows the page in each scheme. */
+  themeColor: { light: "#F4F4F1", dark: "#121316" },
 };
 
 const NAV_ALL = [

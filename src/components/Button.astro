@@ -5,5 +5,5 @@ const { href, primary = false, small = false, external = /^https?:/.test(href), 
 ---
 <a href={href} class:list={["btn", { primary, small }, cls]} rel={external ? "noopener" : undefined}>
   <span><slot /></span>
-  <Arrow external={external} />
+  {external && <Arrow external />}
 </a>
