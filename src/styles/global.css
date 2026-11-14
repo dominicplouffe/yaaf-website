@@ -17,22 +17,6 @@
    3. Numbers, IDs and code are IBM Plex Mono.
    --------------------------------------------------------------------------- */
 @theme {
-  --color-page: var(--yaaf-page);
-  --color-surface: var(--yaaf-surface);
-  --color-surface-2: var(--yaaf-surface-2);
-  --color-sunken: var(--yaaf-sunken);
-  --color-ink: var(--yaaf-ink);
-  --color-ink-2: var(--yaaf-ink-2);
-  --color-muted: var(--yaaf-muted);
-  --color-line: var(--yaaf-border);
-  --color-line-2: var(--yaaf-border);
-  --color-line-strong: var(--yaaf-border-strong);
-  --color-accent: var(--yaaf-accent);
-  --color-good: var(--yaaf-good);
-  --color-warning: var(--yaaf-warning);
-  --color-serious: var(--yaaf-serious);
-  --color-critical: var(--yaaf-critical);
-
   --font-display: "Brygada 1918", "Brygada Fallback", "Iowan Old Style", Georgia, serif;
   --font-sans: "Public Sans", "Public Sans Fallback", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
@@ -121,6 +105,8 @@ h1, h2, h3 {
   letter-spacing: -0.015em;
 }
 h4, h5, h6 { font-family: var(--font-sans); font-weight: 600; letter-spacing: 0; }
+/* A heading used as a label keeps the label's face. */
+:is(h1, h2, h3, h4).eyebrow { font-family: var(--font-mono); font-weight: 500; letter-spacing: 0.08em; }
 /* Headline emphasis: an ink italic. */
 :is(h1, h2, h3) em { font-style: italic; color: inherit; }
 
@@ -413,6 +399,8 @@ section[id], [id].anchor { scroll-margin-top: 84px; }
 }
 .prose pre code { background: none; padding: 0; font-size: inherit; }
 .prose img { border: 1px solid var(--yaaf-border-strong); }
+/* The synced docs put a rule before most sections, and the section draws its own. */
+.prose hr:has(+ h2) { display: none; }
 .prose hr { border: 0; border-top: 1px solid var(--yaaf-border-strong); margin: 2.4em 0; }
 .prose table { width: 100%; border-collapse: collapse; font-size: 14.5px; display: block; overflow-x: auto; }
 .prose thead th {
@@ -430,36 +418,15 @@ section[id], [id].anchor { scroll-margin-top: 84px; }
 .prose tbody td { padding: 10px 14px 10px 0; border-bottom: 1px solid var(--yaaf-border); vertical-align: top; }
 .prose :is(h2, h3, h4) { scroll-margin-top: 90px; }
 
-/* Code blocks carry a light and a dark theme (astro.config.mjs); pick by scheme. */
+/* Code blocks carry a light and a dark theme (astro.config.mjs); pick by scheme.
+   The light theme's comment grey (#66707B) is 4.2:1 on the sunken code ground;
+   the brand's neutral 600 clears 4.5:1 there. */
+@media not (prefers-color-scheme: dark) {
+  .astro-code span[style*="#66707B" i] { color: #535766 !important; }
+}
 @media (prefers-color-scheme: dark) {
   .astro-code, .astro-code span { color: var(--shiki-dark) !important; font-style: var(--shiki-dark-font-style) !important; }
 }
-
-/* ---------------------------------------------------------------------------
-   TRANSITIONAL: the old theme's names, kept only until every page is moved to
-   the tokens above. Each hue the old design used now resolves to ink or a
-   neutral, so nothing renders in a colour the brand does not have. The pull
-   request that restyles the last page deletes this block.
-   --------------------------------------------------------------------------- */
-:root {
-  --color-grid: transparent;
-  --color-accent-lo: var(--yaaf-accent);
-  --color-accent-hi: var(--yaaf-accent);
-  --color-accent-2: var(--yaaf-ink);
-  --color-gold: var(--yaaf-ink);
-  --color-sun: var(--yaaf-ink);
-  --color-rose: var(--yaaf-ink);
-  --color-violet: var(--yaaf-ink);
-  --color-sky: var(--yaaf-ink);
-  --color-mint: var(--yaaf-ink);
-  --color-lime: var(--yaaf-ink);
-  --color-old: var(--yaaf-muted);
-  --color-old-bg: var(--yaaf-sunken);
-  --dawn: linear-gradient(var(--yaaf-ink), var(--yaaf-ink));
-}
-.dawn-text { color: var(--yaaf-ink); }
-.cell.warm h3, .cell.blue h3 { color: var(--yaaf-ink); }
-.pill.blue, .pill.warm { color: var(--yaaf-ink); border-color: var(--yaaf-ink); }
 
 /* --- Carbon ------------------------------------------------------------------
    A band that is dark in both themes (the install band). It re-declares the
