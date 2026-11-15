@@ -1,0 +1,51 @@
+# Copy to .github/workflows/counts.yml. Kept here because the session that
+# wrote it could not create workflow files in this repository.
+#
+# Nightly: count installs from CloudFront's standard logs (one address once a
+# day per listing, never yaaf telemetry), commit registry/counts.json, and
+# rebuild the served index. Needs a log bucket on the distribution and
+# s3:ListBucket + s3:GetObject on it for the deploy role (see README).
+name: Install counts
+
+on:
+  schedule:
+    - cron: "43 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  counts:
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+      - name: fetch yesterday's logs
+        run: |
+          mkdir -p logs
+          day=$(date -u -d yesterday +%F)
+          aws s3 sync "s3://${{ vars.LOG_BUCKET }}/${{ vars.LOG_PREFIX }}" logs/ \
+            --exclude "*" --include "*.${day}-*" --only-show-errors
+      - run: python registry/tools/count_installs.py logs --counts registry/counts.json
+      - run: npm ci && npm run sync:marketplace
+      - name: commit if they moved
+        run: |
+          if git diff --quiet -- registry/counts.json public/marketplace; then exit 0; fi
+          git config user.name "yaaf-website-bot"
+          git config user.email "noreply@github.com"
+          git add registry/counts.json public/marketplace
+          git commit -m "Install counts: $(date -u +%F)"
+          git push

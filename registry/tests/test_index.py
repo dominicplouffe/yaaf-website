@@ -29,3 +29,9 @@ def test_the_index_says_what_each_version_can_do(tmp_path):
     assert "wordpress" in latest["keys"] and "web" in latest["can_do"]
     assert latest["inputs"] == ["subject", "site", "publication"]
     json.dumps(index)
+
+
+def test_outcomes_ride_on_the_listing(tmp_path):
+    index = build_index.build(tmp_path / "out", outcomes={"@yaaf/writer": {"reports": 2, "finished": 1}})
+    writer = next(l for l in index["listings"] if l["id"] == "@yaaf/writer")
+    assert writer["outcomes"] == {"reports": 2, "finished": 1}

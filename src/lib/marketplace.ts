@@ -45,6 +45,9 @@ export interface Listing {
   latest: number;
   versions: VersionEntry[];
   installs: number;
+  /** How it went for people who ran it and said so (registry/tools/outcomes.py). */
+  outcomes?: { reports: number; finished: number; median_days: number; median_usd: number | null;
+               requirements_met_share: number | null };
 }
 
 const files = import.meta.glob("../../public/marketplace/listings/*/*/versions/*.json", { eager: true, import: "default" });

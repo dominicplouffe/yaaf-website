@@ -18,6 +18,8 @@ const roles: any[] = listing.kind === "role" ? [body.role] : body.bundle.roles;
 const project = listing.kind === "project" ? body.bundle.project : null;
 const needs = body.needs ?? { keys: [], data_sources: [], mailbox: false, github_repo: false };
 const inputs: any[] = body.inputs ?? [];
+const receipt: any = body.receipt ?? null;
+const req: { met: number; open: number; cut: number } | null = receipt?.verified?.requirements ?? null;
 const removed = listing.status === "removed";
 const roleName = new Map(roles.map((r) => [r.slug, r.name]));
 const goalParts: string[] = project ? project.goal.split(/(\{\{\s*[A-Za-z0-9_]+\s*\}\})/g) : [];
@@ -131,11 +133,30 @@ const otherVersions = [...listing.versions].reverse();
           </div>
         )}
 
-        {body.receipt && (
+        {receipt && (
           <div class="panel">
             <h2>When the publisher ran it</h2>
-            <pre class="receipt">{JSON.stringify(body.receipt, null, 2)}</pre>
-            <p class="muted">From yaaf's receipt on the publisher's install, as they reported it.</p>
+            <dl class="nums">
+              <div><dt>Ran for</dt><dd>{receipt.project?.days ?? "?"} days</dd></div>
+              <div><dt>Cost</dt><dd>{receipt.project?.billing_mode === "api_key" ? `$${Number(receipt.cost?.usd ?? 0).toFixed(2)}` : "on a plan"}</dd></div>
+              {req && <div><dt>Requirements met</dt><dd>{req.met} of {req.met + req.open + req.cut}</dd></div>}
+              {receipt.verified?.evidence && <div><dt>Claims verified</dt><dd>{receipt.verified.evidence.verified} of {receipt.verified.evidence.external}</dd></div>}
+            </dl>
+            <p class="muted">From yaaf's receipt on the publisher's install, as they reported it. yaaf computes it; no agent writes it.</p>
+          </div>
+        )}
+
+        {listing.outcomes && (
+          <div class="panel">
+            <h2>When others ran it</h2>
+            <dl class="nums">
+              <div><dt>Reported</dt><dd>{listing.outcomes.reports}</dd></div>
+              <div><dt>Finished</dt><dd>{listing.outcomes.finished}</dd></div>
+              <div><dt>Median days</dt><dd>{listing.outcomes.median_days}</dd></div>
+              {listing.outcomes.median_usd !== null && <div><dt>Median cost</dt><dd>${listing.outcomes.median_usd}</dd></div>}
+              {listing.outcomes.requirements_met_share !== null && <div><dt>Requirements met</dt><dd>{Math.round(listing.outcomes.requirements_met_share * 100)}%</dd></div>}
+            </dl>
+            <p class="muted">From people who chose to send their receipt's numbers. The publisher's own report is not counted, and each person counts once.</p>
           </div>
         )}
 
@@ -183,7 +204,9 @@ const otherVersions = [...listing.versions].reverse();
   .muted { color: var(--color-muted); font-size: 12.5px; }
   .panel > .muted { margin: 10px 0 0; }
   .sha { overflow-wrap: anywhere; }
-  .receipt { max-height: 260px; }
+  .nums { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 0; }
+  .nums dt { font-size: 12px; color: var(--color-muted); }
+  .nums dd { margin: 0; font-size: 22px; font-weight: 500; color: var(--color-ink); font-variant-numeric: tabular-nums; }
   .report { margin: 0; font-size: 13px; }
   .report a { color: var(--color-muted); }
 </style>

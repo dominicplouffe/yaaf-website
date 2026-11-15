@@ -36,6 +36,18 @@ publisher need two approvals.
 Removal never deletes: set `status` to `removed` with a `status_reason` in
 `listing.json`. Every install shows the reason, and new installs are refused.
 
+## What people see besides the listing
+
+- **Installs** (`counts.json`): from CloudFront's logs of listing files being
+  downloaded, one address once a day per listing (`tools/count_installs.py`).
+  yaaf sends no telemetry.
+- **Outcomes** (`outcomes.json`): a project started from a listing may choose,
+  once, to report how it went. yaaf opens an `Outcome:` issue here with numbers
+  from its receipt only. `tools/outcomes.py` counts them nightly
+  (`.github/workflows/outcomes.yml`), ignoring the publisher's own reports and
+  counting each account once per listing.
+- **No star ratings.** They are the easiest number to fake.
+
 ## Layout
 
 ```

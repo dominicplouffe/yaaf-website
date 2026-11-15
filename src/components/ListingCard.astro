@@ -7,11 +7,13 @@ const v = latest(listing);
 const runs = v.can_do.includes("bash");
 ---
 <a class="lcard" href={hrefOf(listing)} data-kind={listing.kind} data-category={listing.category}
+  data-proven={listing.outcomes?.finished ?? 0} data-installs={listing.installs}
   data-text={`${listing.name} ${listing.summary} ${listing.id} ${listing.domains.join(" ")}`.toLowerCase()}>
   <p class="top">
     <span class="kind">{listing.kind === "project" ? "Project" : "Role"}</span>
     {listing.tier === "official" && <span class="tag off">official</span>}
     {v.has_receipt && <span class="tag ran">ran for real</span>}
+    {listing.outcomes && <span class="tag ran">{listing.outcomes.finished} of {listing.outcomes.reports} finished</span>}
   </p>
   <h3>{listing.name}</h3>
   <p class="id">{listing.id}</p>

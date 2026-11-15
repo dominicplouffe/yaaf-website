@@ -44,8 +44,9 @@ def summarise(version: dict) -> dict:
 
 
 def build(out: Path, *, repo: str | None = None, client_id: str | None = None,
-          counts: dict[str, int] | None = None) -> dict:
+          counts: dict[str, int] | None = None, outcomes: dict[str, dict] | None = None) -> dict:
     counts = counts or {}
+    outcomes = outcomes or {}
     listings = []
     if out.exists():
         shutil.rmtree(out)
@@ -76,6 +77,9 @@ def build(out: Path, *, repo: str | None = None, client_id: str | None = None,
             "latest": versions[-1]["version"] if versions else None,
             "versions": versions,
             "installs": int(counts.get(meta["id"], 0)),
+            # How it went for people who ran it and chose to say, from
+            # tools/outcomes.py. Never the publisher's own report.
+            **({"outcomes": outcomes[meta["id"]]} if meta["id"] in outcomes else {}),
         })
     index = {
         "registry": {
@@ -90,21 +94,28 @@ def build(out: Path, *, repo: str | None = None, client_id: str | None = None,
     return index
 
 
+def _read(path: Path) -> dict:
+    return json.loads(path.read_text()) if path and path.exists() else {}
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--out", type=Path, default=ROOT / "dist")
     parser.add_argument("--repo", help="owner/repo pull requests go to")
     parser.add_argument("--client-id", help="the GitHub OAuth app publishers sign in with")
-    parser.add_argument("--counts", type=Path, help="installs per listing id, as JSON")
+    parser.add_argument("--counts", type=Path, default=ROOT / "counts.json",
+                        help="installs per listing, from tools/count_installs.py")
+    parser.add_argument("--outcomes", type=Path, default=ROOT / "outcomes.json",
+                        help="reports per listing, from tools/outcomes.py")
     args = parser.parse_args()
-    counts = json.loads(args.counts.read_text()) if args.counts and args.counts.exists() else {}
-    config = ROOT / "registry.json"
-    settings = json.loads(config.read_text()) if config.exists() else {}
+    counts = _read(args.counts)
+    counts = counts.get("counts", counts)
+    settings = _read(ROOT / "registry.json")
     index = build(args.out, repo=args.repo or settings.get("repo"),
-                  client_id=args.client_id or settings.get("client_id"), counts=counts)
+                  client_id=args.client_id or settings.get("client_id"), counts=counts,
+                  outcomes=_read(args.outcomes))
     print(f"{len(index['listings'])} listing(s) → {args.out / 'index.json'}")
 
 
 if __name__ == "__main__":
     main()
-
