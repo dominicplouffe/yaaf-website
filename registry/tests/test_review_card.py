@@ -37,7 +37,7 @@ def _move(registry, src, handle):
 def test_a_role_that_runs_commands_with_a_key_needs_two(registry, monkeypatch):
     _move(registry, "blog-writer", "rae")
     _, high, reasons = _card(registry, monkeypatch, "@rae/blog-writer")
-    assert high and "runs commands while holding a key" in reasons
+    assert high and "has a shell while holding a key" in reasons
 
 
 def test_an_update_that_adds_a_power_needs_two_and_shows_the_diff(registry, monkeypatch):
