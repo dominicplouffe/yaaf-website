@@ -1,0 +1,112 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Section from "../../components/Section.astro";
+import ListingCard from "../../components/ListingCard.astro";
+import Button from "../../components/Button.astro";
+import { active, CATEGORY_WORDS, INDEX_URL } from "../../lib/marketplace";
+
+const projects = active.filter((l) => l.kind === "project");
+const roles = active.filter((l) => l.kind === "role");
+const publishers = new Set(active.map((l) => l.publisher)).size;
+const categories = Object.entries(
+  active.reduce<Record<string, number>>((acc, l) => ({ ...acc, [l.category]: (acc[l.category] ?? 0) + 1 }), {}),
+).sort((a, b) => b[1] - a[1]);
+---
+<BaseLayout title="Marketplace"
+  description={`Hire a whole team or one role for your yaaf company: ${projects.length} projects and ${roles.length} roles, each showing every word of its prompt and what it can touch before you install it.`}>
+  <section class="page-hero">
+    <div class="shell">
+      <p class="eyebrow">Marketplace</p>
+      <h1>Teams that already worked.</h1>
+      <p class="lede">Start from a project someone already ran, or hire one role your company is missing. Every listing shows what it can do and every word of its instructions before anything is installed. Moderators read each version before it appears here.</p>
+    </div>
+  </section>
+
+  <Section first={true}>
+    <div class="cells hued">
+      <a class="cell" href="#browse" data-pick="project"><p class="num">{projects.length}</p><p>Projects to start from</p></a>
+      <a class="cell" href="#browse" data-pick="role"><p class="num">{roles.length}</p><p>Roles to hire</p></a>
+      <div class="cell"><p class="num">{publishers}</p><p>{publishers === 1 ? "Publisher" : "Publishers"}</p></div>
+      <a class="cell" href="/marketplace/publish/"><p class="num">→</p><p>Publish your own</p></a>
+    </div>
+  </Section>
+
+  <Section eyebrow="Browse" title="Find the team for the job." id="browse">
+    <div class="tools">
+      <input type="search" id="q" placeholder="What do you want done?" aria-label="Search the marketplace" />
+      <div class="pills" role="group" aria-label="Projects or roles">
+        <button class="f on" data-kind="all">All <span>{active.length}</span></button>
+        <button class="f" data-kind="project">Projects <span>{projects.length}</span></button>
+        <button class="f" data-kind="role">Roles <span>{roles.length}</span></button>
+      </div>
+      <div class="pills" role="group" aria-label="Kind of work">
+        <button class="c on" data-cat="all">Any work</button>
+        {categories.map(([cat, n]) => <button class="c" data-cat={cat}>{CATEGORY_WORDS[cat] ?? cat} <span>{n}</span></button>)}
+      </div>
+    </div>
+    <p class="empty" id="empty" hidden>Nothing matches that. Try fewer words.</p>
+    <div class="grid" id="grid">
+      {active.map((l) => <ListingCard listing={l} />)}
+    </div>
+  </Section>
+
+  <Section eyebrow="How it stays safe" title="A role is instructions that run with your keys."
+    lede="So nothing here installs itself, and nothing installs that changed after a moderator read it.">
+    <div class="cells c3 hued">
+      <div class="cell"><span class="eyebrow">Before you install</span><p>You see what each role can do, which keys it asks for, and every word of its prompt. Your yaaf shows it all again before it installs anything.</p></div>
+      <div class="cell"><span class="eyebrow">Checked on arrival</span><p>Your yaaf installs a file only if it matches, byte for byte, the version moderators approved. It never installs over a role you already have.</p></div>
+      <div class="cell"><span class="eyebrow">Updates ask first</span><p>A new version never reaches a running team on its own. One that can do more than before asks you to say yes to exactly that.</p></div>
+    </div>
+    <p class="note">Every yaaf reads this marketplace from <code>{INDEX_URL}</code>. Set <code>YAAF_LIBRARY_SOURCES</code> to use a different one, or leave it empty to turn the marketplace off.</p>
+    <div class="btns inset"><Button href="/marketplace/publish/">How publishing works</Button></div>
+  </Section>
+</BaseLayout>
+
+<style>
+  .tools { display: grid; gap: 12px; margin-bottom: 20px; padding-inline: var(--inset); }
+  #q { max-width: 560px; width: 100%; background: var(--color-surface); color: var(--color-ink); border: 1px solid var(--color-line-strong); padding: 11px 13px; font: inherit; font-size: 15px; }
+  .pills { display: flex; flex-wrap: wrap; gap: 6px; }
+  .pills button { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.5px; color: var(--color-ink-2); background: transparent; border: 1px solid var(--color-line); padding: 6px 11px; cursor: pointer; }
+  .pills button span { color: var(--color-muted); margin-left: 4px; }
+  .pills button:hover { border-color: var(--color-line-strong); color: var(--color-ink); }
+  .pills button.on { color: #14051f; border-color: var(--color-gold); background: var(--color-gold); }
+  .pills button.on span { color: #555; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+  .empty { padding-inline: var(--inset); color: var(--color-muted); }
+  .empty[hidden] { display: none; }
+  .note code { font-family: var(--font-mono); font-size: 0.9em; color: var(--color-ink); }
+</style>
+
+<script>
+  const grid = document.getElementById("grid");
+  const q = document.getElementById("q") as HTMLInputElement | null;
+  const empty = document.getElementById("empty");
+  let kind = "all";
+  let cat = "all";
+  function apply() {
+    const words = (q?.value || "").toLowerCase().split(/\s+/).filter(Boolean);
+    let shown = 0;
+    grid?.querySelectorAll<HTMLElement>("a[data-kind]").forEach((card) => {
+      const ok = (kind === "all" || card.dataset.kind === kind)
+        && (cat === "all" || card.dataset.category === cat)
+        && words.every((w) => (card.dataset.text || "").includes(w));
+      card.hidden = !ok;
+      shown += ok ? 1 : 0;
+    });
+    if (empty) empty.hidden = shown > 0;
+  }
+  function pick(selector: string, attr: string, set: (v: string) => void) {
+    const buttons = document.querySelectorAll<HTMLButtonElement>(selector);
+    buttons.forEach((btn) => btn.addEventListener("click", () => {
+      buttons.forEach((b) => b.classList.toggle("on", b === btn));
+      set(btn.dataset[attr] || "all");
+      apply();
+    }));
+  }
+  pick(".pills .f", "kind", (v) => { kind = v; });
+  pick(".pills .c", "cat", (v) => { cat = v; });
+  q?.addEventListener("input", apply);
+  document.querySelectorAll<HTMLElement>("[data-pick]").forEach((cell) => cell.addEventListener("click", () => {
+    document.querySelector<HTMLButtonElement>(`.pills .f[data-kind="${cell.dataset.pick}"]`)?.click();
+  }));
+</script>

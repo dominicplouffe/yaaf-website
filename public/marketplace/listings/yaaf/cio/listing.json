@@ -1,0 +1,12 @@
+{
+  "id": "@yaaf/cio",
+  "kind": "role",
+  "name": "Chief Investment Officer",
+  "summary": "The CEO role for markets work: owns the mandate, the research agenda, and the kill decisions.",
+  "category": "leadership",
+  "domains": [
+    "markets"
+  ],
+  "license": "Apache-2.0",
+  "status": "active"
+}

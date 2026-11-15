@@ -1,0 +1,80 @@
+---
+/**
+ * "Open in yaaf": a link to the listing's install screen on the visitor's own
+ * yaaf. A link, never a fetch, so the browser asks no local-network question
+ * and the site still makes no requests of its own. The address defaults to
+ * yaaf's own port on this machine and can be changed; it is remembered in this
+ * browser only (the My Home Assistant pattern).
+ */
+import Cmd from "./Cmd.astro";
+import { installCommand, openInYaaf, type Listing } from "../lib/marketplace";
+interface Props { listing: Listing }
+const { listing } = Astro.props;
+---
+<div class="oiy" data-listing={listing.id}>
+  <div class="btns">
+    <a class="btn primary" data-open href={openInYaaf(listing)} rel="noopener">
+      <span>Open in yaaf</span>
+    </a>
+  </div>
+  <p class="where">
+    Your yaaf: <code data-base>localhost:24247</code>{" "}
+    <button type="button" data-change>change</button>
+  </p>
+  <form class="set" data-form hidden>
+    <label for={`base-${listing.id}`}>Where your yaaf runs</label>
+    <input id={`base-${listing.id}`} data-input type="url" placeholder="http://localhost:24247" />
+    <button type="submit">Save</button>
+  </form>
+  <p class="or">Or in a terminal:</p>
+  <Cmd cmd={installCommand(listing)} />
+</div>
+
+<style>
+  .oiy { display: grid; gap: 10px; }
+  .where, .or { margin: 0; font-size: 13px; color: var(--color-muted); }
+  .where code { color: var(--color-ink-2); font-family: var(--font-mono); }
+  .where button { background: none; border: 0; padding: 0; color: var(--color-accent-hi); cursor: pointer; font: inherit; text-decoration: underline; }
+  .set { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 13px; }
+  .set[hidden] { display: none; }
+  .set input { flex: 1 1 220px; min-width: 0; background: var(--color-surface); color: var(--color-ink); border: 1px solid var(--color-line-strong); padding: 7px 9px; font: inherit; }
+  .set button { background: var(--color-surface-2); color: var(--color-ink); border: 1px solid var(--color-line-strong); padding: 7px 12px; cursor: pointer; font: inherit; }
+</style>
+
+<script>
+  const KEY = "yaaf.instance";
+  const DEFAULT = "http://localhost:24247";
+  function read(): string {
+    try { return localStorage.getItem(KEY) || DEFAULT; } catch { return DEFAULT; }
+  }
+  function apply(base: string) {
+    document.querySelectorAll<HTMLElement>(".oiy").forEach((box) => {
+      const link = box.querySelector<HTMLAnchorElement>("[data-open]");
+      if (link) {
+        const hash = link.href.slice(link.href.indexOf("#"));
+        link.href = base.replace(/\/+$/, "") + "/" + hash;
+      }
+      const shown = box.querySelector<HTMLElement>("[data-base]");
+      if (shown) shown.textContent = base.replace(/^https?:\/\//, "");
+    });
+  }
+  apply(read());
+  document.querySelectorAll<HTMLElement>(".oiy").forEach((box) => {
+    const form = box.querySelector<HTMLFormElement>("[data-form]");
+    const input = box.querySelector<HTMLInputElement>("[data-input]");
+    box.querySelector("[data-change]")?.addEventListener("click", () => {
+      if (!form || !input) return;
+      form.hidden = !form.hidden;
+      input.value = read();
+      input.focus();
+    });
+    form?.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const value = (input?.value || "").trim();
+      if (!/^https?:\/\/[^\s/]+/.test(value)) return;
+      try { localStorage.setItem(KEY, value); } catch { /* this browser only */ }
+      apply(value);
+      form.hidden = true;
+    });
+  });
+</script>

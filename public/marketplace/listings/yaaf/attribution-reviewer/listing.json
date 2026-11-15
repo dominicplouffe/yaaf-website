@@ -1,0 +1,12 @@
+{
+  "id": "@yaaf/attribution-reviewer",
+  "kind": "role",
+  "name": "Attribution Reviewer",
+  "summary": "Checks whether the numbers behind a recommendation mean what the recommendation says they mean.",
+  "category": "challenge",
+  "domains": [
+    "data"
+  ],
+  "license": "Apache-2.0",
+  "status": "active"
+}

@@ -1,0 +1,12 @@
+{
+  "id": "@yaaf/operator",
+  "kind": "role",
+  "name": "Execution Operator",
+  "summary": "The person who has to make the change in the real system on Monday morning.",
+  "category": "challenge",
+  "domains": [
+    "general"
+  ],
+  "license": "Apache-2.0",
+  "status": "active"
+}

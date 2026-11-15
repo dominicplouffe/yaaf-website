@@ -1,0 +1,12 @@
+{
+  "id": "@yaaf/data-scientist",
+  "kind": "role",
+  "name": "Data Scientist",
+  "summary": "The deep, expensive option: takes the whole hunt through a dataset — many cuts, time-series structure, models against baselines, backtests that survive…",
+  "category": "research",
+  "domains": [
+    "data"
+  ],
+  "license": "Apache-2.0",
+  "status": "active"
+}

@@ -1,0 +1,17 @@
+{
+  "id": "@yaaf/a-game-you-can-play",
+  "kind": "project",
+  "name": "A Game You Can Play",
+  "summary": "A small browser game you can actually play, built, tested and tuned by a game team.",
+  "category": "build",
+  "domains": [
+    "games"
+  ],
+  "license": "Apache-2.0",
+  "status": "active",
+  "details": {
+    "what_you_get": "A single HTML file you double-click, containing a small browser game that is genuinely fun for five minutes.",
+    "what_it_costs": "Capped at $80 — the largest in the set, because three teams and iteration on feel costs more than one memo.",
+    "what_you_need": "Your Anthropic API key. No build tooling, no engine, no store account. The deliverable runs by opening a file."
+  }
+}

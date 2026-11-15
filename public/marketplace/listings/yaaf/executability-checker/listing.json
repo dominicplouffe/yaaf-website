@@ -1,0 +1,12 @@
+{
+  "id": "@yaaf/executability-checker",
+  "kind": "role",
+  "name": "Executability Checker",
+  "summary": "Kills recommendations nobody can actually carry out.",
+  "category": "challenge",
+  "domains": [
+    "general"
+  ],
+  "license": "Apache-2.0",
+  "status": "active"
+}

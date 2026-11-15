@@ -1,0 +1,12 @@
+{
+  "id": "@yaaf/editor",
+  "kind": "role",
+  "name": "Editor / Independent Read",
+  "summary": "The first reader who did not write it.",
+  "category": "challenge",
+  "domains": [
+    "general"
+  ],
+  "license": "Apache-2.0",
+  "status": "active"
+}

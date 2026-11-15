@@ -1,0 +1,12 @@
+{
+  "id": "@yaaf/plan-adversary",
+  "kind": "role",
+  "name": "Plan Adversary / Coverage Review",
+  "summary": "Attacks the PLAN, not the work: assumes the brief is incomplete and proves it, against what the profession actually delivers.",
+  "category": "challenge",
+  "domains": [
+    "general"
+  ],
+  "license": "Apache-2.0",
+  "status": "active"
+}

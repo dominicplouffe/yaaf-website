@@ -10,8 +10,8 @@
   "license": "Apache-2.0",
   "status": "active",
   "details": {
-    "what_you_get": "a memo that answers one question you are stuck on, with enough evidence that you could defend the answer to someone who disagrees.",
-    "what_it_costs": "capped at $40; a well-scoped question lands well under it.",
-    "what_you_need": "your Anthropic API key. The research is done with the web tools your key already pays for; there is no search subscription."
+    "what_you_get": "A memo that answers one question you are stuck on, with enough evidence that you could defend the answer to someone who disagrees.",
+    "what_it_costs": "Capped at $40; a well-scoped question lands well under it.",
+    "what_you_need": "Your Anthropic API key. The research is done with the web tools your key already pays for; there is no search subscription."
   }
 }

@@ -10,8 +10,8 @@
   "license": "Apache-2.0",
   "status": "active",
   "details": {
-    "what_you_get": "a small, well-argued pull request most mornings, and a diagnosis waiting for you when CI goes red overnight.",
-    "what_it_costs": "capped at $120/month — the highest in the set, because it works every night.",
-    "what_you_need": "your Anthropic API key and a free GitHub account with a personal access token. This is the only example in the set that needs an account, and it needs one because the whole point is doing something in the world and proving it happened."
+    "what_you_get": "A small, well-argued pull request most mornings, and a diagnosis waiting for you when CI goes red overnight.",
+    "what_it_costs": "Capped at $120/month — the highest in the set, because it works every night.",
+    "what_you_need": "Your Anthropic API key and a free GitHub account with a personal access token. This is the only example in the set that needs an account, and it needs one because the whole point is doing something in the world and proving it happened."
   }
 }

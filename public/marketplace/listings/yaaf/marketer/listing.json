@@ -1,0 +1,12 @@
+{
+  "id": "@yaaf/marketer",
+  "kind": "role",
+  "name": "Marketing",
+  "summary": "Channels, positioning, campaigns, measurement.",
+  "category": "growth",
+  "domains": [
+    "general"
+  ],
+  "license": "Apache-2.0",
+  "status": "active"
+}

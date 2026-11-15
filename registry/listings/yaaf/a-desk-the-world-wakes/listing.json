@@ -10,8 +10,8 @@
   "license": "Apache-2.0",
   "status": "active",
   "details": {
-    "what_you_get": "a standing triage desk. Things happen; the desk finds out, works them, and keeps one living register that collapses repeats instead of growing forever.",
-    "what_it_costs": "capped at $50/month.",
-    "what_you_need": "your Anthropic API key. The endpoint and its signing secret are created with the project — no service to sign up for."
+    "what_you_get": "A standing triage desk. Things happen; the desk finds out, works them, and keeps one living register that collapses repeats instead of growing forever.",
+    "what_it_costs": "Capped at $50/month.",
+    "what_you_need": "Your Anthropic API key. The endpoint and its signing secret are created with the project — no service to sign up for."
   }
 }

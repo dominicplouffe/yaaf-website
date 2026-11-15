@@ -10,8 +10,8 @@
   "license": "Apache-2.0",
   "status": "active",
   "details": {
-    "what_you_get": "an initiation note on one public company, built only from its own filings, that a skeptic could attack.",
-    "what_it_costs": "capped at $60. Filings are long; the analysts read a lot.",
-    "what_you_need": "your Anthropic API key. Nothing else. Every filing this project reads is on [SEC EDGAR](https://www.sec.gov/edgar), which is free, public, and needs no account. If you have ever been told a research desk requires a data subscription: not for this."
+    "what_you_get": "An initiation note on one public company, built only from its own filings, that a skeptic could attack.",
+    "what_it_costs": "Capped at $60. Filings are long; the analysts read a lot.",
+    "what_you_need": "Your Anthropic API key. Nothing else. Every filing this project reads is on [SEC EDGAR](https://www.sec.gov/edgar), which is free, public, and needs no account. If you have ever been told a research desk requires a data subscription: not for this."
   }
 }

@@ -99,6 +99,9 @@ def test_a_role_listing_must_be_named_for_its_role(registry):
 
 
 def test_yaaf_itself_refuses_what_yaaf_would_refuse(registry):
+    import pytest
+
+    pytest.importorskip("yaaf", reason="yaaf's own validators run where yaaf is installed")
     edit(registry, "yaaf/writer", 1, lambda b: b["role"].__setitem__("effort", "ludicrous"))
     assert any("yaaf would refuse role writer" in e for e in errors())
 

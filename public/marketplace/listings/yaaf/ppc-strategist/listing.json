@@ -1,0 +1,13 @@
+{
+  "id": "@yaaf/ppc-strategist",
+  "kind": "role",
+  "name": "PPC Strategist",
+  "summary": "Decides what to change in an advertising account and what to leave alone.",
+  "category": "growth",
+  "domains": [
+    "general",
+    "data"
+  ],
+  "license": "Apache-2.0",
+  "status": "active"
+}

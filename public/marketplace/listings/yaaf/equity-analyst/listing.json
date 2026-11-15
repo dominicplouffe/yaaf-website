@@ -1,0 +1,12 @@
+{
+  "id": "@yaaf/equity-analyst",
+  "kind": "role",
+  "name": "Equity Research Analyst",
+  "summary": "Fundamental analysis of a company or sector: filings, financials, unit economics, guidance and the numbers a story has to survive.",
+  "category": "research",
+  "domains": [
+    "markets"
+  ],
+  "license": "Apache-2.0",
+  "status": "active"
+}

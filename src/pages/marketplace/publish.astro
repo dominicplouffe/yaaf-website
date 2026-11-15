@@ -1,0 +1,56 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Section from "../../components/Section.astro";
+import Cmd from "../../components/Cmd.astro";
+import { INDEX_URL, REGISTRY_REPO } from "../../lib/marketplace";
+---
+<BaseLayout title="Publish to the marketplace"
+  description="Publish a yaaf project or role from inside yaaf. Your keys and details stay behind, the Founder turns your specifics into blanks, and a moderator reads every version.">
+  <section class="page-hero">
+    <div class="shell">
+      <p class="eyebrow"><a href="/marketplace/">Marketplace</a> · Publish</p>
+      <h1>Publish the team that worked.</h1>
+      <p class="lede">You publish from inside yaaf, from the project or role itself. yaaf removes everything that is yours, the Founder turns your details into blanks, and you read the result the way a stranger will see it. A moderator reads it before anyone can install it.</p>
+    </div>
+  </section>
+
+  <Section first={true} eyebrow="Publishing" title="Four steps, about three minutes.">
+    <div class="cells c2 hued">
+      <div class="cell"><span class="eyebrow">1 · Click Publish</span><p>On a project: <b>Settings → Share</b>. On a role: <b>Roles → the role → Publish</b>. A project that finished carries its receipt: what it cost and what yaaf verified.</p></div>
+      <div class="cell"><span class="eyebrow">2 · Read it as a stranger</span><p>yaaf leaves out your keys, email, repo, domains and private addresses. The Founder replaces your details with blanks and asks only what it cannot decide, with its answer already chosen.</p></div>
+      <div class="cell"><span class="eyebrow">3 · Sign in with GitHub, once</span><p>yaaf shows a code to enter at github.com. Your GitHub name becomes your name here, so nobody can publish as you.</p></div>
+      <div class="cell"><span class="eyebrow">4 · Submit</span><p>yaaf opens the pull request for you and shows its state on the project. A moderator's note appears there too. When they approve, the listing is live.</p></div>
+    </div>
+    <p class="note">From a terminal, or for a script:</p>
+    <div class="inset cmds">
+      <Cmd cmd="yaaf publish project my-project" />
+      <Cmd cmd="yaaf publish role my-role" />
+    </div>
+  </Section>
+
+  <Section eyebrow="What never leaves your machine" title="Your yaaf refuses to send anything that is yours.">
+    <div class="cells c3 hued">
+      <div class="cell"><span class="eyebrow">Keys</span><p>Only their names travel, with a line on what each is for. The person installing brings their own.</p></div>
+      <div class="cell"><span class="eyebrow">Your details</span><p>yaaf checks the listing against every value it knows is yours, including key values, and refuses to send it if any remains.</p></div>
+      <div class="cell"><span class="eyebrow">Your servers</span><p>A data source on your own server travels as its name and the tools it needs. Its address stays behind.</p></div>
+    </div>
+  </Section>
+
+  <Section eyebrow="Review" title="A moderator reads every version.">
+    <div class="cells c2 hued">
+      <div class="cell"><span class="eyebrow">Checked automatically</span><p>The format, yaaf's own rules, secrets, private details, every key and data source declared, and a $0 test run of each project.</p></div>
+      <div class="cell"><span class="eyebrow">Read by a person</span><p>Every new listing and every update, shown as the change since the last approved version. Two moderators for anything that can run commands while holding a key, or that adds a power.</p></div>
+    </div>
+    <p class="note">The rules are short: it does what it says, it carries nothing of yours, it declares what it needs, and it asks for no more than the work needs. <a href={`${REGISTRY_REPO}/blob/main/GUIDELINES.md`} rel="noopener">Read the guidelines</a>.</p>
+  </Section>
+
+  <Section eyebrow="Open source" title="The marketplace is one registry among any number.">
+    <p class="note">yaaf reads whatever registries you list in <code>YAAF_LIBRARY_SOURCES</code>. This one is <code>{INDEX_URL}</code>. A company can run its own with the same format and tools, and yaaf works the same with none at all.</p>
+  </Section>
+</BaseLayout>
+
+<style>
+  .cmds { display: grid; gap: 8px; max-width: 560px; }
+  .note code { font-family: var(--font-mono); font-size: 0.9em; color: var(--color-ink); }
+  .eyebrow a { color: inherit; }
+</style>

@@ -10,8 +10,8 @@
   "license": "Apache-2.0",
   "status": "active",
   "details": {
-    "what_you_get": "one small tool that has actually been attacked, and a written record of what was tried and what held.",
-    "what_it_costs": "capped at $90 — attacking costs more than building, which is the correct ratio and rarely the one people budget for.",
-    "what_you_need": "your Anthropic API key."
+    "what_you_get": "One small tool that has actually been attacked, and a written record of what was tried and what held.",
+    "what_it_costs": "Capped at $90 — attacking costs more than building, which is the correct ratio and rarely the one people budget for.",
+    "what_you_need": "Your Anthropic API key."
   }
 }

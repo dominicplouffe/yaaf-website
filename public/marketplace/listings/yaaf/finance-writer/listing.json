@@ -1,0 +1,12 @@
+{
+  "id": "@yaaf/finance-writer",
+  "kind": "role",
+  "name": "Market Commentary Writer",
+  "summary": "Turns the desk's research into prose a reader finishes: briefs, newsletters, memos.",
+  "category": "content",
+  "domains": [
+    "markets"
+  ],
+  "license": "Apache-2.0",
+  "status": "active"
+}

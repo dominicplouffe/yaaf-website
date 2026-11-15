@@ -174,7 +174,7 @@ def writeup(stem: str) -> dict:
             if m:
                 clean = re.sub(r"\s+", " ", m.group(1)).strip()
                 clean = re.sub(r"[*_`]", "", clean)
-                return clean[:800]
+                return (clean[:1].upper() + clean[1:])[:800]
         return None
 
     details = {"what_you_get": para("What you get"), "what_it_costs": para("What it costs", "Cost"),

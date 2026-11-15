@@ -14,7 +14,8 @@
     "check": "astro check",
     "deploy": "./scripts/deploy.sh",
     "og": "node scripts/make-og.mjs",
-    "check:links": "node scripts/check-links.mjs"
+    "check:links": "node scripts/check-links.mjs",
+    "sync:marketplace": "node scripts/sync-marketplace.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",

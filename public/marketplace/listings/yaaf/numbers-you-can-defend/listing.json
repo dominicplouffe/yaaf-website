@@ -1,0 +1,17 @@
+{
+  "id": "@yaaf/numbers-you-can-defend",
+  "kind": "project",
+  "name": "Numbers You Can Defend",
+  "summary": "Answers a question from a public dataset so a skeptic could re-derive every number.",
+  "category": "research",
+  "domains": [
+    "data"
+  ],
+  "license": "Apache-2.0",
+  "status": "active",
+  "details": {
+    "what_you_get": "A memo that answers one question, the scripts that produce every number in it, and a provenance file pinning the exact data those numbers came from — a bundle you could hand to someone who asks \"how do you know?\"",
+    "what_it_costs": "Capped at $60. Most of it goes on the analysis; the checks are cheap and are the part you are actually paying for.",
+    "what_you_need": "Your Anthropic API key. The data is free, public, and needs no account; the project fetches it itself."
+  }
+}

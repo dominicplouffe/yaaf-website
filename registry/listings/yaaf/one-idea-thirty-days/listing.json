@@ -10,8 +10,8 @@
   "license": "Apache-2.0",
   "status": "active",
   "details": {
-    "what_you_get": "one small product idea with an argument that survives attack — or an honest \"there is nothing here\", which is the same deliverable.",
-    "what_it_costs": "capped at $60 over the window.",
-    "what_you_need": "your Anthropic API key."
+    "what_you_get": "One small product idea with an argument that survives attack — or an honest \"there is nothing here\", which is the same deliverable.",
+    "what_it_costs": "Capped at $60 over the window.",
+    "what_you_need": "Your Anthropic API key."
   }
 }
