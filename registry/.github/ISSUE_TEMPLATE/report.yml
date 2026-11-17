@@ -1,0 +1,30 @@
+name: Report a listing
+description: Something in a listing is harmful, misleading, or not what it says.
+labels: [report]
+body:
+  - type: input
+    id: listing
+    attributes:
+      label: Listing
+      placeholder: "@handle/slug"
+    validations:
+      required: true
+  - type: dropdown
+    id: what
+    attributes:
+      label: What is wrong
+      options:
+        - It tries to send data or credentials somewhere
+        - It does something its summary does not say
+        - It impersonates someone
+        - It is spam or a duplicate
+        - Something else
+    validations:
+      required: true
+  - type: textarea
+    id: detail
+    attributes:
+      label: What you saw
+      description: Quote the lines, and the version if you know it.
+    validations:
+      required: true

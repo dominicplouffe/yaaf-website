@@ -46,6 +46,7 @@ const NAV_ALL = [
   { label: "Harnesses", href: "/runtimes/" },
   { label: "Features", href: "/features/" },
   { label: "The team", href: "/org/" },
+  { label: "Marketplace", href: "/marketplace/" },
   { label: "Compare", href: "/compare/" },
   { label: "Docs", href: "/docs/" },
 ];

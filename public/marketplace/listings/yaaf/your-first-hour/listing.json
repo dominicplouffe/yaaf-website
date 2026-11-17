@@ -1,0 +1,17 @@
+{
+  "id": "@yaaf/your-first-hour",
+  "kind": "project",
+  "name": "Your First Hour",
+  "summary": "One 800-word briefing note that explains a subject you name to a smart beginner.",
+  "category": "content",
+  "domains": [
+    "general"
+  ],
+  "license": "Apache-2.0",
+  "status": "active",
+  "details": {
+    "what_you_get": "One briefing note, about 800 words, that explains a subject you pick to someone smart who knows nothing about it.",
+    "what_it_costs": "A few dollars at most. The budget is capped at $20 and it will not come close.",
+    "what_you_need": "Your Anthropic API key. Nothing else. No accounts, no data feeds, no repo."
+  }
+}

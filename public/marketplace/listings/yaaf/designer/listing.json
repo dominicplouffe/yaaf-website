@@ -1,0 +1,12 @@
+{
+  "id": "@yaaf/designer",
+  "kind": "role",
+  "name": "Product / UI Designer",
+  "summary": "Owns how the product looks and feels: a design system, then screens and specs a developer can build without guessing.",
+  "category": "content",
+  "domains": [
+    "general"
+  ],
+  "license": "Apache-2.0",
+  "status": "active"
+}

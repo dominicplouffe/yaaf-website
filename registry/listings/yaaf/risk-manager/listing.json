@@ -1,0 +1,12 @@
+{
+  "id": "@yaaf/risk-manager",
+  "kind": "role",
+  "name": "Risk Manager",
+  "summary": "The desk's brake: exposure, concentration, correlation, drawdown and liquidity limits.",
+  "category": "challenge",
+  "domains": [
+    "markets"
+  ],
+  "license": "Apache-2.0",
+  "status": "active"
+}

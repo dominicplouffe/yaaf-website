@@ -1,0 +1,36 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import Section from "../../../components/Section.astro";
+import ListingCard from "../../../components/ListingCard.astro";
+import { active } from "../../../lib/marketplace";
+
+export function getStaticPaths() {
+  const handles = [...new Set(active.map((l) => l.publisher))];
+  return handles.map((handle) => ({ params: { handle }, props: { handle } }));
+}
+
+const { handle } = Astro.props as { handle: string };
+const mine = active.filter((l) => l.publisher === handle);
+const official = handle === "yaaf";
+---
+<BaseLayout title={`@${handle}`} description={`${mine.length} listings published by @${handle} on the yaaf marketplace.`} cta={false}>
+  <section class="page-hero">
+    <div class="shell">
+      <p class="eyebrow"><a href="/marketplace/">Marketplace</a> · Publisher</p>
+      <h1>@{handle}</h1>
+      <p class="lede">
+        {official
+          ? "The library that ships with yaaf, published through the same review as everyone else's."
+          : <>Publishes as the GitHub account <a href={`https://github.com/${handle}`} rel="noopener">{handle}</a>. That proves who published a listing, not that it is safe: read what it can do before you install it.</>}
+      </p>
+    </div>
+  </section>
+  <Section first={true}>
+    <div class="grid">{mine.map((l) => <ListingCard listing={l} />)}</div>
+  </Section>
+</BaseLayout>
+
+<style>
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; padding-inline: var(--inset); }
+  .eyebrow a { color: inherit; }
+</style>

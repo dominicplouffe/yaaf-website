@@ -1,0 +1,13 @@
+{
+  "id": "@yaaf/quant-researcher",
+  "kind": "role",
+  "name": "Quantitative Researcher",
+  "summary": "Tests whether a market claim survives data: hypothesis, point-in-time data, costs, walk-forward, and an honest null result when there is nothing there.",
+  "category": "research",
+  "domains": [
+    "markets",
+    "data"
+  ],
+  "license": "Apache-2.0",
+  "status": "active"
+}

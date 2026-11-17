@@ -1,0 +1,12 @@
+{
+  "id": "@yaaf/exec-communicator",
+  "kind": "role",
+  "name": "Executive Communicator",
+  "summary": "Turns the data desk's findings, caveats and provenance into a short HTML slide deck an executive finishes and acts on.",
+  "category": "content",
+  "domains": [
+    "data"
+  ],
+  "license": "Apache-2.0",
+  "status": "active"
+}

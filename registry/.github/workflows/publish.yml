@@ -1,0 +1,27 @@
+name: Publish
+
+# A merge is a publication: rebuild the index and tell the website.
+on:
+  push:
+    branches: [main]
+    paths: ["listings/**"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: python tools/build_index.py --out dist
+      - name: tell the website to sync
+        env:
+          GH_TOKEN: ${{ secrets.WEBSITE_DISPATCH_TOKEN }}
+        run: |
+          gh api repos/dominicplouffe/yaaf-website/dispatches \
+            -f event_type=marketplace-updated -f "client_payload[sha]=${GITHUB_SHA}"

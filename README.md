@@ -52,6 +52,29 @@ renders them, so a surprising sync is visible on the page.
 > counts `src/content/roles/*.json` at build time, and everything else the pages
 > state about the repository comes from the manifest.
 
+## The marketplace
+
+`/marketplace/` lists roles and projects people publish for yaaf. Its data is
+the registry in `registry/` (format: `registry/SPEC.md`), which is built to
+become its own repository, `yaaf-marketplace`, with one command
+(`registry/README.md`).
+
+```bash
+npm run sync:marketplace   # registry/ -> public/marketplace/ (committed)
+```
+
+`public/marketplace/index.json` is served at
+`https://yaaf.dplouffe.ca/marketplace/index.json`, the address every yaaf
+install reads by default (`YAAF_LIBRARY_SOURCES`). It is regenerated from the
+listings, never edited, and CI fails if it differs from a fresh build. The
+pages read the same files, so the site never shows a listing yaaf would not
+install. **Open in yaaf** is a plain link to `/#/library/install` on the
+visitor's own install (`localhost:24247` unless they set another address,
+remembered in their browser only), so the site still makes no requests.
+
+`registry/tools/import_yaaf.py` republishes yaaf's own roles and examples as
+`@yaaf` listings: a new version only when what a listing installs changed.
+
 ## Configuration
 
 Everything that is a decision rather than content is in **`src/site.config.mjs`**:
@@ -223,7 +246,7 @@ src/
   components/          CompanyChart, TeamDiagram, AutonomyDial, OrgChart, RoleCard, Shot, Term, Drill, Section, Nav, Foot
   layouts/             BaseLayout, DocsLayout
   pages/               index, manifesto, how-it-works, features, runtimes (Harnesses), faq,
-                       changelog, org, examples, docs, 404; _compare is hidden
+                       changelog, org, marketplace/, docs, 404; _compare is hidden
                        while SHOW_COMPARE is off, and /why/ redirects to /manifesto/
 scripts/
   sync-content.mjs     the content pipeline

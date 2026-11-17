@@ -1,0 +1,2165 @@
+{
+ "registry": {
+  "spec": 1,
+  "name": "yaaf marketplace",
+  "publish": {
+   "method": "github-pr",
+   "repo": "dominicplouffe/yaaf-marketplace",
+   "client_id": null
+  }
+ },
+ "generated_at": "2026-11-14T00:00:00Z",
+ "listings": [
+  {
+   "id": "@yaaf/a-content-engine",
+   "kind": "project",
+   "name": "A Content Engine",
+   "summary": "Blog posts on your subject, drafted to WordPress, graded by whether real readers respond.",
+   "category": "content",
+   "domains": [
+    "general"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "details": {
+    "what_you_get": "Posts published as WordPress drafts for you to approve, each answering one question a real person asks — and an honest account of whether anybody outside responded.",
+    "what_it_costs": "Capped at $150/month on purpose, and the goal says why. The drill reports it fits if a run costs under $12.50 — check that against a bill you have seen.",
+    "what_you_need": "Your Anthropic API key, and a WordPress site with an application password. Without the WordPress credential the desk still runs — the posts land in the workspace as drafts and nothing reaches the world."
+   },
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/a-content-engine/versions/1.json",
+     "sha256": "08af08d70cb83db369239b000298e88adab5fa1492e6759ea36fd0c0ae7687be",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "bash",
+      "data_processing",
+      "files",
+      "web"
+     ],
+     "keys": [
+      "wordpress"
+     ],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [
+      "subject",
+      "site",
+      "publication"
+     ],
+     "roles": [
+      "ceo",
+      "researcher",
+      "blog-writer",
+      "editor",
+      "marketer"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/a-desk-the-world-wakes",
+   "kind": "project",
+   "name": "A Desk The World Wakes Up",
+   "summary": "A standing triage desk that answers what arrives at your project's webhook, day and night.",
+   "category": "build",
+   "domains": [
+    "general"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "details": {
+    "what_you_get": "A standing triage desk. Things happen; the desk finds out, works them, and keeps one living register that collapses repeats instead of growing forever.",
+    "what_it_costs": "Capped at $50/month.",
+    "what_you_need": "Your Anthropic API key. The endpoint and its signing secret are created with the project — no service to sign up for."
+   },
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/a-desk-the-world-wakes/versions/1.json",
+     "sha256": "a6fcf0fa2b363f0674246b82aa5d66daa383e15c578f8c73c4f94d093752ab30",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "bash",
+      "data_processing",
+      "files",
+      "web"
+     ],
+     "keys": [
+      "github"
+     ],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [
+      "product"
+     ],
+     "roles": [
+      "ceo",
+      "support",
+      "engineer"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/a-game-you-can-play",
+   "kind": "project",
+   "name": "A Game You Can Play",
+   "summary": "A small browser game you can actually play, built, tested and tuned by a game team.",
+   "category": "build",
+   "domains": [
+    "games"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "details": {
+    "what_you_get": "A single HTML file you double-click, containing a small browser game that is genuinely fun for five minutes.",
+    "what_it_costs": "Capped at $80 — the largest in the set, because three teams and iteration on feel costs more than one memo.",
+    "what_you_need": "Your Anthropic API key. No build tooling, no engine, no store account. The deliverable runs by opening a file."
+   },
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/a-game-you-can-play/versions/1.json",
+     "sha256": "4a307a501609ab152ca788d4d80d642f1aa73205ca4cd5f5f70355b60f89788c",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "bash",
+      "data_processing",
+      "files",
+      "web"
+     ],
+     "keys": [
+      "github"
+     ],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [],
+     "roles": [
+      "ceo",
+      "game-developer",
+      "game-ux-designer",
+      "game-analyst"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/a-red-team",
+   "kind": "project",
+   "name": "A Red Team That Can Block",
+   "summary": "Builds one small tool, then a second team tries to break it until it cannot.",
+   "category": "challenge",
+   "domains": [
+    "general"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "details": {
+    "what_you_get": "One small tool that has actually been attacked, and a written record of what was tried and what held.",
+    "what_it_costs": "Capped at $90 — attacking costs more than building, which is the correct ratio and rarely the one people budget for.",
+    "what_you_need": "Your Anthropic API key."
+   },
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/a-red-team/versions/1.json",
+     "sha256": "d2774649304714d5f5aa832ded5de4609e027c4416dceb9c84db62e87cd7f912",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "bash",
+      "data_processing",
+      "files",
+      "web"
+     ],
+     "keys": [
+      "github"
+     ],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [
+      "thing"
+     ],
+     "roles": [
+      "ceo",
+      "engineer",
+      "adversary"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/a-tutor-that-adapts",
+   "kind": "project",
+   "name": "A Tutor That Adapts",
+   "summary": "One lesson a week on a subject you choose, re-planned around what you actually get wrong.",
+   "category": "content",
+   "domains": [
+    "education"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "details": {
+    "what_you_get": "One lesson a week on a subject you choose — explanation, worked example, exercises, answer key — and a curriculum that changes based on the answers you leave for it.",
+    "what_it_costs": "Capped at $40/month. A lesson is a handful of runs.",
+    "what_you_need": "Your Anthropic API key, and about twenty minutes a week."
+   },
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/a-tutor-that-adapts/versions/1.json",
+     "sha256": "97f8f4b06549e0bf8b462563139002c2a30bc4869ad7667ef79440f3db3c86c6",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "data_processing",
+      "files",
+      "web"
+     ],
+     "keys": [],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [
+      "subject"
+     ],
+     "roles": [
+      "ceo",
+      "tutor"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/adversary",
+   "kind": "role",
+   "name": "Red Team / Adversarial Reviewer",
+   "summary": "Tries to break the team's own work before anyone outside does.",
+   "category": "challenge",
+   "domains": [
+    "general"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/adversary/versions/1.json",
+     "sha256": "9911cd7df598535b7e6122b977c283b85377ba8498c07ee4ddbd19000e9e61a9",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "bash",
+      "data_processing",
+      "files",
+      "web"
+     ],
+     "keys": [],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [],
+     "roles": [
+      "adversary"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/an-overnight-crew",
+   "kind": "project",
+   "name": "An Overnight Crew",
+   "summary": "Keeps a repository you own healthy overnight: one valuable piece of maintenance a night.",
+   "category": "build",
+   "domains": [
+    "general"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "details": {
+    "what_you_get": "A small, well-argued pull request most mornings, and a diagnosis waiting for you when CI goes red overnight.",
+    "what_it_costs": "Capped at $120/month — the highest in the set, because it works every night.",
+    "what_you_need": "Your Anthropic API key and a free GitHub account with a personal access token. This is the only example in the set that needs an account, and it needs one because the whole point is doing something in the world and proving it happened."
+   },
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/an-overnight-crew/versions/1.json",
+     "sha256": "414de7d91d74e2740a8a7dbe2f04875fa0df435eb0f174d2b95042f81a416ca1",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "bash",
+      "data_processing",
+      "files",
+      "web"
+     ],
+     "keys": [
+      "github"
+     ],
+     "required_keys": [
+      "github"
+     ],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": true,
+     "inputs": [],
+     "roles": [
+      "ceo",
+      "engineer"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/attribution-reviewer",
+   "kind": "role",
+   "name": "Attribution Reviewer",
+   "summary": "Checks whether the numbers behind a recommendation mean what the recommendation says they mean.",
+   "category": "challenge",
+   "domains": [
+    "data"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/attribution-reviewer/versions/1.json",
+     "sha256": "609b8187bdc2b229e9a062a54ec5aa773978c8862f0cd306e89a50d7651e20df",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "bash",
+      "data_processing",
+      "files"
+     ],
+     "keys": [],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [],
+     "roles": [
+      "attribution-reviewer"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/blog-writer",
+   "kind": "role",
+   "name": "Marketing Blog Writer",
+   "summary": "Writes marketing blog posts that earn attention from real readers: researched, sourced, publishable prose aimed at a specific search intent — and publishes…",
+   "category": "content",
+   "domains": [
+    "general"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/blog-writer/versions/1.json",
+     "sha256": "93d25dbcb654b50b883d161d8f607a4e08029309895d43127f0d09b13e6ddea0",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "bash",
+      "files",
+      "web"
+     ],
+     "keys": [
+      "wordpress"
+     ],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [],
+     "roles": [
+      "blog-writer"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/ceo",
+   "kind": "role",
+   "name": "CEO / Project Manager",
+   "summary": "Owns the plan, bet selection, and kill decisions.",
+   "category": "leadership",
+   "domains": [
+    "general"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/ceo/versions/1.json",
+     "sha256": "46cb8f3736e51b92ba30c456b524480d8e9f9600b274f9ea41de76135bfec21f",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "data_processing",
+      "files",
+      "web"
+     ],
+     "keys": [],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [],
+     "roles": [
+      "ceo"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/cio",
+   "kind": "role",
+   "name": "Chief Investment Officer",
+   "summary": "The CEO role for markets work: owns the mandate, the research agenda, and the kill decisions.",
+   "category": "leadership",
+   "domains": [
+    "markets"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/cio/versions/1.json",
+     "sha256": "701d4f01c209dc5038670318978de3563affda771332af9266991deaf686e8dc",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "data_processing",
+      "files",
+      "web"
+     ],
+     "keys": [],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [],
+     "roles": [
+      "cio"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/compliance-officer",
+   "kind": "role",
+   "name": "Compliance Reviewer",
+   "summary": "Reviews anything the desk publishes or acts on for the lines that must not be crossed: advice, claims, licensing, non-public information, and market conduct.",
+   "category": "challenge",
+   "domains": [
+    "markets"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/compliance-officer/versions/1.json",
+     "sha256": "fd35d1471942ceddf19a969c5eaef884789e3a64416856f800c34b5d7e2c8987",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "data_processing",
+      "files",
+      "web"
+     ],
+     "keys": [],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [],
+     "roles": [
+      "compliance-officer"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/data-analyst",
+   "kind": "role",
+   "name": "Data Analyst",
+   "summary": "Turns a pile of records into findings someone can act on and someone else can re-derive.",
+   "category": "research",
+   "domains": [
+    "data"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/data-analyst/versions/1.json",
+     "sha256": "bcd118883dbef1636650129d000a0ff2c1e6074ba0408b434fddc44a74c38763",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "bash",
+      "data_processing",
+      "files",
+      "web"
+     ],
+     "keys": [],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [],
+     "roles": [
+      "data-analyst"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/data-scientist",
+   "kind": "role",
+   "name": "Data Scientist",
+   "summary": "The deep, expensive option: takes the whole hunt through a dataset — many cuts, time-series structure, models against baselines, backtests that survive…",
+   "category": "research",
+   "domains": [
+    "data"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/data-scientist/versions/1.json",
+     "sha256": "70204add3aa0c64a85237eed9e8064338298d308e56ed9623a7e435dfec2304b",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "bash",
+      "data_processing",
+      "files",
+      "web"
+     ],
+     "keys": [],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [],
+     "roles": [
+      "data-scientist"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/data-skeptic",
+   "kind": "role",
+   "name": "Adversarial Data Scientist",
+   "summary": "A data scientist who reviews other data scientists and expects to find them wrong.",
+   "category": "challenge",
+   "domains": [
+    "data"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/data-skeptic/versions/1.json",
+     "sha256": "95ea37440e92b7702c541c8daac080dfa0c15292ae0e03c1930b7a18cfa8cb5a",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "bash",
+      "data_processing",
+      "files",
+      "web"
+     ],
+     "keys": [],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [],
+     "roles": [
+      "data-skeptic"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/designer",
+   "kind": "role",
+   "name": "Product / UI Designer",
+   "summary": "Owns how the product looks and feels: a design system, then screens and specs a developer can build without guessing.",
+   "category": "content",
+   "domains": [
+    "general"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/designer/versions/1.json",
+     "sha256": "b842b3fefaf111cd0c7e004afa09289b8b5bdda745dd740986c421560301eb6f",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "data_processing",
+      "files",
+      "web"
+     ],
+     "keys": [],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [],
+     "roles": [
+      "designer"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/editor",
+   "kind": "role",
+   "name": "Editor / Independent Read",
+   "summary": "The first reader who did not write it.",
+   "category": "challenge",
+   "domains": [
+    "general"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/editor/versions/1.json",
+     "sha256": "41542ab226fc16f19b8fdbe16b1b332f2c71c46ceb4e20e949d958e6cc8fa6b6",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "data_processing",
+      "files",
+      "web"
+     ],
+     "keys": [],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [],
+     "roles": [
+      "editor"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/engineer",
+   "kind": "role",
+   "name": "Software Engineer",
+   "summary": "Builds and runs everything technical: product code, infrastructure, deploys, tests, data.",
+   "category": "build",
+   "domains": [
+    "general"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/engineer/versions/1.json",
+     "sha256": "3de636956208f25cff070584b4b19808913813ed133fd75589873c70216f47f3",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "bash",
+      "files",
+      "web"
+     ],
+     "keys": [
+      "github"
+     ],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [],
+     "roles": [
+      "engineer"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/equity-analyst",
+   "kind": "role",
+   "name": "Equity Research Analyst",
+   "summary": "Fundamental analysis of a company or sector: filings, financials, unit economics, guidance and the numbers a story has to survive.",
+   "category": "research",
+   "domains": [
+    "markets"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/equity-analyst/versions/1.json",
+     "sha256": "b2e46052a4c03dfd3172035cdd1ac7bc01299c4f15fb942e1e0ae0926da19c8f",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "data_processing",
+      "files",
+      "web"
+     ],
+     "keys": [],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [],
+     "roles": [
+      "equity-analyst"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/exec-communicator",
+   "kind": "role",
+   "name": "Executive Communicator",
+   "summary": "Turns the data desk's findings, caveats and provenance into a short HTML slide deck an executive finishes and acts on.",
+   "category": "content",
+   "domains": [
+    "data"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/exec-communicator/versions/1.json",
+     "sha256": "80c8b4459416e4d37049033716aef9346d31ac3f979b137b0f4f1cb340c925fb",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "data_processing",
+      "files",
+      "web"
+     ],
+     "keys": [],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [],
+     "roles": [
+      "exec-communicator"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/executability-checker",
+   "kind": "role",
+   "name": "Executability Checker",
+   "summary": "Kills recommendations nobody can actually carry out.",
+   "category": "challenge",
+   "domains": [
+    "general"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/executability-checker/versions/1.json",
+     "sha256": "1ead031ef6c842819697b5fb2dc4374014685962a7bcb87ad4f5c171028a20cb",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "files"
+     ],
+     "keys": [],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [],
+     "roles": [
+      "executability-checker"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/finance-writer",
+   "kind": "role",
+   "name": "Market Commentary Writer",
+   "summary": "Turns the desk's research into prose a reader finishes: briefs, newsletters, memos.",
+   "category": "content",
+   "domains": [
+    "markets"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/finance-writer/versions/1.json",
+     "sha256": "397b216c73808b8ef775c37711851e298dba50a1aa1b093f2477e82138e5567c",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "data_processing",
+      "files",
+      "web"
+     ],
+     "keys": [],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [],
+     "roles": [
+      "finance-writer"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/game-analyst",
+   "kind": "role",
+   "name": "Mobile Game Researcher / Analyst",
+   "summary": "Studies the mobile games market — what is selling, what retains, what is actually fun — and turns that into concrete, prioritized suggestions for a specific…",
+   "category": "research",
+   "domains": [
+    "games"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/game-analyst/versions/1.json",
+     "sha256": "d4435b10dcec671b8bf7d98ff713c070aa956e1c34d30f1b6f045c96568caf03",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "data_processing",
+      "files",
+      "web"
+     ],
+     "keys": [],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [],
+     "roles": [
+      "game-analyst"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/game-developer",
+   "kind": "role",
+   "name": "Mobile Game Developer",
+   "summary": "Builds and ships mobile games in JavaScript/TypeScript — Expo/React Native first, plus web-based engines (Phaser, PixiJS, canvas/WebGL) when they fit.",
+   "category": "build",
+   "domains": [
+    "games"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/game-developer/versions/1.json",
+     "sha256": "9f5d27f032938d22d68e9f06b7f62eda17a4defa289ee2542de7e2318773bc38",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "bash",
+      "files",
+      "web"
+     ],
+     "keys": [
+      "github"
+     ],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [],
+     "roles": [
+      "game-developer"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/game-graphic-designer",
+   "kind": "role",
+   "name": "Mobile Game Graphic Designer",
+   "summary": "Art director for AI-generated game art: defines the game's visual identity, then writes precise, reproducible image-generation prompts and asset specs so…",
+   "category": "content",
+   "domains": [
+    "games"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/game-graphic-designer/versions/1.json",
+     "sha256": "77b2ac52f98f4ec63211165757bb01dc21a428f40e52b0860bbf126215849169",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "data_processing",
+      "files",
+      "web"
+     ],
+     "keys": [],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [],
+     "roles": [
+      "game-graphic-designer"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/game-ux-designer",
+   "kind": "role",
+   "name": "Mobile Game UX Designer",
+   "summary": "Deep experience critiquing and designing mobile game UX: onboarding, controls, HUD, menus, monetization flows, juice.",
+   "category": "content",
+   "domains": [
+    "games"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/game-ux-designer/versions/1.json",
+     "sha256": "132960c899abc6f2ac0128d895b3ae624b4df4adaf45f83ebf94440093b740f7",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "data_processing",
+      "files",
+      "web"
+     ],
+     "keys": [],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [],
+     "roles": [
+      "game-ux-designer"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/gtm",
+   "kind": "role",
+   "name": "Go-to-Market",
+   "summary": "Offers, pricing, distribution, outreach.",
+   "category": "growth",
+   "domains": [
+    "general"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/gtm/versions/1.json",
+     "sha256": "ac35b934644120b1732742efd6df6b9884e7c7db13d939438c03d7dd423909ba",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "data_processing",
+      "files",
+      "web"
+     ],
+     "keys": [],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [],
+     "roles": [
+      "gtm"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/macro-analyst",
+   "kind": "role",
+   "name": "Macro Analyst",
+   "summary": "Rates, inflation, growth, currencies, commodities and central banks.",
+   "category": "research",
+   "domains": [
+    "markets"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/macro-analyst/versions/1.json",
+     "sha256": "c5ac4579b03ea08034d41a1440f8b8358d4b7516c3df45f4c5f21d9a0bf32c33",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "data_processing",
+      "files",
+      "web"
+     ],
+     "keys": [
+      "market-data"
+     ],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [],
+     "roles": [
+      "macro-analyst"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/market-data-engineer",
+   "kind": "role",
+   "name": "Market Data Engineer",
+   "summary": "Owns the data the desk reasons from: ingestion, corporate actions, point-in-time correctness, validation, and the pipeline that reruns without a human.",
+   "category": "build",
+   "domains": [
+    "markets",
+    "data"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/market-data-engineer/versions/1.json",
+     "sha256": "5ec81348d4db36f58c64c93f93151b03bf2208b9e79eea435d2c6f21ae3c25e6",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "bash",
+      "files",
+      "web"
+     ],
+     "keys": [
+      "market-data",
+      "github"
+     ],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [],
+     "roles": [
+      "market-data-engineer"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/market-news-analyst",
+   "kind": "role",
+   "name": "Market News Analyst",
+   "summary": "Watches the tape: filings, earnings, guidance, central-bank and macro releases.",
+   "category": "research",
+   "domains": [
+    "markets"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/market-news-analyst/versions/1.json",
+     "sha256": "9aa6cbf44757cb2cf2551b36a05503ff6a8a741a9e27596ebd4b0c89e21d31dc",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "data_processing",
+      "files",
+      "web"
+     ],
+     "keys": [
+      "news-api"
+     ],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [],
+     "roles": [
+      "market-news-analyst"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/marketer",
+   "kind": "role",
+   "name": "Marketing",
+   "summary": "Channels, positioning, campaigns, measurement.",
+   "category": "growth",
+   "domains": [
+    "general"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/marketer/versions/1.json",
+     "sha256": "a6e3dfa77292eb120b47fbb2b4de83c2e94f06b1b19651406f01932298411064",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "data_processing",
+      "files",
+      "web"
+     ],
+     "keys": [],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [],
+     "roles": [
+      "marketer"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/numbers-you-can-defend",
+   "kind": "project",
+   "name": "Numbers You Can Defend",
+   "summary": "Answers a question from a public dataset so a skeptic could re-derive every number.",
+   "category": "research",
+   "domains": [
+    "data"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "details": {
+    "what_you_get": "A memo that answers one question, the scripts that produce every number in it, and a provenance file pinning the exact data those numbers came from — a bundle you could hand to someone who asks \"how do you know?\"",
+    "what_it_costs": "Capped at $60. Most of it goes on the analysis; the checks are cheap and are the part you are actually paying for.",
+    "what_you_need": "Your Anthropic API key. The data is free, public, and needs no account; the project fetches it itself."
+   },
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/numbers-you-can-defend/versions/1.json",
+     "sha256": "54562e1081c447c5eebcd4bea25d3edfc2498216a31558f8ebe634bd383e5db4",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "bash",
+      "data_processing",
+      "files",
+      "web"
+     ],
+     "keys": [
+      "github"
+     ],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [
+      "question"
+     ],
+     "roles": [
+      "ceo",
+      "data-analyst",
+      "engineer"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/one-idea-thirty-days",
+   "kind": "project",
+   "name": "One Idea, Thirty Days",
+   "summary": "One software idea worth building, with outside proof that someone wants it, in 30 days.",
+   "category": "growth",
+   "domains": [
+    "general"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "details": {
+    "what_you_get": "One small product idea with an argument that survives attack — or an honest \"there is nothing here\", which is the same deliverable.",
+    "what_it_costs": "Capped at $60 over the window.",
+    "what_you_need": "Your Anthropic API key."
+   },
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/one-idea-thirty-days/versions/1.json",
+     "sha256": "8e06541a3538e120f3f94c700a4c778693319faf31d42adb02fc06b2cfebf599",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "data_processing",
+      "files",
+      "web"
+     ],
+     "keys": [],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [],
+     "roles": [
+      "ceo",
+      "gtm"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/operator",
+   "kind": "role",
+   "name": "Execution Operator",
+   "summary": "The person who has to make the change in the real system on Monday morning.",
+   "category": "challenge",
+   "domains": [
+    "general"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/operator/versions/1.json",
+     "sha256": "4f7f756f192238ff16b06bd5f28435abdca432db27bd11db9a3c531a6fe1570f",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "bash",
+      "data_processing",
+      "files",
+      "web"
+     ],
+     "keys": [],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [],
+     "roles": [
+      "operator"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/plan-adversary",
+   "kind": "role",
+   "name": "Plan Adversary / Coverage Review",
+   "summary": "Attacks the PLAN, not the work: assumes the brief is incomplete and proves it, against what the profession actually delivers.",
+   "category": "challenge",
+   "domains": [
+    "general"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/plan-adversary/versions/1.json",
+     "sha256": "b6679f05da92d7e7dc2cf691da4ee9a1e7e7008ec8dead19b4d84978efd1c5cb",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "data_processing",
+      "files",
+      "web"
+     ],
+     "keys": [],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [],
+     "roles": [
+      "plan-adversary"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/portfolio-manager",
+   "kind": "role",
+   "name": "Portfolio Manager",
+   "summary": "Turns the desk's research into a recommended book: what to hold, at what weight, why, and what would change it.",
+   "category": "leadership",
+   "domains": [
+    "markets"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/portfolio-manager/versions/1.json",
+     "sha256": "4a88f673eaed8a25d6d36611b8d4c23f0592eaac718c839ef8d682a975a9f146",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "data_processing",
+      "files",
+      "web"
+     ],
+     "keys": [
+      "market-data"
+     ],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [],
+     "roles": [
+      "portfolio-manager"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/ppc-analyst",
+   "kind": "role",
+   "name": "PPC Analyst",
+   "summary": "Turns an advertising account's rows into figures somebody can act on and somebody else can re-derive.",
+   "category": "research",
+   "domains": [
+    "data"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/ppc-analyst/versions/1.json",
+     "sha256": "b90da6c7673a422a4f0ec55d8556c9bfd329340440ea3557338bcbc28d6d5e4d",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "bash",
+      "data_processing",
+      "files"
+     ],
+     "keys": [],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [],
+     "roles": [
+      "ppc-analyst"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/ppc-strategist",
+   "kind": "role",
+   "name": "PPC Strategist",
+   "summary": "Decides what to change in an advertising account and what to leave alone.",
+   "category": "growth",
+   "domains": [
+    "general",
+    "data"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/ppc-strategist/versions/1.json",
+     "sha256": "9efac071a518cc5b60a0888e95e7f5228954871af44cf79750473bdcb1a60287",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "bash",
+      "data_processing",
+      "files",
+      "web"
+     ],
+     "keys": [],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [],
+     "roles": [
+      "ppc-strategist"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/quant-researcher",
+   "kind": "role",
+   "name": "Quantitative Researcher",
+   "summary": "Tests whether a market claim survives data: hypothesis, point-in-time data, costs, walk-forward, and an honest null result when there is nothing there.",
+   "category": "research",
+   "domains": [
+    "markets",
+    "data"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/quant-researcher/versions/1.json",
+     "sha256": "87ddcea99de8bcf8312ec6074a3982f130c5124504bc65c56aae528e4e16411b",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "bash",
+      "data_processing",
+      "files",
+      "web"
+     ],
+     "keys": [],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [],
+     "roles": [
+      "quant-researcher"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/read-the-filings",
+   "kind": "project",
+   "name": "Read The Filings",
+   "summary": "An initiation note on a US-listed company you name, built only from its SEC filings.",
+   "category": "research",
+   "domains": [
+    "markets"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "details": {
+    "what_you_get": "An initiation note on one public company, built only from its own filings, that a skeptic could attack.",
+    "what_it_costs": "Capped at $60. Filings are long; the analysts read a lot.",
+    "what_you_need": "Your Anthropic API key. Nothing else. Every filing this project reads is on [SEC EDGAR](https://www.sec.gov/edgar), which is free, public, and needs no account. If you have ever been told a research desk requires a data subscription: not for this."
+   },
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/read-the-filings/versions/1.json",
+     "sha256": "736b0f2e52a07d9097482404fc9e7dc6e4c0c0fe100a6854419c2ab68f46e8f4",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "data_processing",
+      "files",
+      "web"
+     ],
+     "keys": [],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [
+      "company"
+     ],
+     "roles": [
+      "cio",
+      "equity-analyst",
+      "compliance-officer"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/researcher",
+   "kind": "role",
+   "name": "Researcher / Analyst",
+   "summary": "Answers well-scoped questions with sourced findings: market scans, technical evaluations, competitive analysis, data digging.",
+   "category": "research",
+   "domains": [
+    "general"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/researcher/versions/1.json",
+     "sha256": "906befaf53a9cfc61bfc31dbcda429a209e78368978c4389f9f4bb1d66249b1c",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "data_processing",
+      "files",
+      "web"
+     ],
+     "keys": [],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [],
+     "roles": [
+      "researcher"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/risk-manager",
+   "kind": "role",
+   "name": "Risk Manager",
+   "summary": "The desk's brake: exposure, concentration, correlation, drawdown and liquidity limits.",
+   "category": "challenge",
+   "domains": [
+    "markets"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/risk-manager/versions/1.json",
+     "sha256": "88fec560b82900ed30cc06b780843c238da6e9c3bdf41756ae3d6231c985ca8e",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "data_processing",
+      "files",
+      "web"
+     ],
+     "keys": [
+      "market-data"
+     ],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [],
+     "roles": [
+      "risk-manager"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/sales",
+   "kind": "role",
+   "name": "Sales",
+   "summary": "Works qualified conversations to a close: follow-ups, objections, proposals, payment links.",
+   "category": "growth",
+   "domains": [
+    "general"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/sales/versions/1.json",
+     "sha256": "dfb12d836adf239543c1ed3cf4002da1a8a63962915e0c1a97e1430c5684302e",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "data_processing",
+      "files",
+      "web"
+     ],
+     "keys": [],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [],
+     "roles": [
+      "sales"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/settle-an-argument",
+   "kind": "project",
+   "name": "Settle An Argument",
+   "summary": "A memo that answers one question you are stuck on, with evidence you could defend.",
+   "category": "research",
+   "domains": [
+    "general"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "details": {
+    "what_you_get": "A memo that answers one question you are stuck on, with enough evidence that you could defend the answer to someone who disagrees.",
+    "what_it_costs": "Capped at $40; a well-scoped question lands well under it.",
+    "what_you_need": "Your Anthropic API key. The research is done with the web tools your key already pays for; there is no search subscription."
+   },
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/settle-an-argument/versions/1.json",
+     "sha256": "afcdce7cf0df4731a6615c5adcfbdbe5c7c71aefb11acf0ba0726b81d0aa4bb3",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "data_processing",
+      "files",
+      "web"
+     ],
+     "keys": [],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [
+      "question"
+     ],
+     "roles": [
+      "ceo",
+      "researcher",
+      "writer"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/support",
+   "kind": "role",
+   "name": "Customer Support",
+   "summary": "Answers real users, reproduces their problems, and routes what they reveal back into the plan.",
+   "category": "growth",
+   "domains": [
+    "general"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/support/versions/1.json",
+     "sha256": "99db650b6d98420ad664fd8c1f9665a328cc7e89306a5865e0afd3077a2670fd",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "data_processing",
+      "files",
+      "web"
+     ],
+     "keys": [],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [],
+     "roles": [
+      "support"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/technical-analyst",
+   "kind": "role",
+   "name": "Technical / Market Structure Analyst",
+   "summary": "Price, volume, trend, liquidity and positioning.",
+   "category": "research",
+   "domains": [
+    "markets"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/technical-analyst/versions/1.json",
+     "sha256": "83e8660b336da69fc8c3a9edb7dc72042d89718be6aafa227ca035f7399f1f99",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "bash",
+      "data_processing",
+      "files",
+      "web"
+     ],
+     "keys": [
+      "market-data"
+     ],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [],
+     "roles": [
+      "technical-analyst"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/tell-me-what-changed",
+   "kind": "project",
+   "name": "Tell Me What Changed",
+   "summary": "A weekly note on what changed in the things you depend on, and only what matters to you.",
+   "category": "research",
+   "domains": [
+    "general"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "details": {
+    "what_you_get": "A weekly brief on something you depend on, containing only what actually changed and what it means for you.",
+    "what_it_costs": "Capped at $50/month.",
+    "what_you_need": "Your Anthropic API key. Everything it reads is public."
+   },
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/tell-me-what-changed/versions/1.json",
+     "sha256": "c4773eb4ed43403710e218817f64a7ff386e58755127bd1c1ce529d06a4c1754",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "data_processing",
+      "files",
+      "web"
+     ],
+     "keys": [],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [
+      "watch"
+     ],
+     "roles": [
+      "ceo",
+      "researcher",
+      "writer"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/tutor",
+   "kind": "role",
+   "name": "Tutor / Curriculum Builder",
+   "summary": "Teaches one person one subject: builds the curriculum, writes exercises with worked answers, marks honestly, and changes the plan based on what they…",
+   "category": "content",
+   "domains": [
+    "education"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/tutor/versions/1.json",
+     "sha256": "566ccc91dac7b286cf83831240dac880eccdd4b56439babc6e5fd8905d0ddd85",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "data_processing",
+      "files",
+      "web"
+     ],
+     "keys": [],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [],
+     "roles": [
+      "tutor"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/writer",
+   "kind": "role",
+   "name": "Writer / Content",
+   "summary": "Produces publishable prose: docs, posts, landing copy, reports.",
+   "category": "content",
+   "domains": [
+    "general"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/writer/versions/1.json",
+     "sha256": "8ec4673a9371c430d17a7f9fab91c687a00c11d5b1a1ad7fc567bfa51eee0fdb",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "data_processing",
+      "files",
+      "web"
+     ],
+     "keys": [],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [],
+     "roles": [
+      "writer"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  },
+  {
+   "id": "@yaaf/your-first-hour",
+   "kind": "project",
+   "name": "Your First Hour",
+   "summary": "One 800-word briefing note that explains a subject you name to a smart beginner.",
+   "category": "content",
+   "domains": [
+    "general"
+   ],
+   "license": "Apache-2.0",
+   "status": "active",
+   "details": {
+    "what_you_get": "One briefing note, about 800 words, that explains a subject you pick to someone smart who knows nothing about it.",
+    "what_it_costs": "A few dollars at most. The budget is capped at $20 and it will not come close.",
+    "what_you_need": "Your Anthropic API key. Nothing else. No accounts, no data feeds, no repo."
+   },
+   "publisher": "yaaf",
+   "tier": "official",
+   "latest": 1,
+   "versions": [
+    {
+     "version": 1,
+     "path": "listings/yaaf/your-first-hour/versions/1.json",
+     "sha256": "b4168c172d48e3b9d068202e07f6c0da95721b1afd6396df0ae0073657ee04f3",
+     "published_at": "2026-11-14",
+     "changes": "First version.",
+     "can_do": [
+      "data_processing",
+      "files",
+      "web"
+     ],
+     "keys": [],
+     "required_keys": [],
+     "data_sources": [],
+     "mailbox": false,
+     "github_repo": false,
+     "inputs": [
+      "subject"
+     ],
+     "roles": [
+      "ceo",
+      "writer"
+     ],
+     "has_receipt": false
+    }
+   ],
+   "installs": 0
+  }
+ ]
+}

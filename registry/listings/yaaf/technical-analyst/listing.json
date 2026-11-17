@@ -1,0 +1,12 @@
+{
+  "id": "@yaaf/technical-analyst",
+  "kind": "role",
+  "name": "Technical / Market Structure Analyst",
+  "summary": "Price, volume, trend, liquidity and positioning.",
+  "category": "research",
+  "domains": [
+    "markets"
+  ],
+  "license": "Apache-2.0",
+  "status": "active"
+}

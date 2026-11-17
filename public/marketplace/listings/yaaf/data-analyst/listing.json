@@ -1,0 +1,12 @@
+{
+  "id": "@yaaf/data-analyst",
+  "kind": "role",
+  "name": "Data Analyst",
+  "summary": "Turns a pile of records into findings someone can act on and someone else can re-derive.",
+  "category": "research",
+  "domains": [
+    "data"
+  ],
+  "license": "Apache-2.0",
+  "status": "active"
+}

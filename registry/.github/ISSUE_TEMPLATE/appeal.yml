@@ -1,0 +1,18 @@
+name: Appeal a removal
+description: Ask moderators to look again at a listing that was removed or refused.
+labels: [appeal]
+body:
+  - type: input
+    id: listing
+    attributes:
+      label: Listing
+      placeholder: "@handle/slug"
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why it should come back
+      description: What changed, or what the reason missed.
+    validations:
+      required: true

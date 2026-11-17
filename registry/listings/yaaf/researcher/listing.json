@@ -1,0 +1,12 @@
+{
+  "id": "@yaaf/researcher",
+  "kind": "role",
+  "name": "Researcher / Analyst",
+  "summary": "Answers well-scoped questions with sourced findings: market scans, technical evaluations, competitive analysis, data digging.",
+  "category": "research",
+  "domains": [
+    "general"
+  ],
+  "license": "Apache-2.0",
+  "status": "active"
+}

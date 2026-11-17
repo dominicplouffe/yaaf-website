@@ -1,0 +1,12 @@
+{
+  "id": "@yaaf/sales",
+  "kind": "role",
+  "name": "Sales",
+  "summary": "Works qualified conversations to a close: follow-ups, objections, proposals, payment links.",
+  "category": "growth",
+  "domains": [
+    "general"
+  ],
+  "license": "Apache-2.0",
+  "status": "active"
+}

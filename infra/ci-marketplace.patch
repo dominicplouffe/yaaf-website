@@ -1,0 +1,35 @@
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index da81926..962a43f 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -29,6 +29,21 @@ jobs:
+           key: astro-${{ runner.os }}-${{ hashFiles('src/assets/**', 'src/content/**') }}
+           restore-keys: astro-${{ runner.os }}-
+       - run: npm ci
++      - uses: actions/setup-python@v5
++        with:
++          python-version: "3.13"
++      # The marketplace registry lives in registry/ until it moves to its own
++      # repository. Its checks run here so a listing the checks would refuse,
++      # or an index that no longer matches the listings, never ships.
++      - name: registry checks
++        run: |
++          pip install jsonschema pytest
++          python registry/tools/check.py
++          python -m pytest -q registry/tests
++      - name: the served index matches the listings
++        run: |
++          npm run sync:marketplace
++          git diff --exit-code -- public/marketplace
+       - run: npm run check
+       - run: npm run build
+ 
+@@ -49,3 +64,8 @@ jobs:
+           # The use-case pages are gone; their old URLs must still land somewhere.
+           grep -q 'http-equiv="refresh"' dist/examples/index.html
+           grep -q 'http-equiv="refresh"' dist/examples/01-your-first-hour/index.html
++          # One page per listing, and the index every yaaf install reads.
++          test -f dist/marketplace/index.json
++          listings=$(python -c "import json;print(len(json.load(open('public/marketplace/index.json'))['listings']))")
++          pages=$(find dist/marketplace -mindepth 3 -name index.html | wc -l)
++          test "$pages" -eq "$listings"

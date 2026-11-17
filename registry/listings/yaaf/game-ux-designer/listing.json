@@ -1,0 +1,12 @@
+{
+  "id": "@yaaf/game-ux-designer",
+  "kind": "role",
+  "name": "Mobile Game UX Designer",
+  "summary": "Deep experience critiquing and designing mobile game UX: onboarding, controls, HUD, menus, monetization flows, juice.",
+  "category": "content",
+  "domains": [
+    "games"
+  ],
+  "license": "Apache-2.0",
+  "status": "active"
+}

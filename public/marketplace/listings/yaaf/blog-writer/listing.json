@@ -1,0 +1,12 @@
+{
+  "id": "@yaaf/blog-writer",
+  "kind": "role",
+  "name": "Marketing Blog Writer",
+  "summary": "Writes marketing blog posts that earn attention from real readers: researched, sourced, publishable prose aimed at a specific search intent — and publishes…",
+  "category": "content",
+  "domains": [
+    "general"
+  ],
+  "license": "Apache-2.0",
+  "status": "active"
+}

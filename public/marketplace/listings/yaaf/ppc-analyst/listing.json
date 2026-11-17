@@ -1,0 +1,12 @@
+{
+  "id": "@yaaf/ppc-analyst",
+  "kind": "role",
+  "name": "PPC Analyst",
+  "summary": "Turns an advertising account's rows into figures somebody can act on and somebody else can re-derive.",
+  "category": "research",
+  "domains": [
+    "data"
+  ],
+  "license": "Apache-2.0",
+  "status": "active"
+}

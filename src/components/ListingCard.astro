@@ -1,0 +1,42 @@
+---
+/** One listing in a grid: what it is, what it does, what it can touch. */
+import { canDo, hrefOf, latest, type Listing } from "../lib/marketplace";
+interface Props { listing: Listing }
+const { listing } = Astro.props;
+const v = latest(listing);
+const runs = v.can_do.includes("bash");
+---
+<a class="lcard" href={hrefOf(listing)} data-kind={listing.kind} data-category={listing.category}
+  data-proven={listing.outcomes?.finished ?? 0} data-installs={listing.installs}
+  data-text={`${listing.name} ${listing.summary} ${listing.id} ${listing.domains.join(" ")}`.toLowerCase()}>
+  <p class="top">
+    <span class="kind">{listing.kind === "project" ? "Project" : "Role"}</span>
+    {listing.tier === "official" && <span class="tag off">official</span>}
+    {v.has_receipt && <span class="tag ran">ran for real</span>}
+    {listing.outcomes && <span class="tag ran">{listing.outcomes.finished} of {listing.outcomes.reports} finished</span>}
+  </p>
+  <h3>{listing.name}</h3>
+  <p class="id">{listing.id}</p>
+  <p class="sum">{listing.summary}</p>
+  <p class="meta">
+    {listing.kind === "project" && <span>{v.roles.length} roles</span>}
+    <span class:list={{ warn: runs }}>{canDo(v.can_do).join(" · ")}</span>
+    {v.keys.length > 0 && <span>Needs {v.keys.join(", ")}</span>}
+    {v.inputs.length > 0 && <span>Asks {v.inputs.length} {v.inputs.length === 1 ? "question" : "questions"}</span>}
+  </p>
+</a>
+
+<style>
+  .lcard { display: flex; flex-direction: column; gap: 8px; padding: 18px; background: var(--yaaf-surface); border: 1px solid var(--yaaf-border); color: inherit; text-decoration: none; transition: border-color 0.2s var(--ease); min-width: 0; }
+  .lcard:hover, .lcard:focus-visible { border-color: var(--yaaf-border-strong); }
+  .lcard[hidden] { display: none; }
+  .top { display: flex; gap: 6px; flex-wrap: wrap; margin: 0; }
+  .kind, .tag { font-family: var(--font-mono); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; border: 1px solid var(--yaaf-border); padding: 2px 7px; color: var(--yaaf-muted); }
+  .tag.off { color: var(--yaaf-seal); border-color: color-mix(in srgb, var(--yaaf-seal) 40%, transparent); }
+  .tag.ran { color: var(--yaaf-good); border-color: color-mix(in srgb, var(--yaaf-good) 40%, transparent); }
+  h3 { margin: 0; font-size: 16px; font-weight: 600; letter-spacing: -0.01em; color: var(--yaaf-ink); }
+  .id { margin: -4px 0 0; font-family: var(--font-mono); font-size: 11px; color: var(--yaaf-muted); }
+  .sum { margin: 0; font-size: 13.5px; line-height: 1.55; color: var(--yaaf-ink-2); }
+  .meta { margin: auto 0 0; display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 12px; color: var(--yaaf-muted); }
+  .meta .warn { color: var(--yaaf-warning); }
+</style>

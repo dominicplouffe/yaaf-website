@@ -1,0 +1,212 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import Section from "../../../components/Section.astro";
+import OrgChart from "../../../components/OrgChart.astro";
+import OpenInYaaf from "../../../components/OpenInYaaf.astro";
+import {
+  canDo, CATEGORY_WORDS, latest, listings, reportHref, slugOf, versionBody, type Listing,
+} from "../../../lib/marketplace";
+
+export function getStaticPaths() {
+  return listings.map((listing) => ({ params: slugOf(listing), props: { listing } }));
+}
+
+const { listing } = Astro.props as { listing: Listing };
+const v = latest(listing);
+const body = versionBody(v);
+const roles: any[] = listing.kind === "role" ? [body.role] : body.bundle.roles;
+const project = listing.kind === "project" ? body.bundle.project : null;
+const needs = body.needs ?? { keys: [], data_sources: [], mailbox: false, github_repo: false };
+const inputs: any[] = body.inputs ?? [];
+const receipt: any = body.receipt ?? null;
+const req: { met: number; open: number; cut: number } | null = receipt?.verified?.requirements ?? null;
+const removed = listing.status === "removed";
+const roleName = new Map(roles.map((r) => [r.slug, r.name]));
+const goalParts: string[] = project ? project.goal.split(/(\{\{\s*[A-Za-z0-9_]+\s*\}\})/g) : [];
+const question = new Map<string, string>(inputs.map((i) => [String(i.id), String(i.question)]));
+const blankId = (part: string): string => part.replace(/[{}\s]/g, "");
+const otherVersions = [...listing.versions].reverse();
+---
+<BaseLayout title={listing.name} description={listing.summary} cta={false}>
+  <section class="page-hero">
+    <div class="shell">
+      <p class="eyebrow"><a href="/marketplace/">Marketplace</a> · {listing.kind === "project" ? "Project" : "Role"} · {CATEGORY_WORDS[listing.category] ?? listing.category}</p>
+      <h1>{listing.name}</h1>
+      <p class="lede">{listing.summary}</p>
+      <p class="byline">
+        <span class="mono">{listing.id}</span>
+        <span>by <a href={`/marketplace/${listing.publisher}/`}>@{listing.publisher}</a></span>
+        <span class:list={["tier", listing.tier]}>{listing.tier}</span>
+        <span>v{v.version} · {v.published_at}</span>
+        {listing.installs > 0 && <span>{listing.installs} installs</span>}
+        <span>{listing.license}</span>
+      </p>
+      {removed && <p class="removed">Removed by the moderators: {listing.status_reason}. It cannot be installed, and every yaaf running it shows this reason.</p>}
+      {listing.status === "deprecated" && <p class="deprecated">Deprecated: {listing.status_reason}</p>}
+    </div>
+  </section>
+
+  <Section first={true}>
+    <div class="layout">
+      <div class="main">
+        {listing.details && (
+          <dl class="details">
+            {listing.details.what_you_get && <><dt>What you get</dt><dd>{listing.details.what_you_get}</dd></>}
+            {listing.details.what_it_costs && <><dt>What it costs</dt><dd>{listing.details.what_it_costs}</dd></>}
+            {listing.details.what_you_need && <><dt>What you need</dt><dd>{listing.details.what_you_need}</dd></>}
+          </dl>
+        )}
+
+        {project && (
+          <div class="block">
+            <h2>The goal</h2>
+            <p class="goal">
+              {goalParts.map((part: string) => part.startsWith("{{")
+                ? <span class="blank" title={question.get(blankId(part))}>{blankId(part).replace(/_/g, " ")}</span>
+                : <span>{part}</span>)}
+            </p>
+          </div>
+        )}
+
+        {project && (
+          <div class="block">
+            <h2>The team</h2>
+            <OrgChart chairman={false} compact={true}
+              ceo={roleName.get(project.ceo_role_slug) ?? project.ceo_role_slug}
+              ceoRole={project.ceo_role_slug}
+              teams={project.teams.map((t: any) => ({
+                name: t.name, role: roleName.get(t.role_slug) ?? t.role_slug,
+                employees: t.employees ?? [], lead: t.lead ?? null,
+                challenge: roles.find((r) => r.slug === t.role_slug)?.category === "challenge",
+              }))} />
+          </div>
+        )}
+
+        <div class="block">
+          <h2>{roles.length === 1 ? "What it can do" : "What each role can do"}</h2>
+          {roles.map((role) => {
+            const tools = Object.entries(role.tool_permissions ?? {}).filter(([, on]) => on).map(([k]) => k);
+            return (
+              <article class="role">
+                <h3>{role.name}</h3>
+                <p class="desc">{role.description}</p>
+                <p class="can">
+                  {canDo(tools).map((t) => <span class:list={["chip", { warn: t === "Runs commands" }]}>{t}</span>)}
+                  {(role.secret_scopes ?? []).map((s: string) => <span class="chip key">receives {s}</span>)}
+                </p>
+                <details open={roles.length === 1}>
+                  <summary>Every word of its prompt</summary>
+                  <pre>{role.system_prompt}</pre>
+                </details>
+              </article>
+            );
+          })}
+        </div>
+      </div>
+
+      <aside class="side">
+        {!removed && <OpenInYaaf listing={listing} />}
+
+        {(needs.keys.length > 0 || needs.data_sources.length > 0 || needs.mailbox || needs.github_repo) && (
+          <div class="panel">
+            <h2>What you bring</h2>
+            <ul>
+              {needs.keys.map((k: any) => (
+                <li><b>{k.label}</b>{k.required ? "" : " (optional)"}
+                  {k.format && <span class="muted"> · {k.format}</span>}
+                  {k.help && <> · <a href={k.help} rel="noopener">how to get one</a></>}</li>
+              ))}
+              {needs.data_sources.map((d: any) => (
+                <li><b>{d.serves}</b> <span class="muted">· {d.address === "bring-your-own" ? "your own server" : d.address} · {d.tools.length} tools allowed</span></li>
+              ))}
+              {needs.mailbox && <li>A mailbox for the project</li>}
+              {needs.github_repo && <li>A GitHub repository</li>}
+            </ul>
+            <p class="muted">Nothing of the publisher's comes with it. Your yaaf asks for your own.</p>
+          </div>
+        )}
+
+        {inputs.length > 0 && (
+          <div class="panel">
+            <h2>You'll be asked</h2>
+            <ul>{inputs.map((i) => <li>{i.question} <span class="muted">e.g. {String(i.example)}</span></li>)}</ul>
+          </div>
+        )}
+
+        {receipt && (
+          <div class="panel">
+            <h2>When the publisher ran it</h2>
+            <dl class="nums">
+              <div><dt>Ran for</dt><dd>{receipt.project?.days ?? "?"} days</dd></div>
+              <div><dt>Cost</dt><dd>{receipt.project?.billing_mode === "api_key" ? `$${Number(receipt.cost?.usd ?? 0).toFixed(2)}` : "on a plan"}</dd></div>
+              {req && <div><dt>Requirements met</dt><dd>{req.met} of {req.met + req.open + req.cut}</dd></div>}
+              {receipt.verified?.evidence && <div><dt>Claims verified</dt><dd>{receipt.verified.evidence.verified} of {receipt.verified.evidence.external}</dd></div>}
+            </dl>
+            <p class="muted">From yaaf's receipt on the publisher's install, as they reported it. yaaf computes it; no agent writes it.</p>
+          </div>
+        )}
+
+        {listing.outcomes && (
+          <div class="panel">
+            <h2>When others ran it</h2>
+            <dl class="nums">
+              <div><dt>Reported</dt><dd>{listing.outcomes.reports}</dd></div>
+              <div><dt>Finished</dt><dd>{listing.outcomes.finished}</dd></div>
+              <div><dt>Median days</dt><dd>{listing.outcomes.median_days}</dd></div>
+              {listing.outcomes.median_usd !== null && <div><dt>Median cost</dt><dd>${listing.outcomes.median_usd}</dd></div>}
+              {listing.outcomes.requirements_met_share !== null && <div><dt>Requirements met</dt><dd>{Math.round(listing.outcomes.requirements_met_share * 100)}%</dd></div>}
+            </dl>
+            <p class="muted">From people who chose to send their receipt's numbers. The publisher's own report is not counted, and each person counts once.</p>
+          </div>
+        )}
+
+        <div class="panel">
+          <h2>Versions</h2>
+          <ul>{otherVersions.map((x) => <li>v{x.version} · {x.published_at} · {x.changes}</li>)}</ul>
+          <p class="muted mono sha">sha256 {v.sha256.slice(0, 16)}… Your yaaf refuses any file that does not match.</p>
+        </div>
+        <p class="report"><a href={reportHref(listing)} rel="noopener">Report this listing</a></p>
+      </aside>
+    </div>
+  </Section>
+</BaseLayout>
+
+<style>
+  .byline { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--yaaf-muted); }
+  .byline a, .eyebrow a { color: inherit; }
+  .mono { font-family: var(--font-mono); }
+  .tier { font-family: var(--font-mono); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; }
+  .tier.official { color: var(--yaaf-seal); }
+  .removed { color: var(--yaaf-critical); }
+  .deprecated { color: var(--yaaf-warning); }
+  .layout { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 32px; padding-inline: var(--inset); }
+  @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } .side { order: -1; } }
+  .main, .side { display: grid; gap: 28px; align-content: start; min-width: 0; }
+  h2 { font-size: 13px; font-family: var(--font-mono); letter-spacing: 1.2px; text-transform: uppercase; color: var(--yaaf-muted); font-weight: 500; margin: 0 0 12px; }
+  .details { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 10px 20px; margin: 0; }
+  .details dt { color: var(--yaaf-ink); font-weight: 600; }
+  .details dd { margin: 0; color: var(--yaaf-ink-2); line-height: 1.6; }
+  @media (max-width: 640px) { .details { grid-template-columns: 1fr; } }
+  .goal { white-space: pre-wrap; line-height: 1.7; color: var(--yaaf-ink-2); margin: 0; }
+  .blank { background: var(--yaaf-seal); color: var(--yaaf-on-seal); padding: 0 6px; font-family: var(--font-mono); font-size: 0.85em; white-space: nowrap; }
+  .role { border-top: 1px solid var(--yaaf-border); padding: 16px 0; display: grid; gap: 8px; }
+  .role h3 { margin: 0; font-size: 16px; font-weight: 600; color: var(--yaaf-ink); }
+  .desc { margin: 0; color: var(--yaaf-ink-2); font-size: 14px; line-height: 1.6; }
+  .can { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; }
+  .chip { font-family: var(--font-mono); font-size: 11px; border: 1px solid var(--yaaf-border); padding: 2px 8px; color: var(--yaaf-ink-2); }
+  .chip.warn { color: var(--yaaf-warning); border-color: color-mix(in srgb, var(--yaaf-warning) 40%, transparent); }
+  .chip.key { color: var(--yaaf-accent); border-color: color-mix(in srgb, var(--yaaf-accent) 40%, transparent); }
+  summary { cursor: pointer; font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 1px; text-transform: uppercase; color: var(--yaaf-muted); }
+  pre { white-space: pre-wrap; font-family: var(--font-mono); font-size: 12px; line-height: 1.65; color: var(--yaaf-ink-2); background: var(--yaaf-page); border: 1px solid var(--yaaf-border); padding: 12px; max-height: 420px; overflow: auto; margin: 10px 0 0; }
+  .panel { border: 1px solid var(--yaaf-border); background: var(--yaaf-surface); padding: 16px; }
+  .panel ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: 14px; color: var(--yaaf-ink-2); }
+  .panel b { color: var(--yaaf-ink); font-weight: 600; }
+  .muted { color: var(--yaaf-muted); font-size: 12.5px; }
+  .panel > .muted { margin: 10px 0 0; }
+  .sha { overflow-wrap: anywhere; }
+  .nums { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 0; }
+  .nums dt { font-size: 12px; color: var(--yaaf-muted); }
+  .nums dd { margin: 0; font-size: 22px; font-weight: 500; color: var(--yaaf-ink); font-variant-numeric: tabular-nums; }
+  .report { margin: 0; font-size: 13px; }
+  .report a { color: var(--yaaf-muted); }
+</style>

@@ -1,0 +1,12 @@
+{
+  "id": "@yaaf/game-analyst",
+  "kind": "role",
+  "name": "Mobile Game Researcher / Analyst",
+  "summary": "Studies the mobile games market — what is selling, what retains, what is actually fun — and turns that into concrete, prioritized suggestions for a specific…",
+  "category": "research",
+  "domains": [
+    "games"
+  ],
+  "license": "Apache-2.0",
+  "status": "active"
+}

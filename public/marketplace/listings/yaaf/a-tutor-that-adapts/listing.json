@@ -1,0 +1,17 @@
+{
+  "id": "@yaaf/a-tutor-that-adapts",
+  "kind": "project",
+  "name": "A Tutor That Adapts",
+  "summary": "One lesson a week on a subject you choose, re-planned around what you actually get wrong.",
+  "category": "content",
+  "domains": [
+    "education"
+  ],
+  "license": "Apache-2.0",
+  "status": "active",
+  "details": {
+    "what_you_get": "One lesson a week on a subject you choose — explanation, worked example, exercises, answer key — and a curriculum that changes based on the answers you leave for it.",
+    "what_it_costs": "Capped at $40/month. A lesson is a handful of runs.",
+    "what_you_need": "Your Anthropic API key, and about twenty minutes a week."
+  }
+}
