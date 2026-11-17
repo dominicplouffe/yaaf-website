@@ -100,7 +100,7 @@ const GLANCE = [
           {GRADED.map(([k, g, v]) => (
             <tr>
               <th scope="row">{k}</th>
-              <td data-label="Grade"><span class:list={["pill", g === "weak" ? "warm" : "dim"]}>{g}</span></td>
+              <td data-label="Grade"><span class:list={["pill", { dim: g !== "weak" }]}>{g}</span></td>
               <td data-label="The gap">{v}</td>
             </tr>
           ))}
@@ -127,7 +127,7 @@ const GLANCE = [
   </Section>
 
   <Section eyebrow="The others" title="Use the right tool.">
-    <div class="cells hued">
+    <div class="cells">
       <div class="cell" id="harnesses">
         <span class="eyebrow">Claude Code, Codex, Gemini CLI</span>
         <h3>A harness drives one agent.</h3>
@@ -162,6 +162,6 @@ const GLANCE = [
 <style>
   .sides { margin-top: 2.5rem; }
   .wide { min-width: 860px; }
-  .big { font-size: 1.15rem !important; color: var(--color-ink) !important; line-height: 1.45 !important; }
+  .big { font-size: 1.15rem !important; color: var(--yaaf-ink) !important; line-height: 1.45 !important; }
   .kit-table tbody th { white-space: nowrap; }
 </style>

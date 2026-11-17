@@ -24,30 +24,16 @@ const html = code
 
 <style>
   .term {
-    background: #0a0a0a;
-    border: 1px solid var(--color-line);
-    border-radius: var(--radius-card);
+    margin: 0;
+    background: var(--yaaf-sunken);
+    border: 1px solid var(--yaaf-border-strong);
     overflow: hidden;
+    min-width: 0;
   }
-  .bar { padding: 9px 14px; border-bottom: 1px solid var(--color-line); background: var(--color-surface); }
-  pre {
-    margin: 0;
-    padding: 14px 16px;
-    overflow-x: auto;
-    font-family: var(--font-mono);
-    font-size: 12.5px;
-    line-height: 1.8;
-    color: var(--color-ink-2);
-  }
-  .note {
-    margin: 0;
-    padding: 10px 16px;
-    border-top: 1px solid var(--color-line-2);
-    font-size: 12.5px;
-    line-height: 1.6;
-    color: var(--color-muted);
-  }
-  pre :global(.c) { color: var(--color-muted); }
-  pre :global(.p) { color: var(--color-accent-hi); }
-  pre :global(.ok) { color: var(--color-good); }
+  .bar { padding: 9px 16px; border-bottom: 1px solid var(--yaaf-border-strong); }
+  pre { margin: 0; padding: 14px 16px; overflow-x: auto; font-size: 13px; line-height: 1.75; color: var(--yaaf-ink-2); }
+  .note { margin: 0; padding: 10px 16px; border-top: 1px solid var(--yaaf-border-strong); font-size: 13px; line-height: 1.6; color: var(--yaaf-muted); }
+  pre :global(.c) { color: var(--yaaf-muted); }
+  pre :global(.p) { color: var(--yaaf-ink); font-weight: 500; }
+  pre :global(.ok) { color: var(--yaaf-good); }
 </style>

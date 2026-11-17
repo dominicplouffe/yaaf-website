@@ -1,46 +1,39 @@
 ---
+/**
+ * A product screenshot in a plain ruled frame: no device chrome, no tilt, no
+ * glow. Pass `dark` to show a second capture when the reader's scheme is
+ * dark; only the one that is displayed is fetched.
+ */
 import { Image } from "astro:assets";
 interface Props {
   src: ImageMetadata;
+  dark?: ImageMetadata;
   alt: string;
   caption?: string;
-  /** Crop to the top of a tall full-page capture instead of showing all of it. */
-  crop?: number;
-  /** Crop to an aspect ratio from the top instead, e.g. "16 / 10". Scales with the width. */
+  /** Crop to an aspect ratio from the top, e.g. "16 / 10". */
   ratio?: string;
   priority?: boolean;
-  /** The colour the frame glows, e.g. "var(--color-rose)". Violet when unset. */
-  glow?: string;
+  sizes?: string;
 }
-const { src, alt, caption, crop, ratio, priority = false, glow } = Astro.props;
-const style = [crop && `--crop:${crop}px`, ratio && `aspect-ratio:${ratio}`, glow && `--glow:${glow}`].filter(Boolean).join(";") || undefined;
+const { src, dark, alt, caption, ratio, priority = false, sizes = "(max-width: 1100px) 100vw, 1040px" } = Astro.props;
+const common = { alt, widths: [640, 960, 1280, 1600], sizes, loading: priority ? ("eager" as const) : ("lazy" as const) };
 ---
 <figure class="shot">
-  <div class="frame" style={style}>
-    <Image src={src} alt={alt} widths={[640, 960, 1440]} sizes="(max-width: 900px) 100vw, 900px" loading={priority ? "eager" : "lazy"} />
+  <div class:list={["frame", { paired: !!dark }]} style={ratio ? `aspect-ratio:${ratio}` : undefined}>
+    <Image src={src} class="on-light" {...common} />
+    {dark && <Image src={dark} class="on-dark" {...common} />}
   </div>
   {caption && <figcaption>{caption}</figcaption>}
 </figure>
 
 <style>
   .shot { margin: 0; }
-  .frame {
-    position: relative;
-    border: 1px solid var(--color-line);
-    border-radius: var(--radius-card);
-    overflow: hidden;
-    background: var(--color-page);
-    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6), 0 40px 120px -40px color-mix(in srgb, var(--glow, var(--color-violet)) 55%, transparent);
-    max-height: var(--crop, none);
-  }
-  .frame::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    pointer-events: none;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07);
-  }
+  .frame { border: 1px solid var(--yaaf-border-strong); overflow: hidden; background: var(--yaaf-surface); }
   .frame :global(img) { display: block; width: 100%; height: auto; }
-  figcaption { color: var(--color-muted); font-size: 14px; margin-top: 14px; line-height: 1.55; max-width: 64ch; }
+  .frame :global(.on-dark) { display: none; }
+  @media (prefers-color-scheme: dark) {
+    .frame.paired :global(.on-light) { display: none; }
+    .frame.paired :global(.on-dark) { display: block; }
+  }
+  figcaption { color: var(--yaaf-muted); font-family: var(--font-mono); font-size: 12.5px; margin-top: 12px; line-height: 1.55; max-width: 46em; }
 </style>

@@ -69,17 +69,17 @@ const categories = Object.entries(
 
 <style>
   .tools { display: grid; gap: 12px; margin-bottom: 20px; padding-inline: var(--inset); }
-  #q { max-width: 560px; width: 100%; background: var(--color-surface); color: var(--color-ink); border: 1px solid var(--color-line-strong); padding: 11px 13px; font: inherit; font-size: 15px; }
+  #q { max-width: 560px; width: 100%; background: var(--yaaf-surface); color: var(--yaaf-ink); border: 1px solid var(--yaaf-border-strong); padding: 11px 13px; font: inherit; font-size: 15px; }
   .pills { display: flex; flex-wrap: wrap; gap: 6px; }
-  .pills button { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.5px; color: var(--color-ink-2); background: transparent; border: 1px solid var(--color-line); padding: 6px 11px; cursor: pointer; }
-  .pills button span { color: var(--color-muted); margin-left: 4px; }
-  .pills button:hover { border-color: var(--color-line-strong); color: var(--color-ink); }
-  .pills button.on { color: #14051f; border-color: var(--color-gold); background: var(--color-gold); }
-  .pills button.on span { color: #555; }
+  .pills button { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.5px; color: var(--yaaf-ink-2); background: transparent; border: 1px solid var(--yaaf-border); padding: 6px 11px; cursor: pointer; }
+  .pills button span { color: var(--yaaf-muted); margin-left: 4px; }
+  .pills button:hover { border-color: var(--yaaf-border-strong); color: var(--yaaf-ink); }
+  .pills button.on { color: var(--yaaf-page); border-color: var(--yaaf-ink); background: var(--yaaf-ink); }
+  .pills button.on span { color: var(--yaaf-page); opacity: 0.7; }
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
-  .empty { padding-inline: var(--inset); color: var(--color-muted); }
+  .empty { padding-inline: var(--inset); color: var(--yaaf-muted); }
   .empty[hidden] { display: none; }
-  .note code { font-family: var(--font-mono); font-size: 0.9em; color: var(--color-ink); }
+  .note code { font-family: var(--font-mono); font-size: 0.9em; color: var(--yaaf-ink); }
 </style>
 
 <script>

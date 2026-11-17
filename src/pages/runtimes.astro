@@ -45,7 +45,7 @@ const pricedBy = providers.filter((p) => p.priced.length).map((p) => p.label).jo
   </section>
 
   <Section first={true}>
-    <div class="cells hued">
+    <div class="cells">
       <div class="cell"><p class="num">{harnesses.length}</p><p>Harnesses</p></div>
       <div class="cell"><p class="num">{providers.length}</p><p>Providers</p></div>
       <div class="cell"><p class="num">{models.length}</p><p>Models in the catalog</p></div>
@@ -55,7 +55,7 @@ const pricedBy = providers.filter((p) => p.priced.length).map((p) => p.label).jo
 
   <Section eyebrow="Two levels" title="A harness is transport. yaaf is the rules."
     lede="Claude Code, Codex and the rest decide how a model is driven. They never decide what it may do. That lives in yaaf's server, the same for every harness.">
-    <div class="cells c2 hued">
+    <div class="cells c2">
       <div class="cell">
         <span class="eyebrow">The agent harness decides</span>
         <ul>
@@ -80,8 +80,8 @@ const pricedBy = providers.filter((p) => p.priced.length).map((p) => p.label).jo
   <Section eyebrow="Model classes" title="Roles name a class, not a vendor."
     lede="A role asks for frontier, balanced or fast. Each provider says which of its models that means, so the same team runs on whichever provider you pay.">
     <div class="cells c3">
-      {CLASSES.map(([k, v, hue]) => (
-        <div class={`cell h-${hue} cls`}>
+      {CLASSES.map(([k, v]) => (
+        <div class="cell cls">
           <h3>{k}</h3>
           <p>{v}</p>
         </div>
@@ -92,7 +92,7 @@ const pricedBy = providers.filter((p) => p.priced.length).map((p) => p.label).jo
 
   <Section eyebrow="Why" title="Two agents on one model share its blind spots.">
     <div class="cells c2">
-      <div class="cell warm"><h3>Critics on a different model</h3><p>Put your researcher on Claude and its critic on GPT. Disagreement gets real.</p></div>
+      <div class="cell"><h3>Critics on a different model</h3><p>Put your researcher on Claude and its critic on GPT. Disagreement gets real.</p></div>
       <div class="cell"><h3>Not tied to one vendor</h3><p>The rules never depended on the model. Now the metering doesn't either.</p></div>
     </div>
   </Section>
@@ -135,7 +135,7 @@ const pricedBy = providers.filter((p) => p.priced.length).map((p) => p.label).jo
   </Section>
 
   <Section id="rules" eyebrow={`${RULES.length} rules`} title="Checked when a seat is hired, and again before every run.">
-    <div class="cells hued">
+    <div class="cells">
       {RULES.map(([n, v]) => (
         <div class="cell">
           <span class="eyebrow">{n}</span>
@@ -156,7 +156,7 @@ const pricedBy = providers.filter((p) => p.priced.length).map((p) => p.label).jo
           <li>Mixed providers on one budget is a test, not a promise</li>
         </ul>
       </div>
-      <div class="cell warm">
+      <div class="cell">
         <h3>Not yet</h3>
         <ul>
           <li>A live seat on each provider, which only a deployment with real keys can prove. <code>yaaf smoke</code> checks one on yours.</li>
@@ -169,7 +169,11 @@ const pricedBy = providers.filter((p) => p.priced.length).map((p) => p.label).jo
 </BaseLayout>
 
 <style>
-  .rule { color: var(--color-ink) !important; font-size: 1.05rem !important; }
-  .cls { border-top: 3px solid var(--hue) !important; background: color-mix(in srgb, var(--hue) 8%, var(--color-page)) !important; }
-  .cls h3 { color: var(--hue); font-size: 1.5rem !important; }
+  .rule { color: var(--yaaf-ink) !important; font-size: 1.05rem !important; }
+  .cls { border-top: 2px solid var(--yaaf-ink) !important; }
+  .cls h3 { font-size: 1.5rem !important; }
+  /* Harness and provider names are identifiers: mono, with an ink rule between rows. */
+  :global(.kit-table) tbody th { font-family: var(--font-mono); font-size: 14px; font-weight: 500; }
+  @media (min-width: 721px) { :global(.kit-table) tbody th { white-space: nowrap; padding-right: 28px; } }
+  :global(.kit-table) tbody :is(th, td) { border-bottom-color: var(--yaaf-ink); }
 </style>

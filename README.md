@@ -93,47 +93,46 @@ Everything that is a decision rather than content is in **`src/site.config.mjs`*
 
 ## Design
 
-**Yesterday was black and white; today is the dawn.** The page is a deep
-night (`--color-page`, an indigo, not black) that the sunrise comes up into:
-one gradient, `--dawn` (gold → orange → rose → violet → sky), carries the new
-way of working — the hero's last line, the primary button, the frame around
-the company chart, every section eyebrow. Five named hues (`gold`, `rose`,
-`sky`, `mint`, `violet`, plus `sun` and `lime`) give each idea its own colour.
-The old greys are kept for one job only: drawing *the old way* (the
-"Yesterday" panel, the non-yaaf columns of a comparison). Sharp corners,
-hairlines instead of boxes and medium-weight type set tight stay. Five
-full-height lines split the page into quarters (`.page-lines` in `BaseLayout`),
-and content laid out with `.cells` lands on them.
+**A public register: registry paper, registrar's ink, and one seal.** yaaf's
+product is accountability, so the site reads like an institution you would
+trust with authority, not like a launch. Light (Registry `#F4F4F1`) is the
+default; dark follows `prefers-color-scheme` and sits on neutral Carbon
+`#121316`. No gradients, no glows, no avatars: agents are seats, shown by role.
 
-The pieces worth knowing: `Section` (a hairline, a dawn eyebrow, a big title,
-one short sentence), `.cells` (boxes that share borders) and `.cells.hued`
-(each cell gets the next hue: a bar along the top, a tint, the eyebrow and link
-in that colour), `.h-<hue>` to set one by hand, `.dawn-text`, `Button` (the
-primary one is the dawn), `Cmd` (a command with a copy button), `Shot` (a
-screenshot that glows in the colour you pass as `glow`), `CompanyChart` (the
-home page's org chart of harnesses), `Drill` (real `yaaf rehearse` output),
-`TeamDiagram` (the seats of a company you can click, each specialist a real
-role from the library) and `AutonomyDial` (yaaf's five authority switches; the
-"stops" it shows are read from the Supervised drill, never typed). The last two
-are radios and `:has()`, so they work without a script.
-Tokens live in an `@theme` block in `src/styles/global.css`; Tailwind 4 is
-CSS-first and wired through Vite.
+Three rules hold everywhere:
 
-Type is Geist and Geist Mono (OFL), self-hosted through `@fontsource-variable`.
+1. **Seal is only the checker's signature.** The crimson (`--yaaf-seal`) is in
+   the logo, on the word "checked" in the home page's first line, and on the
+   name after "checked by" in a receipt (`.signed`). Never a button, a link, a
+   status, an error or decoration. Headline emphasis is an ink italic (`<em>`).
+2. **Primary actions are ink; links and focus are Registrar Blue**
+   (`--yaaf-accent`).
+3. **The wordmark is never typed.** `Logo` inlines the brand's outlined paths.
+
+**Tokens.** `src/styles/tokens.css` is the brand's generated file, copied in
+unedited: use the `--yaaf-*` variables. `src/styles/global.css` imports it and
+holds the shared grammar. Tailwind 4 is CSS-first and wired through Vite.
+
+**Type.** Brygada 1918 for headlines, Public Sans for text, IBM Plex Mono for
+every number, ID and code sample (all SIL OFL, self-hosted from
+`public/fonts/` with their licences). `src/styles/fonts.css` declares only the
+weights the site sets, plus metric-matched system fallbacks so nothing
+re-wraps when a font arrives. 12px is the floor; headlines are sentence case.
 The site makes **no external requests at all**.
 
-### Regenerating the social card
+**Devices, each used only with its meaning:**
 
-`public/og.png` is rendered from `scripts/og.html` in a real browser, because
-rasterising SVG text through sharp resolves fonts via system fontconfig and
-silently swaps the typeface on whatever machine runs it.
+| | |
+|---|---|
+| `.double-rule` | Final, checked: the end of the hero, under a shipped release, closing the manifesto's commitments, the footer signature. |
+| Receipt | Result, made by, checked by, cost. Real text, never an image. |
+| Hard-stop meter | Budgets and dates: an ink fill and an ink tick at the wall. |
+| `§` marks | Section numbering (`Section` adds the mark to its eyebrow). |
+| `Icon` | The twelve line icons in `src/assets/brand/icons/`, 1.75 stroke on a 24px grid. |
 
-```bash
-npx playwright install chromium   # once
-npm run og
-# or, with a Chromium already on the machine:
-PLAYWRIGHT_CHROMIUM=/path/to/chrome npm run og
-```
+Brand assets the site serves live in `public/` (favicons, `og.png`,
+`site.webmanifest`, fonts) and `src/assets/brand/` (logo, icons, product
+screens). `og.png` is the brand's own artwork; replace the file to change it.
 
 ---
 
@@ -240,20 +239,20 @@ on the home page, never a feature.
 src/
   site.config.mjs      every decision that isn't content
   content.config.ts    collection schemas (roles, crews, examples, docs)
-  styles/global.css    the @theme palette and the prose styles
+  styles/              tokens.css (brand, generated), fonts.css, global.css (shared grammar)
   content/             generated by npm run sync — committed
-  assets/screenshots/  2880px originals, processed by astro:assets
+  assets/screenshots/  2880px originals, processed by astro:assets (reset by every sync)
+  assets/brand/        logo, icons and product screens from the brand handoff
   components/          CompanyChart, TeamDiagram, AutonomyDial, OrgChart, RoleCard, Shot, Term, Drill, Section, Nav, Foot
   layouts/             BaseLayout, DocsLayout
   pages/               index, manifesto, how-it-works, features, runtimes (Harnesses), faq,
                        changelog, org, marketplace/, docs, 404; _compare is hidden
-                       while SHOW_COMPARE is off, and /why/ redirects to /#why
+                       while SHOW_COMPARE is off, and /why/ redirects to /manifesto/
 scripts/
   sync-content.mjs     the content pipeline
   export-runtimes.py   yaaf's runtime registries -> src/content/runtimes.json
   check-links.mjs      internal links and anchors in dist/
   deploy.sh            build -> s3 -> invalidate
-  make-og.mjs, og.html the social card
 infra/
   rewrite-index.js     CloudFront Function: directory index + canonical slash
 ```
